@@ -1,2 +1,3 @@
 # Coffee-Brewing-and-Grind-Size
-由 EZPage 建立的網站 - Deployed by EZPage
+由村民自行建立的咖啡沖煮筆記和磨豆機粗細轉換器
+
