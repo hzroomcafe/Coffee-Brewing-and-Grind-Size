@@ -34,6 +34,15 @@
         }
         body {
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.4s ease;
+        }
+        /* 隱藏滾動條但保留功能 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -41,7 +50,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+        const { useState, useEffect, useMemo, useRef } = React;
 
         // ==========================================
         // 0. SVG 圖示元件 (取代外部套件，確保單檔完美運行)
@@ -64,25 +73,50 @@
         const Scale = (p) => <IconBase {...p}><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></IconBase>;
         const ArrowLeft = (p) => <IconBase {...p}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconBase>;
         const ArrowRightLeft = (p) => <IconBase {...p}><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></IconBase>;
-        const Globe = (p) => <IconBase {...p}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></IconBase>;
         const Wrench = (p) => <IconBase {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></IconBase>;
+        const Moon = (p) => <IconBase {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></IconBase>;
+        const Sun = (p) => <IconBase {...p}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></IconBase>;
+        const Play = (p) => <IconBase {...p}><polygon points="5 3 19 12 5 21 5 3"/></IconBase>;
+        const Pause = (p) => <IconBase {...p}><rect width="4" height="16" x="6" y="4"/><rect width="4" height="16" x="14" y="4"/></IconBase>;
+        const RotateCcw = (p) => <IconBase {...p}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconBase>;
 
         // ==========================================
-        // 1. 莫蘭迪色系與共用樣式定義
+        // 1. 動態莫蘭迪色系 (支援日/夜模式)
         // ==========================================
-        const colors = {
-            bg: 'bg-[#F4F1EA]', card: 'bg-[#FFFFFF]',
-            primary: 'bg-[#7E8D85]', primaryText: 'text-[#7E8D85]',
-            secondary: 'bg-[#B3A394]', secondaryText: 'text-[#B3A394]',
-            blue: 'bg-[#7A93A2]', blueText: 'text-[#7A93A2]',
-            red: 'bg-[#C18F8F]', redText: 'text-[#C18F8F]',
-            yellow: 'bg-[#C9B793]', yellowText: 'text-[#C9B793]',
-            textDark: 'text-[#4A4A4A]', textMuted: 'text-[#8C8C8C]',
-            border: 'border-[#E2DED3]', accent: 'bg-[#D9D0C1]',
-            hotTag: 'bg-[#F3EBEB] text-[#C18F8F]', icedTag: 'bg-[#E9EDF0] text-[#7A93A2]', 
-            hotIcon: 'text-[#C18F8F]', icedIcon: 'text-[#7A93A2]',
-            bar: ['bg-[#C18F8F]', 'bg-[#C9B793]', 'bg-[#7E8D85]', 'bg-[#7A93A2]', 'bg-[#B3A394]']
-        };
+        const getColors = (isDark) => ({
+            bg: isDark ? 'bg-[#1C1F22]' : 'bg-[#F4F1EA]',
+            card: isDark ? 'bg-[#2A2E32]' : 'bg-[#FFFFFF]',
+            primary: isDark ? 'bg-[#5B6B61]' : 'bg-[#7E8D85]',
+            primaryText: isDark ? 'text-[#8AA192]' : 'text-[#7E8D85]',
+            secondary: isDark ? 'bg-[#8C7A6B]' : 'bg-[#B3A394]',
+            secondaryText: isDark ? 'text-[#C7B5A5]' : 'text-[#B3A394]',
+            blue: isDark ? 'bg-[#5A7485]' : 'bg-[#7A93A2]',
+            blueText: isDark ? 'text-[#8EA8B8]' : 'text-[#7A93A2]',
+            red: isDark ? 'bg-[#A36D6D]' : 'bg-[#C18F8F]',
+            redText: isDark ? 'text-[#D4A3A3]' : 'text-[#C18F8F]',
+            yellow: isDark ? 'bg-[#A89671]' : 'bg-[#C9B793]',
+            yellowText: isDark ? 'text-[#E0CCAB]' : 'text-[#C9B793]',
+            textDark: isDark ? 'text-[#E2E2E2]' : 'text-[#4A4A4A]',
+            textMuted: isDark ? 'text-[#9CA3AF]' : 'text-[#8C8C8C]',
+            border: isDark ? 'border-[#3F454A]' : 'border-[#E2DED3]',
+            accent: isDark ? 'bg-[#3F454A]' : 'bg-[#D9D0C1]',
+            hotTag: isDark ? 'bg-[#402B2B] text-[#D4A3A3]' : 'bg-[#F3EBEB] text-[#C18F8F]',
+            icedTag: isDark ? 'bg-[#25323C] text-[#8EA8B8]' : 'bg-[#E9EDF0] text-[#7A93A2]',
+            hotIcon: isDark ? 'text-[#D4A3A3]' : 'text-[#C18F8F]',
+            icedIcon: isDark ? 'text-[#8EA8B8]' : 'text-[#7A93A2]',
+            bar: isDark ? ['bg-[#A36D6D]', 'bg-[#A89671]', 'bg-[#5B6B61]', 'bg-[#5A7485]', 'bg-[#8C7A6B]'] : ['bg-[#C18F8F]', 'bg-[#C9B793]', 'bg-[#7E8D85]', 'bg-[#7A93A2]', 'bg-[#B3A394]'],
+            inputBg: isDark ? 'bg-[#222529]' : 'bg-[#F9F8F6]',
+            infoBg: isDark ? 'bg-[#33383D]' : 'bg-[#F4F1EA]',
+            iconBg: isDark ? 'bg-[#434A51]' : 'bg-white',
+            timelineBg: isDark ? 'bg-[#2D3237]' : 'bg-[#F9F8F6]',
+            
+            // 新增：高亮步驟專屬背景與邊框 (極致對比優化)
+            activeHotBg: isDark ? 'bg-[#3A332A]' : 'bg-[#FFFCF5]',
+            activeIcedBg: isDark ? 'bg-[#29363D]' : 'bg-[#F2F7FA]',
+            activeHotBorder: isDark ? 'border-[#5C5346] border-l-[#C9B793]' : 'border-[#EAE1CF] border-l-[#C9B793]',
+            activeIcedBorder: isDark ? 'border-[#3D4F59] border-l-[#7A93A2]' : 'border-[#D5E1E8] border-l-[#7A93A2]',
+            activeText: isDark ? 'text-[#FFFFFF]' : 'text-[#1A1A1A]',
+        });
 
         // ==========================================
         // 2. 多語系翻譯字典 (i18n)
@@ -98,7 +132,7 @@
                 no_recipe_desc: '這個濾杯尚未建立參數資料庫', select_recipe_prompt: '👆 請從上方選擇沖煮手法',
                 auto_calc_title: '調整手邊粉重，自動換算水量', suggest_temp: '建議水溫', suggest_weight: '建議粉量',
                 base_ratio: '基準比例', brew_steps: '沖煮流程', converted_ratio: '已換算', original_water: '原',
-                select_grinder_placeholder: '請選擇磨豆機...',
+                select_grinder_placeholder: '請選擇磨豆機...', timer_title: '沖煮計時器',
                 from_grinder: '從此磨豆機 (A)', to_grinder: '轉換至磨豆機 (B)', current_grind: '目前刻度',
                 target_grind: '建議對應刻度', input_placeholder: '輸入數值', unit: '單位', grind_result_msg: '刻度約落在',
                 mapped_linear: '，已為您線性對應。', grind_visual: '沖煮粗細度落點',
@@ -112,9 +146,9 @@
                 hint_4: '由於刀盤種類、磨損或歸零點設定不同，實際結果可能有微小偏差。',
                 changelog_title: '版本更新紀錄',
                 changelog: [
-                    { version: 'v1.2.0', date: '2026.05', changes: ['整合「沖煮參數查詢」與「磨豆機刻度轉換」雙工具', '全面導入莫蘭迪色系質感 UI 與多國語系 (中/英/日) 切換', '新增 Tri-Up Flow、Orea V3 等濾杯參數', '優化冰咖啡「下壺/飲用杯」分離的冰塊計算邏輯'] },
-                    { version: 'v1.1.0', date: '2026.04', changes: ['新增「磨豆機刻度轉換」工具，支援 36 款常見設備', '新增粉量比例動態連動換算功能'] },
-                    { version: 'v1.0.0', date: '2026.04', changes: ['「村民咖啡沖煮參數查詢」1.0 正式上線'] }
+                    { version: 'v1.3.0', date: '2026.05', changes: ['新增「深色模式」日夜主題無縫切換', '新增「智慧沖煮計時器」，自動高亮引導當前步驟', '全面優化跨裝置響應式排版'] },
+                    { version: 'v1.2.0', date: '2026.05', changes: ['整合「沖煮參數」與「磨豆機轉換」雙工具', '導入莫蘭迪色系 UI 與多國語系 (中/英/日)', '優化冰咖啡「下壺/飲用杯」分離的冰塊計算邏輯'] },
+                    { version: 'v1.1.0', date: '2026.04', changes: ['新增「磨豆機刻度轉換」工具，支援 36 款常見設備', '新增粉量比例動態連動換算功能'] }
                 ]
             },
             en: {
@@ -127,7 +161,7 @@
                 no_recipe_desc: 'No recipes registered for this dripper yet.', select_recipe_prompt: '👆 Select a brew recipe above',
                 auto_calc_title: 'Adjust coffee weight to auto-calculate', suggest_temp: 'Water Temp', suggest_weight: 'Coffee Wt.',
                 base_ratio: 'Base Ratio', brew_steps: 'Brew Steps', converted_ratio: 'Scaled', original_water: 'Orig.',
-                select_grinder_placeholder: 'Select a grinder...',
+                select_grinder_placeholder: 'Select a grinder...', timer_title: 'Brew Timer',
                 from_grinder: 'From Grinder (A)', to_grinder: 'To Grinder (B)', current_grind: 'Current Grind',
                 target_grind: 'Target Grind', input_placeholder: 'Input value', unit: 'Unit', grind_result_msg: 'The grind falls into',
                 mapped_linear: ', linearly mapped.', grind_visual: 'Grind Size Category',
@@ -141,9 +175,9 @@
                 hint_4: 'Results may vary slightly due to burrs, wear, or zero-point calibration.',
                 changelog_title: 'Release Notes',
                 changelog: [
-                    { version: 'v1.2.0', date: 'May 2026', changes: ['Integrated Brew Guide and Grind Converter into a single app.', 'Applied Morandi color theme and added multi-language support (ZH/EN/JA).', 'Added new drippers: Tri-Up Flow, Orea V3, etc.', 'Improved ice calculation logic for iced coffee recipes.'] },
-                    { version: 'v1.1.0', date: 'Apr 2026', changes: ['Added Grind Size Converter supporting 36 grinders.', 'Added dynamic water volume calculation based on coffee weight.'] },
-                    { version: 'v1.0.0', date: 'Apr 2026', changes: ['Initial release of Brew Recipe Guide v1.0.'] }
+                    { version: 'v1.3.0', date: 'May 2026', changes: ['Added Dark Mode toggle.', 'Added Smart Brew Timer with automatic step highlighting.', 'Responsive UI improvements for mobile and desktop.'] },
+                    { version: 'v1.2.0', date: 'May 2026', changes: ['Integrated Brew Guide and Grind Converter into a single app.', 'Applied Morandi color theme and added multi-language support.', 'Improved ice calculation logic for iced coffee recipes.'] },
+                    { version: 'v1.1.0', date: 'Apr 2026', changes: ['Added Grind Size Converter supporting 36 grinders.', 'Added dynamic water volume calculation based on coffee weight.'] }
                 ]
             },
             ja: {
@@ -156,7 +190,7 @@
                 no_recipe_desc: 'このドリッパーのレシピはまだありません', select_recipe_prompt: '👆 上からレシピを選択してください',
                 auto_calc_title: '粉量を調整して湯量を自動計算', suggest_temp: '推奨湯温', suggest_weight: '推奨粉量',
                 base_ratio: '基本比率', brew_steps: '抽出手順', converted_ratio: '換算済', original_water: '元',
-                select_grinder_placeholder: 'ミルを選択...',
+                select_grinder_placeholder: 'ミルを選択...', timer_title: '抽出タイマー',
                 from_grinder: '変換元ミル (A)', to_grinder: '変換先ミル (B)', current_grind: '現在の設定',
                 target_grind: '推奨設定値', input_placeholder: '数値を入力', unit: '単位', grind_result_msg: '挽き目の目安は',
                 mapped_linear: '。線形変換されました。', grind_visual: '挽き目カテゴリー',
@@ -170,9 +204,9 @@
                 hint_4: '刃の種類、摩耗、ゼロ点設定により微小な誤差が生じる場合があります。',
                 changelog_title: 'リリースノート',
                 changelog: [
-                    { version: 'v1.2.0', date: '2026年5月', changes: ['「抽出レシピ」と「挽き目変換」ツールを統合。', 'モランディカラーの適用と多言語（中/英/日）対応を追加。', 'Tri-Up Flow、Orea V3などの新しいドリッパーを追加。', 'アイスコーヒーの氷量計算ロジックを改善。'] },
-                    { version: 'v1.1.0', date: '2026年4月', changes: ['36種類のミルに対応した「挽き目コンバーター」を追加。', '粉量に基づいた湯量の動的計算機能を追加。'] },
-                    { version: 'v1.0.0', date: '2026年4月', changes: ['「抽出レシピガイド 1.0」を初公開。'] }
+                    { version: 'v1.3.0', date: '2026年5月', changes: ['ダークモード機能を追加。', '自動ステップハイライト機能付きのスマート抽出タイマーを追加。', '各種デバイス向けにUIデザインを最適化。'] },
+                    { version: 'v1.2.0', date: '2026年5月', changes: ['「抽出レシピ」と「挽き目変換」ツールを統合。', 'モランディカラーの適用と多言語対応を追加。', 'アイスコーヒーの氷量計算ロジックを改善。'] },
+                    { version: 'v1.1.0', date: '2026年4月', changes: ['36種類のミルに対応した「挽き目コンバーター」を追加。', '粉量に基づいた湯量の動的計算機能を追加。'] }
                 ]
             }
         };
@@ -398,14 +432,29 @@
         // 4. 主應用程式 (App)
         // ==========================================
         function App() {
-            const [view, setView] = useState('home'); // 'home', 'brew', 'grind'
+            const [view, setView] = useState('home'); 
             const [lang, setLang] = useState('zh');
+            const [isDark, setIsDark] = useState(false);
             
             const t = (key) => i18n[lang][key] || key;
+            const c = getColors(isDark); 
+
+            useEffect(() => {
+                document.body.className = c.bg;
+            }, [isDark, c.bg]);
 
             return (
-                <div className={`min-h-screen ${colors.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white`}>
-                    <div className={`${colors.primary} text-white shadow-md sticky top-0 z-50`}>
+                <div className={`min-h-screen ${c.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
+                    
+                    <button 
+                        onClick={() => setIsDark(!isDark)} 
+                        className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full shadow-lg border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300`}
+                        title="Toggle Dark Mode"
+                    >
+                        {isDark ? <Sun size={24} /> : <Moon size={24} />}
+                    </button>
+
+                    <div className={`${c.primary} text-white shadow-md sticky top-0 z-50 transition-colors duration-300`}>
                         <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 {view !== 'home' && (
@@ -427,10 +476,10 @@
                         </div>
                     </div>
 
-                    <main className="max-w-3xl mx-auto px-4 py-8">
-                        {view === 'home' && <HomeView setView={setView} t={t} />}
-                        {view === 'brew' && <BrewTool lang={lang} t={t} />}
-                        {view === 'grind' && <GrindTool lang={lang} t={t} />}
+                    <main className="max-w-3xl mx-auto px-4 py-8 relative">
+                        {view === 'home' && <HomeView setView={setView} t={t} c={c} />}
+                        {view === 'brew' && <BrewTool lang={lang} t={t} c={c} />}
+                        {view === 'grind' && <GrindTool lang={lang} t={t} c={c} />}
                     </main>
                 </div>
             );
@@ -439,53 +488,49 @@
         // ==========================================
         // 5. 首頁選擇視圖
         // ==========================================
-        function HomeView({ setView, t }) {
+        function HomeView({ setView, t, c }) {
             const changelog = t('changelog');
 
             return (
                 <div className="animate-in fade-in zoom-in-95 duration-300">
                     <div className="text-center mb-8">
-                        <h2 className={`text-2xl md:text-3xl font-bold ${colors.textDark} mb-2`}>{t('home_title')}</h2>
-                        <p className={`${colors.textMuted}`}>{t('home_subtitle')}</p>
+                        <h2 className={`text-2xl md:text-3xl font-bold ${c.textDark} mb-2`}>{t('home_title')}</h2>
+                        <p className={`${c.textMuted}`}>{t('home_subtitle')}</p>
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-5 mb-10">
-                        <button onClick={() => setView('brew')} className={`${colors.card} border-2 ${colors.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}>
-                            <div className={`w-14 h-14 rounded-full ${colors.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div>
-                            <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_brew_title')}</h3>
-                            <p className={`text-sm ${colors.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p>
+                        <button onClick={() => setView('brew')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}>
+                            <div className={`w-14 h-14 rounded-full ${c.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div>
+                            <h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_brew_title')}</h3>
+                            <p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p>
                         </button>
-                        <button onClick={() => setView('grind')} className={`${colors.card} border-2 ${colors.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}>
-                            <div className={`w-14 h-14 rounded-full ${colors.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Wrench size={28} /></div>
-                            <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_grind_title')}</h3>
-                            <p className={`text-sm ${colors.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p>
+                        <button onClick={() => setView('grind')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}>
+                            <div className={`w-14 h-14 rounded-full ${c.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Wrench size={28} /></div>
+                            <h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_grind_title')}</h3>
+                            <p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p>
                         </button>
                     </div>
 
-                    {/* 版本更新紀錄 (Changelog Timeline) */}
                     <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
                         <div className="flex items-center justify-center gap-3 mb-6">
-                            <div className="h-px bg-[#E2DED3] flex-1"></div>
-                            <h3 className={`flex items-center gap-2 text-lg font-bold ${colors.textDark} px-2`}>
-                                <Clock size={18} className={colors.primaryText} />
+                            <div className={`h-px ${c.border} flex-1`}></div>
+                            <h3 className={`flex items-center gap-2 text-lg font-bold ${c.textDark} px-2`}>
+                                <Clock size={18} className={c.primaryText} />
                                 {t('changelog_title')}
                             </h3>
-                            <div className="h-px bg-[#E2DED3] flex-1"></div>
+                            <div className={`h-px ${c.border} flex-1`}></div>
                         </div>
                         
-                        <div className={`${colors.card} p-6 sm:p-8 rounded-2xl shadow-sm border ${colors.border}`}>
+                        <div className={`${c.card} p-6 sm:p-8 rounded-2xl shadow-sm border ${c.border}`}>
                             <div className="space-y-8">
                                 {Array.isArray(changelog) && changelog.map((log, idx) => (
-                                    <div key={idx} className="relative pl-6 sm:pl-8 border-l-2 border-[#E2DED3]">
-                                        {/* 時間軸節點 (最新版用主色，歷史版用淺色) */}
-                                        <div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 border-white ${idx === 0 ? colors.primary : colors.accent}`}></div>
-                                        
+                                    <div key={idx} className={`relative pl-6 sm:pl-8 border-l-2 ${c.border}`}>
+                                        <div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 ${c.card} ${idx === 0 ? c.primary : c.accent}`}></div>
                                         <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-3">
-                                            <span className={`text-lg font-black ${colors.textDark}`}>{log.version}</span>
-                                            <span className={`text-xs font-bold ${colors.textMuted}`}>{log.date}</span>
+                                            <span className={`text-lg font-black ${c.textDark}`}>{log.version}</span>
+                                            <span className={`text-xs font-bold ${c.textMuted}`}>{log.date}</span>
                                         </div>
-                                        
-                                        <ul className={`list-disc pl-5 text-[13px] sm:text-sm ${colors.textDark} space-y-1.5 leading-relaxed`}>
+                                        <ul className={`list-disc pl-5 text-[13px] sm:text-sm ${c.textDark} space-y-1.5 leading-relaxed`}>
                                             {log.changes.map((change, i) => (
                                                 <li key={i}>{change}</li>
                                             ))}
@@ -502,7 +547,7 @@
         // ==========================================
         // 工具 1: 沖煮參數查詢
         // ==========================================
-        function BrewTool({ lang, t }) {
+        function BrewTool({ lang, t, c }) {
             const { DRIPPER_CATEGORIES, RECIPE_DATABASE } = useDatabases(lang);
             const [selectedDripperId, setSelectedDripperId] = useState('');
             const [selectedRecipeId, setSelectedRecipeId] = useState(null);
@@ -516,15 +561,15 @@
             const selectedRecipe = RECIPE_DATABASE.find(r => r.id === selectedRecipeId);
 
             return (
-                <div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300">
-                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-4`}>
-                        <label className={`flex items-center gap-2 text-sm font-bold ${colors.textDark} mb-3`}><Filter size={16} className={colors.primaryText} /> {t('select_dripper')}</label>
+                <div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300 relative">
+                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-4`}>
+                        <label className={`flex items-center gap-2 text-sm font-bold ${c.textDark} mb-3`}><Filter size={16} className={c.primaryText} /> {t('select_dripper')}</label>
                         <div className="relative">
-                            <select value={selectedDripperId} onChange={(e) => handleDripperChange(e.target.value)} className={`w-full bg-[#F9F8F6] border ${selectedDripperId === '' ? 'text-gray-400' : 'text-gray-800'} ${colors.border} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7E8D85] appearance-none`}>
+                            <select value={selectedDripperId} onChange={(e) => handleDripperChange(e.target.value)} className={`w-full ${c.inputBg} border ${selectedDripperId === '' ? 'text-gray-400' : c.textDark} ${c.border} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7E8D85] appearance-none transition-colors`}>
                                 <option value="" disabled>{t('select_dripper_placeholder')}</option>
                                 {Object.entries(DRIPPER_CATEGORIES).map(([category, drippers]) => (
-                                    <optgroup key={category} label={category} className="text-gray-500 font-bold">
-                                        {drippers.map(d => <option key={d.id} value={d.id} className="text-gray-800 font-medium">{d.name}</option>)}
+                                    <optgroup key={category} label={category} className={`${c.textMuted} font-bold`}>
+                                        {drippers.map(d => <option key={d.id} value={d.id} className={`${c.textDark} font-medium`}>{d.name}</option>)}
                                     </optgroup>
                                 ))}
                             </select>
@@ -533,39 +578,39 @@
                     </div>
 
                     {!selectedDripperId ? (
-                        <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-12 text-center animate-in fade-in duration-300`}>
-                            <div className={`w-16 h-16 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-4 ${colors.secondaryText}`}><Filter size={32} /></div>
-                            <h3 className={`text-lg font-bold ${colors.textDark} mb-1`}>{t('no_dripper_title')}</h3>
-                            <p className={`text-sm ${colors.textMuted}`}>{t('no_dripper_desc')}</p>
+                        <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}>
+                            <div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Filter size={32} /></div>
+                            <h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_dripper_title')}</h3>
+                            <p className={`text-sm ${c.textMuted}`}>{t('no_dripper_desc')}</p>
                         </div>
                     ) : filteredRecipes.length > 0 ? (
                         <div className="space-y-4 animate-in fade-in duration-300">
                             <div className="relative z-20">
-                                <button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left bg-white border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : colors.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between`}>
+                                <button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left ${c.card} border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : c.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between`}>
                                     {selectedRecipe ? (
                                         <div className="flex items-center gap-3">
-                                            <div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? colors.icedTag : colors.hotTag}`}>{selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}</div>
+                                            <div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? c.icedTag : c.hotTag}`}>{selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}</div>
                                             <div>
-                                                <div className="text-[11px] font-bold text-gray-400 mb-0.5">{t('current_recipe')}</div>
-                                                <div className={`font-bold text-lg ${colors.textDark}`}>{selectedRecipe.name}</div>
+                                                <div className={`text-[11px] font-bold ${c.textMuted} mb-0.5`}>{t('current_recipe')}</div>
+                                                <div className={`font-bold text-lg ${c.textDark}`}>{selectedRecipe.name}</div>
                                             </div>
                                         </div>
-                                    ) : (<div className="font-bold text-gray-400 text-lg">{t('select_recipe')}</div>)}
-                                    <div className={`p-2 rounded-full ${colors.bg} text-gray-500 transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}><ChevronDown size={20} /></div>
+                                    ) : (<div className={`font-bold ${c.textMuted} text-lg`}>{t('select_recipe')}</div>)}
+                                    <div className={`p-2 rounded-full ${c.infoBg} ${c.textMuted} transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}><ChevronDown size={20} /></div>
                                 </button>
                                 {isSelectorOpen && (
-                                    <div className={`absolute top-full left-0 right-0 mt-2 bg-white border ${colors.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto`}>
-                                        <div className={`p-2 bg-[#F9F8F6] border-b border-[#E2DED3]`}><p className={`text-xs font-bold ${colors.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
+                                    <div className={`absolute top-full left-0 right-0 mt-2 ${c.card} border ${c.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto no-scrollbar`}>
+                                        <div className={`p-2 ${c.inputBg} border-b ${c.border}`}><p className={`text-xs font-bold ${c.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
                                         {filteredRecipes.map(recipe => (
-                                            <button key={recipe.id} onClick={() => handleSelectRecipe(recipe)} className={`w-full text-left p-4 border-b last:border-0 ${colors.border} hover:bg-[#F9F8F6] transition-colors flex items-center justify-between ${selectedRecipe?.id === recipe.id ? colors.bg : 'bg-white'}`}>
+                                            <button key={recipe.id} onClick={() => handleSelectRecipe(recipe)} className={`w-full text-left p-4 border-b last:border-0 ${c.border} hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center justify-between ${selectedRecipe?.id === recipe.id ? c.infoBg : c.card}`}>
                                                 <div className="flex items-center gap-3">
-                                                    {recipe.drinkType === 'iced' ? <Snowflake size={18} className={colors.icedIcon} /> : <Flame size={18} className={colors.hotIcon} />}
+                                                    {recipe.drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}
                                                     <div>
-                                                        <div className={`font-bold ${colors.textDark}`}>{recipe.name}</div>
-                                                        {recipe.author && <div className={`text-xs ${colors.textMuted} mt-0.5`}>by {recipe.author}</div>}
+                                                        <div className={`font-bold ${c.textDark}`}>{recipe.name}</div>
+                                                        {recipe.author && <div className={`text-xs ${c.textMuted} mt-0.5`}>by {recipe.author}</div>}
                                                     </div>
                                                 </div>
-                                                {selectedRecipe?.id === recipe.id && <CheckCircle2 size={20} className={colors.primaryText} />}
+                                                {selectedRecipe?.id === recipe.id && <CheckCircle2 size={20} className={c.primaryText} />}
                                             </button>
                                         ))}
                                     </div>
@@ -573,94 +618,183 @@
                             </div>
                             {selectedRecipe ? (
                                 <div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
-                                    <BrewRecipeDetail recipe={selectedRecipe} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} />
+                                    <BrewRecipeDetail recipe={selectedRecipe} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} c={c} />
                                 </div>
                             ) : (
                                 <div className={`text-center py-10 animate-in fade-in duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
-                                    <div className={`w-12 h-12 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-3 ${colors.secondaryText}`}><Coffee size={24} /></div>
-                                    <p className={`text-sm font-bold ${colors.textMuted}`}>{t('select_recipe_prompt')}</p>
+                                    <div className={`w-12 h-12 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-3 ${c.secondaryText}`}><Coffee size={24} /></div>
+                                    <p className={`text-sm font-bold ${c.textMuted}`}>{t('select_recipe_prompt')}</p>
                                 </div>
                             )}
                         </div>
                     ) : (
-                        <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-12 text-center animate-in fade-in duration-300`}>
-                            <div className={`w-16 h-16 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-4 ${colors.secondaryText}`}><Coffee size={32} /></div>
-                            <h3 className={`text-lg font-bold ${colors.textDark} mb-1`}>{t('no_recipe_title')}</h3>
-                            <p className={`text-sm ${colors.textMuted}`}>{t('no_recipe_desc')}</p>
+                        <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}>
+                            <div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Coffee size={32} /></div>
+                            <h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_recipe_title')}</h3>
+                            <p className={`text-sm ${c.textMuted}`}>{t('no_recipe_desc')}</p>
                         </div>
                     )}
                 </div>
             );
         }
 
-        function BrewRecipeDetail({ recipe, customWeight, setCustomWeight, t }) {
+        // --- 沖煮詳情與計時器元件 ---
+        function BrewRecipeDetail({ recipe, customWeight, setCustomWeight, t, c }) {
             const ratio = (customWeight / recipe.baseCoffee) || 1;
             const isIced = recipe.drinkType === 'iced';
             const maxWater = Math.max(...recipe.steps.map(s => s.water || 0));
             const baseRatio = (maxWater / recipe.baseCoffee).toFixed(1).replace('.0', '');
             const renderDynamicText = (textObj) => typeof textObj === 'function' ? textObj(ratio) : textObj;
 
+            // --- 計時器邏輯 ---
+            const [elapsed, setElapsed] = useState(0);
+            const [isRunning, setIsRunning] = useState(false);
+
+            useEffect(() => {
+                let interval;
+                if (isRunning) {
+                    interval = setInterval(() => setElapsed(e => e + 1), 1000);
+                }
+                return () => clearInterval(interval);
+            }, [isRunning]);
+
+            // 當切換食譜時，重置計時器
+            useEffect(() => {
+                setElapsed(0);
+                setIsRunning(false);
+            }, [recipe.id]);
+
+            const formatTime = (secs) => {
+                const m = Math.floor(secs / 60);
+                const s = secs % 60;
+                return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            };
+
+            // --- 步驟時間解析與高亮邏輯 ---
+            const stepStartTimes = useMemo(() => {
+                const times = recipe.steps.map(s => {
+                    const m = s.time.match(/(\d+):(\d+)/);
+                    return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : -1;
+                });
+                // 處理純文字時間 (給予預設 30秒 緩衝)
+                for(let i = 1; i < times.length; i++) {
+                    if(times[i] === -1) times[i] = times[i-1] + 30; 
+                }
+                return times;
+            }, [recipe]);
+
+            const activeStepIndex = useMemo(() => {
+                if (elapsed === 0 && !isRunning) return -1; 
+                let idx = 0;
+                for(let i = 0; i < stepStartTimes.length; i++) {
+                    if (elapsed >= stepStartTimes[i]) idx = i;
+                }
+                return idx;
+            }, [elapsed, isRunning, stepStartTimes]);
+
             return (
                 <div className="space-y-4">
-                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
-                        <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? colors.blue : colors.secondary}`}></div>
-                        <p className={`text-sm font-bold ${colors.textDark} mb-5 flex items-center gap-2`}>
-                            {t('auto_calc_title')} <Droplets size={18} className={isIced ? colors.blueText : colors.secondaryText}/>
+                    {/* 換算計算機 */}
+                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
+                        <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
+                        <p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>
+                            {t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText}/>
                         </p>
                         <div className="flex items-center gap-6">
-                            <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${colors.border} text-gray-500 hover:bg-[#F4F1EA] active:bg-[#E2DED3] text-2xl font-medium transition-colors`}>-</button>
+                            <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>-</button>
                             <div className="relative flex items-baseline">
-                                <input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${colors.textDark} bg-transparent focus:outline-none`} />
-                                <span className={`text-xl font-bold ${colors.textMuted} ml-1`}>g</span>
+                                <input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${c.textDark} bg-transparent focus:outline-none`} />
+                                <span className={`text-xl font-bold ${c.textMuted} ml-1`}>g</span>
                             </div>
-                            <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${colors.border} text-gray-500 hover:bg-[#F4F1EA] active:bg-[#E2DED3] text-2xl font-medium transition-colors`}>+</button>
+                            <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>+</button>
                         </div>
                     </div>
-                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} overflow-hidden`}>
+
+                    {/* 資訊卡 */}
+                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} overflow-hidden`}>
                         {recipe.description && (
-                            <div className={`p-5 text-[13px] ${colors.textDark} leading-relaxed bg-[#F9F8F6] border-b ${colors.border} whitespace-pre-wrap`}>{renderDynamicText(recipe.description)}</div>
+                            <div className={`p-5 text-[13px] sm:text-sm ${c.textDark} leading-relaxed ${c.infoBg} border-b ${c.border} whitespace-pre-wrap`}>{renderDynamicText(recipe.description)}</div>
                         )}
-                        <div className="p-4 grid grid-cols-3 gap-2 sm:gap-3 bg-white">
-                            <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
-                                <div className={`p-1.5 rounded-full bg-white ${colors.redText} shadow-sm mb-1`}><Thermometer size={16} /></div>
-                                <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('suggest_temp')}</p>
-                                <p className={`font-bold text-base ${colors.textDark}`}>{recipe.temperature}°C</p>
+                        <div className={`p-4 grid grid-cols-3 gap-2 sm:gap-3 ${c.card}`}>
+                            <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
+                                <div className={`p-1.5 rounded-full ${c.iconBg} ${c.redText} shadow-sm mb-1`}><Thermometer size={16} /></div>
+                                <p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_temp')}</p>
+                                <p className={`font-bold text-base ${c.textDark}`}>{recipe.temperature}°C</p>
                             </div>
-                            <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
-                                <div className={`p-1.5 rounded-full bg-white ${colors.yellowText} shadow-sm mb-1`}><Scale size={16} /></div>
-                                <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('suggest_weight')}</p>
-                                <p className={`font-bold text-base ${colors.textDark}`}>{recipe.baseCoffee}g</p>
+                            <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
+                                <div className={`p-1.5 rounded-full ${c.iconBg} ${c.yellowText} shadow-sm mb-1`}><Scale size={16} /></div>
+                                <p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_weight')}</p>
+                                <p className={`font-bold text-base ${c.textDark}`}>{recipe.baseCoffee}g</p>
                             </div>
-                            <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
-                                <div className={`p-1.5 rounded-full bg-white ${colors.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div>
-                                <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('base_ratio')}</p>
-                                <p className={`font-bold text-base ${colors.textDark}`}>1 : {baseRatio}</p>
+                            <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
+                                <div className={`p-1.5 rounded-full ${c.iconBg} ${c.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div>
+                                <p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('base_ratio')}</p>
+                                <p className={`font-bold text-base ${c.textDark}`}>1 : {baseRatio}</p>
                             </div>
                         </div>
                     </div>
-                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-5 pb-6`}>
-                        <h3 className={`text-lg font-bold ${colors.textDark} mb-6 flex items-center gap-2 pb-3 border-b border-[#F4F1EA]`}>
-                            <Clock size={20} className={colors.primaryText}/> {t('brew_steps')}
-                            {ratio !== 1 && <span className={`ml-auto text-xs font-bold text-white ${colors.secondary} px-2 py-1 rounded-md`}>{t('converted_ratio')} {(ratio * 100).toFixed(0)}%</span>}
+
+                    {/* 智慧計時器 (Sticky) */}
+                    <div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
+                        <div className={`${c.card} rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border ${c.border} p-4 flex items-center justify-between`}>
+                            <div className="flex items-center gap-3">
+                                <button 
+                                    onClick={() => setIsRunning(!isRunning)} 
+                                    className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all`}
+                                >
+                                    {isRunning ? <Pause size={24}/> : <Play size={24} className="ml-1"/>}
+                                </button>
+                                <button 
+                                    onClick={() => { setElapsed(0); setIsRunning(false); }} 
+                                    className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all hover:bg-black/5 dark:hover:bg-white/5`}
+                                >
+                                    <RotateCcw size={18}/>
+                                </button>
+                            </div>
+                            <div className="text-right">
+                                <div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div>
+                                <div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>
+                                    {formatTime(elapsed)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* 步驟時間軸 */}
+                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 pb-6`}>
+                        <h3 className={`text-lg font-bold ${c.textDark} mb-6 flex items-center gap-2 pb-3 border-b ${c.border}`}>
+                            <Clock size={20} className={c.primaryText}/> {t('brew_steps')}
+                            {ratio !== 1 && <span className={`ml-auto text-xs font-bold text-white ${c.secondary} px-2 py-1 rounded-md`}>{t('converted_ratio')} {(ratio * 100).toFixed(0)}%</span>}
                         </h3>
-                        <div className="relative border-l-2 border-[#E2DED3] ml-3 space-y-8 pb-2">
+                        
+                        <div className={`relative border-l-2 ${c.border} ml-4 space-y-8 pb-4 mt-4`}>
                             {recipe.steps.map((step, index) => {
                                 const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
                                 const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; 
+                                
+                                const isActive = activeStepIndex === index;
+                                const isPast = activeStepIndex > index;
+                                const isUpcoming = activeStepIndex < index && activeStepIndex !== -1;
+
                                 return (
-                                    <div key={step.id || index} className="relative pl-6">
-                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white ${step.water ? (isIced ? colors.blue : colors.primary) : colors.secondary}`}></div>
-                                        <div className="flex justify-between items-start">
+                                    <div key={step.id || index} className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
+                                        
+                                        {/* 時間軸節點 (動態發光與對齊) */}
+                                        <div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
+                                        
+                                        {/* 步驟內容區塊 (高亮為獨立卡片) */}
+                                        <div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02] transform-gpu` : 'py-2 border border-transparent'}`}>
                                             <div className="flex-1 pr-3">
                                                 <div className="flex items-center flex-wrap gap-2 mb-1.5">
-                                                    <span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${colors.textDark}`}>{step.time}</span>
-                                                    {step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? colors.icedTag : colors.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}
+                                                    <span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark} transition-colors`}>{step.time}</span>
+                                                    {step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}
                                                 </div>
-                                                <p className={`text-sm ${colors.textDark} leading-relaxed`}>{renderDynamicText(step.note)}</p>
+                                                <p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'} transition-colors`}>{renderDynamicText(step.note)}</p>
                                             </div>
+                                            
                                             {scaledWater !== null && (
-                                                <div className="text-right shrink-0 bg-[#F9F8F6] px-4 py-2 rounded-xl border border-[#E2DED3] min-w-[70px]">
-                                                    <div className={`text-2xl font-black ${isIced ? colors.blueText : colors.primaryText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>
+                                                <div className={`text-right shrink-0 px-4 py-2 rounded-xl border ${isActive ? `${c.card} border-transparent shadow-sm` : `${c.inputBg} ${c.border}`} min-w-[70px] transition-colors`}>
+                                                    <div className={`text-2xl font-black ${isIced ? c.blueText : c.yellowText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>
                                                     {ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}
                                                 </div>
                                             )}
@@ -677,7 +811,7 @@
         // ==========================================
         // 工具 2: 磨豆機刻度轉換
         // ==========================================
-        function GrindTool({ lang, t }) {
+        function GrindTool({ lang, t, c }) {
             const { GRINDER_DATABASE } = useDatabases(lang);
             const [grinderA, setGrinderA] = useState('');
             const [grinderB, setGrinderB] = useState('');
@@ -729,8 +863,8 @@
                 <React.Fragment>
                     <option value="" disabled>{t('select_grinder_placeholder')}</option>
                     {Object.entries(groups).map(([gName, items]) => (
-                        <optgroup key={gName} label={gName} className="text-gray-500 font-bold">
-                            {items.map(item => <option key={item.key} value={item.key} className="text-gray-800 font-medium">{item.name}</option>)}
+                        <optgroup key={gName} label={gName} className={`${c.textMuted} font-bold`}>
+                            {items.map(item => <option key={item.key} value={item.key} className={`${c.textDark} font-medium`}>{item.name}</option>)}
                         </optgroup>
                     ))}
                 </React.Fragment>
@@ -739,48 +873,48 @@
             return (
                 <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
                     <div className="flex flex-col md:flex-row items-center gap-4 relative">
-                        <div className={`flex-1 w-full ${colors.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm bg-[#7A93A2]/5`}>
-                            <label className={`block text-sm font-bold ${colors.blueText} mb-2`}>{t('from_grinder')}</label>
-                            <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 bg-white mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold`}>{selectOptions}</select>
-                            <label className={`block text-sm font-bold ${colors.blueText} mb-2`}>{t('current_grind')}</label>
-                            <input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 bg-white outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
-                            <div className={`text-center text-xs font-bold text-[#7A93A2]/80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}</div>
+                        <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm ${c.blue} bg-opacity-5 dark:bg-opacity-10`}>
+                            <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('from_grinder')}</label>
+                            <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
+                            <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('current_grind')}</label>
+                            <input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 ${c.inputBg} ${c.textDark} outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
+                            <div className={`text-center text-xs font-bold ${c.blueText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}</div>
                         </div>
 
-                        <button onClick={handleSwap} className={`p-3 bg-white border-2 ${colors.border} hover:bg-[#F4F1EA] ${colors.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group`}>
+                        <button onClick={handleSwap} className={`p-3 ${c.card} border-2 ${c.border} hover:opacity-80 ${c.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group`}>
                             <ArrowRightLeft size={24} className="group-hover:rotate-180 transition-transform duration-300" />
                         </button>
 
-                        <div className={`flex-1 w-full ${colors.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm bg-[#B3A394]/5`}>
-                            <label className={`block text-sm font-bold ${colors.secondaryText} mb-2`}>{t('to_grinder')}</label>
-                            <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 bg-white mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold`}>{selectOptions}</select>
-                            <label className={`block text-sm font-bold ${colors.secondaryText} mb-2`}>{t('target_grind')}</label>
-                            <div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : colors.secondaryText} bg-white rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>
+                        <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm ${c.secondary} bg-opacity-5 dark:bg-opacity-10`}>
+                            <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('to_grinder')}</label>
+                            <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
+                            <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('target_grind')}</label>
+                            <div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : c.secondaryText} ${c.inputBg} rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>
                                 {result ? (result.error ? 'N/A' : result.valB) : '-'}
                             </div>
-                            <div className={`text-center text-xs font-bold text-[#B3A394]/80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
+                            <div className={`text-center text-xs font-bold ${c.secondaryText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
                         </div>
                     </div>
 
                     {result && (
-                        <div className={`${colors.card} p-6 rounded-2xl shadow-sm border ${colors.border} animate-in fade-in duration-300`}>
-                            <div className={`text-center text-sm font-bold p-4 bg-[#F9F8F6] rounded-xl border ${colors.border} mb-6 ${result.error ? 'text-red-500' : colors.textDark}`}>
-                                {result.error ? result.error : (<span>{t('grind_result_msg')} <strong className={colors.primaryText}>{result.catName}</strong>{t('mapped_linear')}</span>)}
+                        <div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border} animate-in fade-in duration-300`}>
+                            <div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 ${result.error ? 'text-red-500' : c.textDark}`}>
+                                {result.error ? result.error : (<span>{t('grind_result_msg')} <strong className={c.primaryText}>{result.catName}</strong>{t('mapped_linear')}</span>)}
                             </div>
                             <div className="px-2">
-                                <div className={`text-xs font-bold ${colors.textMuted} mb-3 flex items-center gap-2`}><Settings2 size={16} /> {t('grind_visual')}</div>
-                                <div className={`flex h-4 rounded-full overflow-hidden ${colors.bg} shadow-inner border ${colors.border}`}>
-                                    {t('grind_cats').map((cat, idx) => (<div key={idx} className={`w-1/5 border-r border-white/30 transition-colors duration-300 ${result.catIdx === idx ? colors.bar[idx] : ''}`}></div>))}
+                                <div className={`text-xs font-bold ${c.textMuted} mb-3 flex items-center gap-2`}><Settings2 size={16} /> {t('grind_visual')}</div>
+                                <div className={`flex h-4 rounded-full overflow-hidden ${c.bg} shadow-inner border ${c.border}`}>
+                                    {t('grind_cats').map((cat, idx) => (<div key={idx} className={`w-1/5 border-r border-white/20 transition-colors duration-300 ${result.catIdx === idx ? c.bar[idx] : ''}`}></div>))}
                                 </div>
-                                <div className={`flex text-[10px] sm:text-xs ${colors.textMuted} mt-2 font-bold`}>
-                                    {t('grind_cats').map((cat, idx) => (<span key={idx} className={`w-1/5 text-center whitespace-pre-wrap ${result.catIdx === idx ? colors.textDark : ''}`}>{cat}</span>))}
+                                <div className={`flex text-[10px] sm:text-xs ${c.textMuted} mt-2 font-bold`}>
+                                    {t('grind_cats').map((cat, idx) => (<span key={idx} className={`w-1/5 text-center whitespace-pre-wrap ${result.catIdx === idx ? c.textDark : ''}`}>{cat}</span>))}
                                 </div>
                             </div>
                         </div>
                     )}
 
-                    <div className={`p-5 ${colors.bg} rounded-2xl border ${colors.border} text-[12px] sm:text-[13px] ${colors.textMuted} leading-relaxed`}>
-                        <strong className={`${colors.textDark} block mb-2`}>{t('hint_title')}</strong>
+                    <div className={`p-5 ${c.infoBg} rounded-2xl border ${c.border} text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed`}>
+                        <strong className={`${c.textDark} block mb-2`}>{t('hint_title')}</strong>
                         <ul className="list-disc pl-5 space-y-1.5">
                             <li>{t('hint_1')}</li>
                             <li>{t('hint_2')}</li>
@@ -792,7 +926,6 @@
             );
         }
 
-        // 初始化渲染
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
