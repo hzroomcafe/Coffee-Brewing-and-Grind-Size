@@ -1,944 +1,743 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>村民咖啡工具箱</title>
-  
-  <!-- 1. 引入 Tailwind CSS (負責畫面美化) -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- 2. 引入 Babel (負責讓瀏覽器讀懂 React 的 JSX 語法) -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>村民咖啡工具箱</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 React 18 -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- 引入 Babel 以解析 JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* 隱藏數字輸入框的上下箭頭，保持介面美觀 */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        select optgroup {
+            font-weight: bold;
+            color: #7E8D85;
+            background-color: #F9F8F6;
+        }
+        select option {
+            font-weight: normal;
+            color: #1f2937;
+            background-color: #ffffff;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
 </head>
-<body class="bg-[#F4F1EA]">
-  
-  <!-- 你的 App 會被渲染在這個 div 裡面 -->
-  <div id="root"></div>
+<body>
+    <div id="root"></div>
 
-  <!-- 3. React 程式碼 -->
-  <script type="text/babel" data-type="module">
-    // 從 esm.sh 載入 React 與 Icons
-    import React, { useState, useMemo } from 'https://esm.sh/react@18';
-    import { createRoot } from 'https://esm.sh/react-dom@18/client';
-    import { Coffee, Settings2, Droplets, Thermometer, Clock, Filter, Flame, Snowflake, ChevronDown, CheckCircle2, Scale, ArrowLeft, ArrowRightLeft, Globe, Wrench } from 'https://esm.sh/lucide-react@0.292.0';
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
 
-    // ==========================================
-    // 1. 莫蘭迪色系與共用樣式定義
-    // ==========================================
-    const colors = {
-      bg: 'bg-[#F4F1EA]',
-      card: 'bg-[#FFFFFF]',
-      primary: 'bg-[#7E8D85]',        // 莫蘭迪綠
-      primaryText: 'text-[#7E8D85]',
-      secondary: 'bg-[#B3A394]',      // 莫蘭迪棕/藕
-      secondaryText: 'text-[#B3A394]',
-      blue: 'bg-[#7A93A2]',           // 莫蘭迪藍
-      blueText: 'text-[#7A93A2]',
-      red: 'bg-[#C18F8F]',            // 莫蘭迪紅
-      redText: 'text-[#C18F8F]',
-      yellow: 'bg-[#C9B793]',         // 莫蘭迪黃
-      yellowText: 'text-[#C9B793]',
-      textDark: 'text-[#4A4A4A]',
-      textMuted: 'text-[#8C8C8C]',
-      border: 'border-[#E2DED3]',
-      accent: 'bg-[#D9D0C1]',
-      hotTag: 'bg-[#F3EBEB] text-[#C18F8F]', 
-      icedTag: 'bg-[#E9EDF0] text-[#7A93A2]', 
-      hotIcon: 'text-[#C18F8F]',
-      icedIcon: 'text-[#7A93A2]',
-      bar: ['bg-[#C18F8F]', 'bg-[#C9B793]', 'bg-[#7E8D85]', 'bg-[#7A93A2]', 'bg-[#B3A394]']
-    };
+        // ==========================================
+        // 0. SVG 圖示元件 (取代外部套件，確保單檔完美運行)
+        // ==========================================
+        const IconBase = ({ children, size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+        const Coffee = (p) => <IconBase {...p}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M9 2v2"/><path d="M15 2v2"/></IconBase>;
+        const Settings2 = (p) => <IconBase {...p}><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></IconBase>;
+        const Droplets = (p) => <IconBase {...p}><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 6.3 7 6.3s-2.29 2.76-3.29 3.69C2.57 10.92 2 12.02 2 13.18 2 15.4 3.8 17.2 6 17.2z"/><path d="M17.5 21.5c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19-.53-.43-1.63-1.46-2.29-2.15v0c-.66.69-1.76 1.72-2.29 2.15-1.14.93-1.71 2.03-1.71 3.19 0 2.22 1.8 4.05 4 4.05z"/></IconBase>;
+        const Thermometer = (p) => <IconBase {...p}><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></IconBase>;
+        const Clock = (p) => <IconBase {...p}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></IconBase>;
+        const Filter = (p) => <IconBase {...p}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></IconBase>;
+        const Flame = (p) => <IconBase {...p}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></IconBase>;
+        const Snowflake = (p) => <IconBase {...p}><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></IconBase>;
+        const ChevronDown = (p) => <IconBase {...p}><path d="m6 9 6 6 6-6"/></IconBase>;
+        const CheckCircle2 = (p) => <IconBase {...p}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
+        const Scale = (p) => <IconBase {...p}><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></IconBase>;
+        const ArrowLeft = (p) => <IconBase {...p}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconBase>;
+        const ArrowRightLeft = (p) => <IconBase {...p}><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></IconBase>;
+        const Globe = (p) => <IconBase {...p}><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></IconBase>;
+        const Wrench = (p) => <IconBase {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></IconBase>;
 
-    // ==========================================
-    // 2. 多語系翻譯字典 (UI 介面)
-    // ==========================================
-    const i18n = {
-      zh: {
-        app_title: '村民咖啡工具箱',
-        home_title: '選擇工具',
-        home_subtitle: '請選擇您要使用的咖啡輔助工具',
-        tool_brew_title: '沖煮參數查詢',
-        tool_brew_desc: '內建多款濾杯的經典手沖參數，並可根據粉重自動換算水量。',
-        tool_grind_title: '磨豆機刻度轉換',
-        tool_grind_desc: '支援超過 30 款常見磨豆機，輕鬆將別人的刻度換算為您的設備設定。',
-        
-        // 沖煮參數 UI
-        select_dripper: '濾杯款式',
-        select_dripper_placeholder: '請選擇濾杯...',
-        no_dripper_title: '請選擇濾杯',
-        no_dripper_desc: '請從上方選單選擇您要使用的濾杯款式',
-        select_recipe: '請選擇沖煮手法...',
-        current_recipe: '目前參數',
-        available_recipes: '可用的沖煮手法',
-        no_recipe_title: '目前沒有任何參數',
-        no_recipe_desc: '這個濾杯尚未建立參數資料庫',
-        select_recipe_prompt: '👆 請從上方選擇沖煮手法',
-        auto_calc_title: '調整手邊粉重，自動換算水量',
-        suggest_temp: '建議水溫',
-        suggest_weight: '建議粉量',
-        base_ratio: '基準比例',
-        brew_steps: '沖煮流程',
-        converted_ratio: '已換算',
-        original_water: '原',
-        
-        // 磨豆機轉換 UI
-        from_grinder: '從此磨豆機 (A)',
-        to_grinder: '轉換至磨豆機 (B)',
-        current_grind: '目前刻度',
-        target_grind: '建議對應刻度',
-        input_placeholder: '輸入數值',
-        unit: '單位',
-        grind_result_msg: '刻度約落在',
-        mapped_linear: '，已為您線性對應。',
-        grind_visual: '沖煮粗細度落點',
-        grind_cats: ['土耳其\n(極細)', '義式濃縮\n(細)', '愛樂壓\n(中細)', '手沖\n(中等)', '法壓\n(粗)'],
-        grind_cats_inline: ['土耳其咖啡 (極細)', '義式濃縮 (細)', '摩卡壺/愛樂壓 (中細)', '手沖咖啡 (中等)', '法式濾壓/冷萃 (粗)'],
-        err_low: '數值過低 (常見下限為',
-        err_high: '數值過高 (常見上限為',
-        err_match: '無法匹配區間',
-        err_notsupport: '目標設備不建議用於',
-        hint_title: '💡 換算小提醒：',
-        hint_1: '圈數標示：遇圈數+小格（如 1 圈又 5 小格），請輸入小數點 1.5。',
-        hint_2: '數字標示：面板標示數字的機型，請直接輸入小數（如 6.5）。',
-        hint_3: '總格數標示：轉圈式的手搖磨豆機，請換算為 總格數 輸入。',
-        hint_4: '由於刀盤種類、磨損或歸零點設定不同，實際結果可能有微小偏差。'
-      },
-      en: {
-        app_title: 'Villager Coffee Tools',
-        home_title: 'Select Tool',
-        home_subtitle: 'Choose a coffee utility to get started',
-        tool_brew_title: 'Brew Recipe Guide',
-        tool_brew_desc: 'Classic pour-over recipes. Auto-calculates water volume by coffee weight.',
-        tool_grind_title: 'Grind Size Converter',
-        tool_grind_desc: 'Supports 30+ grinders. Easily convert grind settings across devices.',
-        
-        select_dripper: 'Dripper',
-        select_dripper_placeholder: 'Select a dripper...',
-        no_dripper_title: 'Select a Dripper',
-        no_dripper_desc: 'Please select a dripper from the menu above',
-        select_recipe: 'Select a recipe...',
-        current_recipe: 'Current Recipe',
-        available_recipes: 'Available Recipes',
-        no_recipe_title: 'No Recipes Found',
-        no_recipe_desc: 'No recipes registered for this dripper yet.',
-        select_recipe_prompt: '👆 Select a brew recipe above',
-        auto_calc_title: 'Adjust coffee weight to auto-calculate',
-        suggest_temp: 'Water Temp',
-        suggest_weight: 'Coffee Wt.',
-        base_ratio: 'Base Ratio',
-        brew_steps: 'Brew Steps',
-        converted_ratio: 'Scaled',
-        original_water: 'Orig.',
-
-        from_grinder: 'From Grinder (A)',
-        to_grinder: 'To Grinder (B)',
-        current_grind: 'Current Grind',
-        target_grind: 'Target Grind',
-        input_placeholder: 'Input value',
-        unit: 'Unit',
-        grind_result_msg: 'The grind size falls into',
-        mapped_linear: ', linearly mapped.',
-        grind_visual: 'Grind Size Category',
-        grind_cats: ['Turkish\n(X-Fine)', 'Espresso\n(Fine)', 'AeroPress\n(M-Fine)', 'Pour Over\n(Medium)', 'French\n(Coarse)'],
-        grind_cats_inline: ['Turkish (X-Fine)', 'Espresso (Fine)', 'AeroPress (M-Fine)', 'Pour Over (Medium)', 'French Press (Coarse)'],
-        err_low: 'Value too low (Min:',
-        err_high: 'Value too high (Max:',
-        err_match: 'Cannot match range',
-        err_notsupport: 'Not recommended for',
-        hint_title: '💡 Quick Tips:',
-        hint_1: 'Rotations: For rotations + clicks (e.g. 1 rot. 5 clicks), input 1.5.',
-        hint_2: 'Dials: Input the exact decimal (e.g. 6.5).',
-        hint_3: 'Total Clicks: Use absolute total clicks for manual grinders.',
-        hint_4: 'Results may vary slightly due to burrs, wear, or zero-point calibration.'
-      },
-      ja: {
-        app_title: '村人コーヒーツール',
-        home_title: 'ツール選択',
-        home_subtitle: '使用するコーヒー補助ツールを選択してください',
-        tool_brew_title: '抽出レシピガイド',
-        tool_brew_desc: '定番レシピ搭載。粉量から湯量を自動計算します。',
-        tool_grind_title: '挽き目コンバーター',
-        tool_grind_desc: '30種類以上のミル対応。挽き目を自分の機材用に変換します。',
-        
-        select_dripper: 'ドリッパー',
-        select_dripper_placeholder: 'ドリッパーを選択...',
-        no_dripper_title: 'ドリッパーを選択',
-        no_dripper_desc: '上のメニューからドリッパーを選択してください',
-        select_recipe: 'レシピを選択...',
-        current_recipe: '現在のレシピ',
-        available_recipes: '利用可能なレシピ',
-        no_recipe_title: 'レシピがありません',
-        no_recipe_desc: 'このドリッパーのレシピはまだありません',
-        select_recipe_prompt: '👆 上からレシピを選択してください',
-        auto_calc_title: '粉量を調整して湯量を自動計算',
-        suggest_temp: '推奨湯温',
-        suggest_weight: '推奨粉量',
-        base_ratio: '基本比率',
-        brew_steps: '抽出手順',
-        converted_ratio: '換算済',
-        original_water: '元',
-
-        from_grinder: '変換元ミル (A)',
-        to_grinder: '変換先ミル (B)',
-        current_grind: '現在の設定',
-        target_grind: '推奨設定値',
-        input_placeholder: '数値を入力',
-        unit: '単位',
-        grind_result_msg: '挽き目の目安は',
-        mapped_linear: '。線形変換されました。',
-        grind_visual: '挽き目カテゴリー',
-        grind_cats: ['トルコ\n(極細挽き)', 'エスプレッソ\n(細挽き)', 'エアロプレス\n(中細挽き)', 'ドリップ\n(中挽き)', 'フレンチ\n(粗挽き)'],
-        grind_cats_inline: ['トルコ (極細挽き)', 'エスプレッソ (細挽き)', 'エアロプレス (中細挽き)', 'ドリップ (中挽き)', 'フレンチ (粗挽き)'],
-        err_low: '数値が低すぎます (下限:',
-        err_high: '数値が高すぎます (上限:',
-        err_match: '範囲に一致しません',
-        err_notsupport: '変換先機材は非推奨:',
-        hint_title: '💡 ヒント:',
-        hint_1: '回転数: 1回転5クリックの場合は「1.5」と入力。',
-        hint_2: 'ダイヤル: そのまま小数で入力（例: 6.5）。',
-        hint_3: '合計クリック: 手挽きミルの場合は「合計クリック数」を入力。',
-        hint_4: '刃の種類、摩耗、ゼロ点設定により微小な誤差が生じる場合があります。'
-      }
-    };
-
-    // ==========================================
-    // 3. 動態資料庫 (根據語言切換內容)
-    // ==========================================
-    function useDatabases(lang) {
-      return useMemo(() => {
-        // 翻譯輔助函數
-        const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
-
-        // --- 濾杯分類庫 ---
-        const DRIPPER_CATEGORIES = {
-          [l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
-            { id: 'Hario V60 01', name: 'Hario V60 01' },
-            { id: 'Hario V60 02', name: 'Hario V60 02' },
-            { id: 'Hario Switch 02', name: 'Hario Switch 02' },
-            { id: 'Tri-Up Flow 01/02', name: 'Tri-Up Flow 01/02' }
-          ],
-          [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
-            { id: 'Orea V3', name: 'Orea V3' },
-            { id: 'BEANDY SILK 絲綢濾杯', name: l('BEANDY SILK 絲綢濾杯', 'BEANDY SILK Dripper', 'BEANDY SILK ドリッパー') }
-          ]
+        // ==========================================
+        // 1. 莫蘭迪色系與共用樣式定義
+        // ==========================================
+        const colors = {
+            bg: 'bg-[#F4F1EA]', card: 'bg-[#FFFFFF]',
+            primary: 'bg-[#7E8D85]', primaryText: 'text-[#7E8D85]',
+            secondary: 'bg-[#B3A394]', secondaryText: 'text-[#B3A394]',
+            blue: 'bg-[#7A93A2]', blueText: 'text-[#7A93A2]',
+            red: 'bg-[#C18F8F]', redText: 'text-[#C18F8F]',
+            yellow: 'bg-[#C9B793]', yellowText: 'text-[#C9B793]',
+            textDark: 'text-[#4A4A4A]', textMuted: 'text-[#8C8C8C]',
+            border: 'border-[#E2DED3]', accent: 'bg-[#D9D0C1]',
+            hotTag: 'bg-[#F3EBEB] text-[#C18F8F]', icedTag: 'bg-[#E9EDF0] text-[#7A93A2]', 
+            hotIcon: 'text-[#C18F8F]', icedIcon: 'text-[#7A93A2]',
+            bar: ['bg-[#C18F8F]', 'bg-[#C9B793]', 'bg-[#7E8D85]', 'bg-[#7A93A2]', 'bg-[#B3A394]']
         };
 
-        // --- 沖煮參數庫 ---
-        const RECIPE_DATABASE = [
-          {
-            id: 'orea-iced-tilt', 
-            name: l('Tilt 冰手沖配方', 'Tilt Iced Pour Over', 'Tilt アイスドリップ'), 
-            author: 'Tilt', dripper: 'Orea V3', drinkType: 'iced', baseCoffee: 20, temperature: 90,
-            description: (r) => l(
-              `研磨度：中細粉 (細挽 / Nuttii 6clicks)\n💡準備工作：\n1. 下壺請預先放入 ${Math.round(50 * r)}g 冰塊。\n2. 飲用杯中放入冰球 ${Math.max(1, Math.round(1 * r))} 顆，約 ${Math.round(100 * r)}g。`,
-              `Grind: Medium-fine (Nuttii 6 clicks)\n💡Prep:\n1. Add ${Math.round(50 * r)}g ice to the server.\n2. Add ${Math.max(1, Math.round(1 * r))} ice ball(s) (approx. ${Math.round(100 * r)}g) to the cup.`,
-              `挽き目：中細挽き (Nuttii 6クリック)\n💡準備：\n1. サーバーに氷を ${Math.round(50 * r)}g 入れておく。\n2. グラスに丸氷を ${Math.max(1, Math.round(1 * r))} 個（約 ${Math.round(100 * r)}g）入れる。`
-            ),
-            steps: [
-              { id: 't1', time: '0:00-0:07', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入第一段水至 ${Math.round(40 * r)}g`, `1st pour to ${Math.round(40 * r)}g`, `第1湯を ${Math.round(40 * r)}g まで注ぐ`), water: 40 },
-              { id: 't2', time: '0:40-0:47', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入第二段水至 ${Math.round(80 * r)}g`, `2nd pour to ${Math.round(80 * r)}g`, `第2湯を ${Math.round(80 * r)}g まで注ぐ`), water: 80 },
-              { id: 't3', time: '1:20-1:37', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入第三段水至 ${Math.round(120 * r)}g`, `3rd pour to ${Math.round(120 * r)}g`, `第3湯を ${Math.round(120 * r)}g まで注ぐ`), water: 120 },
-              { id: 't4', time: '2:00-2:07', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入最後一段水至 ${Math.round(160 * r)}g`, `Final pour to ${Math.round(160 * r)}g`, `最後の注湯を ${Math.round(160 * r)}g まで`), water: 160 },
-              { id: 't5', time: '3:00', action: l('完成', 'Finish', '完了'), note: l('流完移開濾杯，搖晃均勻後倒入裝有冰塊的飲用杯中', 'Remove dripper, swirl, and pour over ice cup.', '落ちきったら外し、揺らして氷入りのグラスに注ぐ。'), water: null }
-            ]
-          },
-          {
-            id: 'switch-iced-chacha', 
-            name: l('冰手沖 (CHACHA 小仙子)', 'Iced Pour Over (CHACHA)', 'アイスドリップ (CHACHA)'), 
-            author: l('CHACHA 小仙子', 'CHACHA', 'CHACHA'), dripper: 'Hario Switch 02', drinkType: 'iced', baseCoffee: 20, temperature: 92,
-            description: (r) => l(
-              `研磨度：中細研磨\n💡準備工作：\n1. 下壺請預先放入 ${Math.round(80 * r)}g 冰塊降溫。\n2. 飲用杯裡放入約 ${Math.round(160 * r)}g 冰塊。`,
-              `Grind: Medium-fine\n💡Prep:\n1. Add ${Math.round(80 * r)}g ice to the server to cool.\n2. Add approx. ${Math.round(160 * r)}g ice to the cup.`,
-              `挽き目：中細挽き\n💡準備：\n1. サーバーに冷却用の氷を ${Math.round(80 * r)}g 入れておく。\n2. グラスに約 ${Math.round(160 * r)}g の氷を入れる。`
-            ),
-            steps: [
-              { id: 'c1', time: '0:00', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: l('關上濾杯開關，注水至', 'Close switch, pour to', 'スイッチを閉じ、注湯:'), water: 50 },
-              { id: 'c2', time: '0:40', action: l('注水', 'Pour', '注湯'), note: l('持續注水至', 'Continue pouring to', '続けて注湯:'), water: 90 },
-              { id: 'c3', time: l('流乾後', 'Drained', '落ちきり後'), action: l('注水', 'Pour', '注湯'), note: l('水流完了就繼續注水至', 'Once drained, pour to', '落ちきったら注湯:'), water: 130 },
-              { id: 'c4', time: l('流乾後', 'Drained', '落ちきり後'), action: l('注水', 'Pour', '注湯'), note: l('水流完了就繼續注水至', 'Once drained, pour to', '落ちきったら注湯:'), water: 160 },
-              { id: 'c5', time: l('完成', 'Finish', '完了'), action: l('倒出', 'Serve', '注ぐ'), note: l('搖晃下壺冷卻後，倒入裝有冰塊的飲用杯中', 'Swirl to cool, then pour into ice cup.', 'サーバーを揺らして冷却後、氷入りのグラスに注ぐ。'), water: null }
-            ]
-          },
-          {
-            id: 'switch-devil-single', 
-            name: l('惡魔手沖 (單人份)', 'Devil Recipe (Single)', '悪魔のレシピ (1人用)'), 
-            author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 15, temperature: 92,
-            description: l(
-              '2016世界手沖冠軍粕谷哲開發的SOP化流程，不需要注水技巧，非常新手友善。',
-              'SOP developed by 2016 World Brewer Champion Tetsu Kasuya. Very beginner-friendly with no special pouring skills required.',
-              '2016年世界チャンピオン粕谷哲考案のSOPレシピ。注ぎの技術が不要で初心者にもおすすめ。'
-            ),
-            steps: [
-              { id: 's1', time: '0:00', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: l('開關打開，開始計時並注水', 'Open switch, start timer and pour', 'スイッチを開け、タイマー開始と共に注湯'), water: 30 },
-              { id: 's2', time: '0:40', action: '', note: l('保持滴濾，注水至', 'Keep open, pour to', '開けたまま注湯:'), water: 90 },
-              { id: 's3', time: '1:20', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: l('關上開關，注水至目標水量浸泡', 'Close switch, pour to target and steep', 'スイッチを閉じ、目標量まで注ぎ浸漬'), water: 225 },
-              { id: 's4', time: '1:50', action: '', note: l('打開開關，濾出咖啡液', 'Open switch to drain', 'スイッチを開け、コーヒーを落とす'), water: null },
-              { id: 's5', time: '2:20', action: '', note: l('前流乾', 'Drained', '落ちきり'), water: null }
-            ]
-          },
-          {
-            id: 'switch-devil-double', 
-            name: l('惡魔手沖 (兩杯份)', 'Devil Recipe (Double)', '悪魔のレシピ (2人用)'), 
-            author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 24, temperature: 92,
-            description: l('適合兩人共享的惡魔手沖大份量版本。', 'Double portion of the Devil Recipe, suitable for two.', '2人用の大容量版・悪魔のレシピ。'),
-            steps: [
-              { id: 'd1', time: '0:00', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: l('開關打開，開始計時並注水', 'Open switch, start timer and pour', 'スイッチを開け、タイマー開始と共に注湯'), water: 50 },
-              { id: 'd2', time: '0:40', action: '', note: l('保持滴濾，注水至', 'Keep open, pour to', '開けたまま注湯:'), water: 150 },
-              { id: 'd3', time: '1:20', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: l('關上開關，注水至目標水量浸泡', 'Close switch, pour to target and steep', 'スイッチを閉じ、目標量まで注ぎ浸漬'), water: 360 },
-              { id: 'd4', time: '2:00', action: '', note: l('打開開關，濾出咖啡液', 'Open switch to drain', 'スイッチを開け、コーヒーを落とす'), water: null },
-              { id: 'd5', time: '3:00', action: '', note: l('前流乾', 'Drained', '落ちきり'), water: null }
-            ]
-          },
-          {
-            id: 'beandy-silk-lonich', 
-            name: l('Lonich Coffee 沖煮法', 'Lonich Coffee Method', 'Lonich Coffee レシピ'), 
-            author: 'Tatsumi-san', dripper: 'BEANDY SILK 絲綢濾杯', drinkType: 'hot', baseCoffee: 15, temperature: 90,
-            description: l(
-              '使用 BEANDY SILK 絲綢濾杯，總水量 230g，透過多段式注水帶來極其穩定的流速與萃取表現。',
-              'A multi-pour technique designed for BEANDY SILK dripper, offering extremely stable flow and extraction.',
-              'BEANDY SILK ドリッパーを使用。多段注湯により非常に安定した流速と抽出を実現。'
-            ),
-            steps: [
-              { id: 'b1', time: '00:00', action: l('悶蒸', 'Bloom', '蒸らし'), note: l('注水進行悶蒸', 'Pour to bloom', '注湯して蒸らし'), water: 40 },
-              { id: 'b2', time: '00:35', action: l('注水', 'Pour', '注湯'), note: l('流速非常穩定', 'Very stable flow rate', '非常に安定した流速'), water: 80 },
-              { id: 'b3', time: '01:10', action: l('注水', 'Pour', '注湯'), note: l('持續穩定注水', 'Continue stable pour', '安定して注湯を続ける'), water: 160 },
-              { id: 'b4', time: '01:45', action: l('注水', 'Pour', '注湯'), note: l('完成最後一段注水', 'Final pour', '最後の注湯を完了'), water: 230 },
-              { id: 'b5', time: '02:15', action: l('完成', 'Finish', '完了'), note: l('全部流完撤濾杯', 'Remove dripper when drained', '落ちきったらドリッパーを外す'), water: null }
-            ]
-          },
-          {
-            id: 'v60-01-james-hoffmann', 
-            name: l('終極V60沖煮法 (2022版)', 'Ultimate V60 Technique (2022)', '究極のV60レシピ (2022版)'), 
-            author: 'James Hoffmann', dripper: 'Hario V60 01', drinkType: 'hot', baseCoffee: 15, temperature: 100,
-            description: (r) => l(
-              '研磨度：中細研磨 (大約細砂糖粗細)\n水溫：淺焙建議使用剛沸騰的熱水 (100°C)\n💡 這是 James Hoffmann 專為單杯 (1 Cup) 設計的 V60 沖煮法，利用多次小水量注水與搖晃來維持溫度並提升萃取均勻度。',
-              'Grind: Medium-fine (caster sugar size)\nTemp: Boiling (100°C) for light roasts\n💡 James Hoffmann\'s 1-Cup V60 method, utilizing multiple small pours and swirling to maintain temp and extraction.',
-              '挽き目：中細挽き (グラニュー糖程度)\n湯温：浅煎りの場合は沸騰直後（100℃）\n💡 ジェームズ・ホフマンの1杯用V60レシピ。少量の注湯とスワールで温度と抽出均一性を保ちます。'
-            ),
-            steps: [
-              { id: 'jh1_1', time: '0:00-0:10', action: l('悶蒸', 'Bloom', '蒸らし'), note: (r) => l(`注入 ${Math.round(50 * r)}g 水量進行悶蒸`, `Pour ${Math.round(50 * r)}g to bloom`, `${Math.round(50 * r)}g 注ぎ蒸らし`), water: 50 },
-              { id: 'jh1_2', time: '0:10-0:15', action: l('搖晃', 'Swirl', '揺らす'), note: l('輕柔搖晃濾杯使粉水充分接觸', 'Gently swirl to mix', '軽く揺らして粉と湯を馴染ませる'), water: null },
-              { id: 'jh1_3', time: '0:45-1:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入至 ${Math.round(100 * r)}g (總水量的 40%)`, `Pour to ${Math.round(100 * r)}g (40% total)`, `...まで注ぐ (総量の40%)`), water: 100 },
-              { id: 'jh1_4', time: '1:10-1:20', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(150 * r)}g (總水量的 60%)`, `Pause, pour to ${Math.round(150 * r)}g (60% total)`, `少し待ち、...まで注ぐ (総量の60%)`), water: 150 },
-              { id: 'jh1_5', time: '1:30-1:40', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(200 * r)}g (總水量的 80%)`, `Pause, pour to ${Math.round(200 * r)}g (80% total)`, `少し待ち、...まで注ぐ (総量の80%)`), water: 200 },
-              { id: 'jh1_6', time: '1:50-2:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，注入至 ${Math.round(250 * r)}g (總水量的 100%)`, `Pause, pour to ${Math.round(250 * r)}g (100% total)`, `少し待ち、...まで注ぐ (総量の100%)`), water: 250 },
-              { id: 'jh1_7', time: '2:00-2:05', action: l('搖晃', 'Swirl', '揺らす'), note: l('最後一次輕柔搖晃濾杯', 'Final gentle swirl', '最後に軽く揺らす'), water: null },
-              { id: 'jh1_8', time: l('約 3:00', '~3:00', '約 3:00'), action: l('完成', 'Finish', '完了'), note: l('流乾後移開。時間會有誤差，以實際風味為準！', 'Remove when drained. Time may vary, taste is king!', '落ちきったら外す。時間は目安、味が最優先！'), water: null }
-            ]
-          },
-          {
-            id: 'v60-02-james-hoffmann', 
-            name: l('終極V60沖煮法 (2022版)', 'Ultimate V60 Technique (2022)', '究極のV60レシピ (2022版)'), 
-            author: 'James Hoffmann', dripper: 'Hario V60 02', drinkType: 'hot', baseCoffee: 15, temperature: 100,
-            description: (r) => l(
-              '研磨度：中細研磨 (大約細砂糖粗細)\n水溫：淺焙建議使用剛沸騰的熱水 (100°C)\n💡 這是 James Hoffmann 專為單杯 (1 Cup) 設計的 V60 沖煮法，利用多次小水量注水與搖晃來維持溫度並提升萃取均勻度。',
-              'Grind: Medium-fine (caster sugar size)\nTemp: Boiling (100°C) for light roasts\n💡 James Hoffmann\'s 1-Cup V60 method, utilizing multiple small pours and swirling to maintain temp and extraction.',
-              '挽き目：中細挽き (グラニュー糖程度)\n湯温：浅煎りの場合は沸騰直後（100℃）\n💡 ジェームズ・ホフマンの1杯用V60レシピ。少量の注湯とスワールで温度と抽出均一性を保ちます。'
-            ),
-            steps: [
-              { id: 'jh2_1', time: '0:00-0:10', action: l('悶蒸', 'Bloom', '蒸らし'), note: (r) => l(`注入 ${Math.round(50 * r)}g 水量進行悶蒸`, `Pour ${Math.round(50 * r)}g to bloom`, `${Math.round(50 * r)}g 注ぎ蒸らし`), water: 50 },
-              { id: 'jh2_2', time: '0:10-0:15', action: l('搖晃', 'Swirl', '揺らす'), note: l('輕柔搖晃濾杯使粉水充分接觸', 'Gently swirl to mix', '軽く揺らして粉と湯を馴染ませる'), water: null },
-              { id: 'jh2_3', time: '0:45-1:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入至 ${Math.round(100 * r)}g (總水量的 40%)`, `Pour to ${Math.round(100 * r)}g (40% total)`, `...まで注ぐ (総量の40%)`), water: 100 },
-              { id: 'jh2_4', time: '1:10-1:20', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(150 * r)}g (總水量的 60%)`, `Pause, pour to ${Math.round(150 * r)}g (60% total)`, `少し待ち、...まで注ぐ (総量の60%)`), water: 150 },
-              { id: 'jh2_5', time: '1:30-1:40', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(200 * r)}g (總水量的 80%)`, `Pause, pour to ${Math.round(200 * r)}g (80% total)`, `少し待ち、...まで注ぐ (総量の80%)`), water: 200 },
-              { id: 'jh2_6', time: '1:50-2:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，注入至 ${Math.round(250 * r)}g (總水量的 100%)`, `Pause, pour to ${Math.round(250 * r)}g (100% total)`, `少し待ち、...まで注ぐ (総量の100%)`), water: 250 },
-              { id: 'jh2_7', time: '2:00-2:05', action: l('搖晃', 'Swirl', '揺らす'), note: l('最後一次輕柔搖晃濾杯', 'Final gentle swirl', '最後に軽く揺らす'), water: null },
-              { id: 'jh2_8', time: l('約 3:00', '~3:00', '約 3:00'), action: l('完成', 'Finish', '完了'), note: l('流乾後移開。時間會有誤差，以實際風味為準！', 'Remove when drained. Time may vary, taste is king!', '落ちきったら外す。時間は目安、味が最優先！'), water: null }
-            ]
-          },
-          {
-            id: 'v60-46-method', 
-            name: l('4:6 沖煮法', '4:6 Method', '4:6メソッド'), 
-            author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario V60 02', drinkType: 'hot', baseCoffee: 20, temperature: 90,
-            description: l(
-              '將總水量分為40%與60%，前40%決定酸甜比，後60%決定濃度。此為基礎平衡配方。',
-              'Divides water into 40% (balance) and 60% (strength). A perfect baseline recipe.',
-              '総湯量を40%と60%に分け、前半で酸味と甘みのバランス、後半で濃度を調整する基本レシピ。'
-            ),
-            steps: [
-              { id: 'v1', time: '0:00', action: l('悶蒸', 'Bloom', '蒸らし'), note: l('注入第一段水', '1st pour', '第1湯'), water: 60 },
-              { id: 'v2', time: '0:45', action: l('注水', 'Pour', '注湯'), note: l('注入第二段水 (完成前40%)', '2nd pour (completes first 40%)', '第2湯 (前半40%完了)'), water: 120 },
-              { id: 'v3', time: '1:30', action: l('注水', 'Pour', '注湯'), note: l('注入第三段水', '3rd pour', '第3湯'), water: 180 },
-              { id: 'v4', time: '2:15', action: l('注水', 'Pour', '注湯'), note: l('注入第四段水', '4th pour', '第4湯'), water: 240 },
-              { id: 'v5', time: '2:45', action: l('注水', 'Pour', '注湯'), note: l('注入最後一段水 (完成後60%)', '5th pour (completes last 60%)', '第5湯 (後半60%完了)'), water: 300 },
-              { id: 'v6', time: '3:30', action: l('完成', 'Finish', '完了'), note: l('濾杯流乾後移開', 'Remove when drained', '落ちきったら外す'), water: null }
-            ]
-          },
-          {
-            id: 'tri-up-flow-eric', 
-            name: l('設計者原廠配方', 'Original Designer Recipe', '公式レシピ'), 
-            author: 'Eric', dripper: 'Tri-Up Flow 01/02', drinkType: 'hot', baseCoffee: 15, temperature: 92,
-            description: l(
-              '研磨度：C40 18-20\n💡沖煮重點：以相同沖煮時間為主，粉量放大後，水量等比放大，相對粗細度需要稍微調整。\n每段注水皆為「快速注水」，大約在 7 秒內完成。',
-              'Grind: C40 18-20\n💡Pour very fast, finishing each stage within 7 seconds.',
-              '挽き目：C40 18-20\n💡各段階は7秒以内で素早く注ぐこと。'
-            ),
-            steps: [
-              { id: 'tu1', time: '0:00-0:25', action: l('快速注水', 'Fast Pour', '素早く注湯'), note: (r) => l(`約7秒內快速注入 ${Math.round(80 * r)}g 水量`, `Fast pour ${Math.round(80 * r)}g in ~7s`, `約7秒で ${Math.round(80 * r)}g を素早く注ぐ`), water: 80 },
-              { id: 'tu2', time: '0:25-1:00', action: l('快速注水', 'Fast Pour', '素早く注湯'), note: (r) => l(`約7秒內快速注入 ${Math.round(100 * r)}g 水量 (累積 ${Math.round(180 * r)}g)`, `Fast pour ${Math.round(100 * r)}g in ~7s (Total ${Math.round(180 * r)}g)`, `約7秒で ${Math.round(100 * r)}g を素早く注ぐ (累計 ${Math.round(180 * r)}g)`), water: 180 },
-              { id: 'tu3', time: '1:00-流完', action: l('快速注水', 'Fast Pour', '素早く注湯'), note: (r) => l(`約7秒內快速注入 ${Math.round(80 * r)}g 水量 (累積 ${Math.round(260 * r)}g)`, `Fast pour ${Math.round(80 * r)}g in ~7s (Total ${Math.round(260 * r)}g)`, `約7秒で ${Math.round(80 * r)}g を素早く注ぐ (累計 ${Math.round(260 * r)}g)`), water: 260 },
-              { id: 'tu4', time: '1:50-2:00', action: l('完成', 'Finish', '完了'), note: l('流完咖啡，總時間最多不超過2:30', 'Drain. Total time max 2:30.', '落ちきり。全体の時間は最大2分30秒以内。'), water: null }
-            ]
-          }
-        ];
-
-        // --- 磨豆機資料庫 ---
-        const elecGroup = l("⚡ 電動磨豆機", "⚡ Electric", "⚡ 電動ミル");
-        const manualGroup = l("🖐️ 其他手搖", "🖐️ Manual", "🖐️ その他手挽き");
-        const uDialNum = l("數字刻度", "Number Dial", "数字ダイヤル");
-        const uDialMacro = l("大數字 (1-31)", "Macro (1-31)", "マクロ (1-31)");
-        const uDial60 = l("面板數字 (1-60)", "Dial (1-60)", "ダイヤル (1-60)");
-        const uStepless = l("數字 (無段)", "Stepless", "無段階");
-        const uDial10 = l("數字刻度 (0-10)", "Dial (0-10)", "ダイヤル (0-10)");
-        const uDial35 = l("數字刻度 (1-35)", "Dial (1-35)", "ダイヤル (1-35)");
-        const uDial90 = l("數字刻度 (0-90)", "Dial (0-90)", "ダイヤル (0-90)");
-        const uDial14 = l("數字刻度 (0-14)", "Dial (0-14)", "ダイヤル (0-14)");
-        const uDialPour = l("數字刻度 (手沖特化)", "Dial (Pour Over)", "ダイヤル (ドリップ特化)");
-        const uRot = l("圈數.數字", "Rotations", "回転数");
-        const uClicks = l("總格數", "Total Clicks", "合計クリック");
-        const uExtDial = l("外部數字", "External Dial", "外部ダイヤル");
-        const uDialClicks = l("數字.小格", "Dial.Clicks", "数字.クリック");
-        const uDial80 = l("面板格數 (0-80)", "Dial (0-80)", "ダイヤル (0-80)");
-
-        const GRINDER_DATABASE = {
-            "elec_encore": { group: elecGroup, name: "Baratza Encore", unit: uDialNum, step: 1, ranges: [{ min: 1, max: 5 }, { min: 5, max: 10 }, { min: 10, max: 15 }, { min: 15, max: 25 }, { min: 25, max: 30 }] },
-            "elec_sette270": { group: elecGroup, name: "Baratza Sette 270", unit: uDialMacro, step: 1, ranges: [{ min: 1, max: 3 }, { min: 3, max: 9 }, { min: 9, max: 15 }, { min: 15, max: 25 }, { min: 25, max: 31 }] },
-            "elec_sgp": { group: elecGroup, name: "Breville/Sage SGP", unit: uDial60, step: 1, ranges: [{ min: 1, max: 5 }, { min: 5, max: 15 }, { min: 15, max: 30 }, { min: 30, max: 45 }, { min: 45, max: 60 }] },
-            "elec_df64": { group: elecGroup, name: "DF64 (Gen 1/2)", unit: uDialNum, step: 1, ranges: [{ min: 0, max: 10 }, { min: 10, max: 20 }, { min: 20, max: 40 }, { min: 40, max: 70 }, { min: 70, max: 90 }] },
-            "elec_eureka": { group: elecGroup, name: "Eureka Mignon", unit: uStepless, step: 0.1, ranges: [{ min: 0, max: 0.5 }, { min: 0.5, max: 2 }, { min: 2, max: 3 }, { min: 3, max: 4.5 }, { min: 4.5, max: 5.5 }] },
-            "elec_ode2": { group: elecGroup, name: "Fellow Ode (Gen 2)", unit: uDialNum, step: 0.1, ranges: [{ min: null, max: null }, { min: null, max: null }, { min: 1, max: 3 }, { min: 3, max: 8 }, { min: 8, max: 11 }] },
-            "elec_opus": { group: elecGroup, name: "Fellow Opus", unit: uDialNum, step: 0.1, ranges: [{ min: 0.5, max: 1 }, { min: 1, max: 2.5 }, { min: 2.5, max: 4.5 }, { min: 4.5, max: 8.5 }, { min: 8.5, max: 11 }] },
-            "elec_ek43": { group: elecGroup, name: "Mahlkönig EK43", unit: uDialNum, step: 0.1, ranges: [{ min: 1, max: 1.5 }, { min: 1.5, max: 2.5 }, { min: 2.5, max: 5 }, { min: 5, max: 8.5 }, { min: 8.5, max: 11 }] },
-            "elec_x54": { group: elecGroup, name: "Mahlkönig X54", unit: uDial35, step: 0.1, ranges: [{ min: 1, max: 4 }, { min: 4, max: 10 }, { min: 10, max: 20 }, { min: 20, max: 28 }, { min: 28, max: 35 }] },
-            "elec_philos": { group: elecGroup, name: "Mazzer Philos", unit: uDial90, step: 1, ranges: [{ min: 0, max: 10 }, { min: 10, max: 25 }, { min: 25, max: 45 }, { min: 45, max: 65 }, { min: 65, max: 80 }] },
-            "elec_niche": { group: elecGroup, name: "Niche Zero", unit: uDialNum, step: 1, ranges: [{ min: 5, max: 10 }, { min: 10, max: 20 }, { min: 20, max: 30 }, { min: 30, max: 45 }, { min: 45, max: 50 }] },
-            "elec_casa": { group: elecGroup, name: "Option-O Lagom Casa", unit: uDial10, step: 0.1, ranges: [{ min: 0.1, max: 0.8 }, { min: 0.8, max: 2.5 }, { min: 2.5, max: 4.5 }, { min: 4.5, max: 7.5 }, { min: 7.5, max: 9.0 }] },
-            "elec_mini": { group: elecGroup, name: "Option-O Lagom Mini", unit: uRot, step: 0.1, ranges: [{ min: 0.3, max: 0.7 }, { min: 0.7, max: 1.4 }, { min: 1.4, max: 1.8 }, { min: 1.8, max: 2.6 }, { min: 2.6, max: 3.2 }] },
-            "elec_p100": { group: elecGroup, name: "Option-O Lagom P100 / 01", unit: uDial10, step: 0.1, ranges: [{ min: 0.1, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.0 }, { min: 4.0, max: 7.0 }, { min: 7.0, max: 9.5 }] },
-            "elec_p64": { group: elecGroup, name: "Option-O Lagom P64", unit: uDial10, step: 0.1, ranges: [{ min: 0.1, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.5 }, { min: 4.5, max: 7.0 }, { min: 7.0, max: 9.5 }] },
-            "elec_078": { group: elecGroup, name: "Timemore Sculptor 078", unit: uDialPour, step: 0.1, ranges: [{ min: null, max: null }, { min: null, max: null }, { min: 4.0, max: 8.0 }, { min: 8.0, max: 14.0 }, { min: 14.0, max: 18.0 }] },
-            "elec_078s": { group: elecGroup, name: "Timemore Sculptor 078s", unit: uDial14, step: 0.1, ranges: [{ min: 0, max: 0.5 }, { min: 0.5, max: 2.5 }, { min: 2.5, max: 6.0 }, { min: 6.0, max: 10.0 }, { min: 10.0, max: 14.0 }] },
-            "elec_vs3": { group: elecGroup, name: "Varia VS3", unit: uDialNum, step: 0.1, ranges: [{ min: 0, max: 1 }, { min: 1, max: 3 }, { min: 3, max: 5 }, { min: 5, max: 8 }, { min: 8, max: 10 }] },
-            "elec_eg1": { group: elecGroup, name: "Weber EG-1", unit: uDial90, step: 0.1, ranges: [{ min: 0, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.0 }, { min: 4.0, max: 7.0 }, { min: 7.0, max: 9.0 }] },
-            "elec_pegasus": { group: elecGroup, name: "Feima 600N/610N", unit: uDialNum, step: 0.5, ranges: [{ min: 0.5, max: 1 }, { min: 1, max: 2.5 }, { min: 2.5, max: 3.5 }, { min: 3.5, max: 5.5 }, { min: 5.5, max: 8 }] },
-
-            // 1Zpresso
-            "1z_q2": { group: "🎯 1Zpresso", name: "1Z Q2 / Q Air", unit: uClicks, step: 1, ranges: [{ min: 15, max: 25 }, { min: 25, max: 35 }, { min: 35, max: 45 }, { min: 45, max: 60 }, { min: 60, max: 75 }] },
-            "1z_jx": { group: "🎯 1Zpresso", name: "1Z JX", unit: uClicks, step: 1, ranges: [{ min: 20, max: 30 }, { min: 30, max: 40 }, { min: 40, max: 60 }, { min: 60, max: 90 }, { min: 90, max: 120 }] },
-            "1z_jxpro": { group: "🎯 1Zpresso", name: "1Z JX-Pro", unit: uClicks, step: 1, ranges: [{ min: 30, max: 50 }, { min: 50, max: 70 }, { min: 70, max: 100 }, { min: 100, max: 140 }, { min: 140, max: 160 }] },
-            "1z_jeplus": { group: "🎯 1Zpresso", name: "1Z JE-Plus", unit: uClicks, step: 1, ranges: [{ min: 20, max: 40 }, { min: 40, max: 60 }, { min: 60, max: 80 }, { min: 80, max: 110 }, { min: 110, max: 130 }] },
-            "1z_xpro": { group: "🎯 1Zpresso", name: "1Z X-Pro / X-Ultra", unit: uClicks, step: 1, ranges: [{ min: 15, max: 30 }, { min: 30, max: 60 }, { min: 60, max: 100 }, { min: 120, max: 150 }, { min: 150, max: 180 }] },
-            "1z_jmax": { group: "🎯 1Zpresso", name: "1Z J-Max", unit: uClicks, step: 1, ranges: [{ min: 50, max: 90 }, { min: 90, max: 150 }, { min: 150, max: 200 }, { min: 200, max: 280 }, { min: 280, max: 320 }] },
-            "1z_jultra": { group: "🎯 1Zpresso", name: "1Z J-Ultra", unit: uClicks, step: 1, ranges: [{ min: 60, max: 100 }, { min: 100, max: 160 }, { min: 160, max: 200 }, { min: 200, max: 270 }, { min: 270, max: 320 }] },
-            "1z_kmax": { group: "🎯 1Zpresso", name: "1Z K-Pro/Plus/Max", unit: uExtDial, step: 0.1, ranges: [{ min: 2, max: 3 }, { min: 3, max: 4.5 }, { min: 4.5, max: 6.0 }, { min: 6.0, max: 8.5 }, { min: 8.5, max: 10 }] },
-            "1z_kultra": { group: "🎯 1Zpresso", name: "1Z K-Ultra", unit: uExtDial, step: 0.1, ranges: [{ min: 2, max: 3 }, { min: 3, max: 4.5 }, { min: 4.5, max: 6.5 }, { min: 6.5, max: 9.0 }, { min: 9.0, max: 10 }] },
-            "1z_zp6": { group: "🎯 1Zpresso", name: "1Z ZP6 Special", unit: uExtDial, step: 0.1, ranges: [{ min: null, max: null }, { min: null, max: null }, { min: 3.0, max: 4.0 }, { min: 4.0, max: 6.0 }, { min: 6.0, max: 7.5 }] },
-
-            // 手搖
-            "other_c40": { group: manualGroup, name: "Comandante C40", unit: uClicks, step: 1, ranges: [{ min: 5, max: 9 }, { min: 9, max: 15 }, { min: 15, max: 22 }, { min: 22, max: 29 }, { min: 29, max: 40 }] },
-            "other_k6": { group: manualGroup, name: "Kingrinder K6", unit: uClicks, step: 1, ranges: [{ min: 28, max: 40 }, { min: 40, max: 60 }, { min: 60, max: 90 }, { min: 90, max: 120 }, { min: 120, max: 150 }] },
-            "other_kinum47": { group: manualGroup, name: "Kinu M47", unit: uRot, step: 0.1, ranges: [{ min: 0.5, max: 1.0 }, { min: 1.1, max: 2.3 }, { min: 2.3, max: 3.5 }, { min: 3.5, max: 5.5 }, { min: 5.5, max: 7.8 }] },
-            "other_timemore_c2": { group: manualGroup, name: "Timemore C2/C3", unit: uClicks, step: 1, ranges: [{ min: 6, max: 10 }, { min: 10, max: 14 }, { min: 14, max: 17 }, { min: 17, max: 24 }, { min: 24, max: 29 }] },
-            "other_millab_m01": { group: manualGroup, name: "Timemore Millab M01", unit: uDialClicks, step: 0.1, ranges: [{ min: 0.0, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.3 }, { min: 4.3, max: 7.6 }, { min: 7.6, max: 10.0 }] },
-            "other_cocinare_b38": { group: manualGroup, name: "Cocinare B38 Ultra", unit: uDial80, step: 1, ranges: [{ min: 0, max: 14 }, { min: 14, max: 29 }, { min: 29, max: 64 }, { min: 64, max: 79 }, { min: 79, max: 80 }] }
+        // ==========================================
+        // 2. 多語系翻譯字典 (i18n)
+        // ==========================================
+        const i18n = {
+            zh: {
+                app_title: '村民咖啡工具箱', home_title: '選擇工具', home_subtitle: '請選擇您要使用的咖啡輔助工具',
+                tool_brew_title: '沖煮參數查詢', tool_brew_desc: '內建多款濾杯的經典手沖參數，並可根據粉重自動換算水量。',
+                tool_grind_title: '磨豆機刻度轉換', tool_grind_desc: '支援超過 30 款常見磨豆機，輕鬆將別人的刻度換算為您的設備設定。',
+                select_dripper: '濾杯款式', select_dripper_placeholder: '請選擇濾杯...', no_dripper_title: '請選擇濾杯',
+                no_dripper_desc: '請從上方選單選擇您要使用的濾杯款式', select_recipe: '請選擇沖煮手法...',
+                current_recipe: '目前參數', available_recipes: '可用的沖煮手法', no_recipe_title: '目前沒有任何參數',
+                no_recipe_desc: '這個濾杯尚未建立參數資料庫', select_recipe_prompt: '👆 請從上方選擇沖煮手法',
+                auto_calc_title: '調整手邊粉重，自動換算水量', suggest_temp: '建議水溫', suggest_weight: '建議粉量',
+                base_ratio: '基準比例', brew_steps: '沖煮流程', converted_ratio: '已換算', original_water: '原',
+                from_grinder: '從此磨豆機 (A)', to_grinder: '轉換至磨豆機 (B)', current_grind: '目前刻度',
+                target_grind: '建議對應刻度', input_placeholder: '輸入數值', unit: '單位', grind_result_msg: '刻度約落在',
+                mapped_linear: '，已為您線性對應。', grind_visual: '沖煮粗細度落點',
+                grind_cats: ['土耳其\n(極細)', '義式濃縮\n(細)', '愛樂壓\n(中細)', '手沖\n(中等)', '法壓\n(粗)'],
+                grind_cats_inline: ['土耳其咖啡 (極細)', '義式濃縮 (細)', '摩卡壺/愛樂壓 (中細)', '手沖咖啡 (中等)', '法式濾壓/冷萃 (粗)'],
+                err_low: '數值過低 (常見下限為', err_high: '數值過高 (常見上限為', err_match: '無法匹配區間',
+                err_notsupport: '目標設備不建議用於', hint_title: '💡 換算小提醒：',
+                hint_1: '圈數標示：遇圈數+小格（如 1 圈又 5 小格），請輸入小數點 1.5。',
+                hint_2: '數字標示：面板標示數字的機型，請直接輸入小數（如 6.5）。',
+                hint_3: '總格數標示：轉圈式的手搖磨豆機，請換算為 總格數 輸入。',
+                hint_4: '由於刀盤種類、磨損或歸零點設定不同，實際結果可能有微小偏差。'
+            },
+            en: {
+                app_title: 'Villager Coffee Tools', home_title: 'Select Tool', home_subtitle: 'Choose a coffee utility to get started',
+                tool_brew_title: 'Brew Recipe Guide', tool_brew_desc: 'Classic pour-over recipes. Auto-calculates water volume by coffee weight.',
+                tool_grind_title: 'Grind Size Converter', tool_grind_desc: 'Supports 30+ grinders. Easily convert grind settings across devices.',
+                select_dripper: 'Dripper', select_dripper_placeholder: 'Select a dripper...', no_dripper_title: 'Select a Dripper',
+                no_dripper_desc: 'Please select a dripper from the menu above', select_recipe: 'Select a recipe...',
+                current_recipe: 'Current Recipe', available_recipes: 'Available Recipes', no_recipe_title: 'No Recipes Found',
+                no_recipe_desc: 'No recipes registered for this dripper yet.', select_recipe_prompt: '👆 Select a brew recipe above',
+                auto_calc_title: 'Adjust coffee weight to auto-calculate', suggest_temp: 'Water Temp', suggest_weight: 'Coffee Wt.',
+                base_ratio: 'Base Ratio', brew_steps: 'Brew Steps', converted_ratio: 'Scaled', original_water: 'Orig.',
+                from_grinder: 'From Grinder (A)', to_grinder: 'To Grinder (B)', current_grind: 'Current Grind',
+                target_grind: 'Target Grind', input_placeholder: 'Input value', unit: 'Unit', grind_result_msg: 'The grind falls into',
+                mapped_linear: ', linearly mapped.', grind_visual: 'Grind Size Category',
+                grind_cats: ['Turkish\n(X-Fine)', 'Espresso\n(Fine)', 'AeroPress\n(M-Fine)', 'Pour Over\n(Medium)', 'French\n(Coarse)'],
+                grind_cats_inline: ['Turkish (X-Fine)', 'Espresso (Fine)', 'AeroPress (M-Fine)', 'Pour Over (Medium)', 'French Press (Coarse)'],
+                err_low: 'Value too low (Min:', err_high: 'Value too high (Max:', err_match: 'Cannot match range',
+                err_notsupport: 'Not recommended for', hint_title: '💡 Quick Tips:',
+                hint_1: 'Rotations: For rotations + clicks (e.g. 1 rot. 5 clicks), input 1.5.',
+                hint_2: 'Dials: Input the exact decimal (e.g. 6.5).',
+                hint_3: 'Total Clicks: Use absolute total clicks for manual grinders.',
+                hint_4: 'Results may vary slightly due to burrs, wear, or zero-point calibration.'
+            },
+            ja: {
+                app_title: '村人コーヒーツール', home_title: 'ツール選択', home_subtitle: '使用するツールを選択してください',
+                tool_brew_title: '抽出レシピガイド', tool_brew_desc: '定番レシピ搭載。粉量から湯量を自動計算します。',
+                tool_grind_title: '挽き目コンバーター', tool_grind_desc: '30種類以上のミル対応。挽き目を自分の機材用に変換します。',
+                select_dripper: 'ドリッパー', select_dripper_placeholder: 'ドリッパーを選択...', no_dripper_title: 'ドリッパーを選択',
+                no_dripper_desc: '上のメニューからドリッパーを選択してください', select_recipe: 'レシピを選択...',
+                current_recipe: '現在のレシピ', available_recipes: '利用可能なレシピ', no_recipe_title: 'レシピがありません',
+                no_recipe_desc: 'このドリッパーのレシピはまだありません', select_recipe_prompt: '👆 上からレシピを選択してください',
+                auto_calc_title: '粉量を調整して湯量を自動計算', suggest_temp: '推奨湯温', suggest_weight: '推奨粉量',
+                base_ratio: '基本比率', brew_steps: '抽出手順', converted_ratio: '換算済', original_water: '元',
+                from_grinder: '変換元ミル (A)', to_grinder: '変換先ミル (B)', current_grind: '現在の設定',
+                target_grind: '推奨設定値', input_placeholder: '数値を入力', unit: '単位', grind_result_msg: '挽き目の目安は',
+                mapped_linear: '。線形変換されました。', grind_visual: '挽き目カテゴリー',
+                grind_cats: ['トルコ\n(極細)', 'エスプレッソ\n(細)', 'エアロプレス\n(中細)', 'ドリップ\n(中)', 'フレンチ\n(粗)'],
+                grind_cats_inline: ['トルコ (極細挽き)', 'エスプレッソ (細挽き)', 'エアロプレス (中細挽き)', 'ドリップ (中挽き)', 'フレンチ (粗挽き)'],
+                err_low: '数値が低すぎます (下限:', err_high: '数値が高すぎます (上限:', err_match: '範囲に一致しません',
+                err_notsupport: '変換先機材は非推奨:', hint_title: '💡 ヒント:',
+                hint_1: '回転数: 1回転5クリックの場合は「1.5」と入力。',
+                hint_2: 'ダイヤル: そのまま小数で入力（例: 6.5）。',
+                hint_3: '合計クリック: 手挽きミルの場合は「合計クリック数」を入力。',
+                hint_4: '刃の種類、摩耗、ゼロ点設定により微小な誤差が生じる場合があります。'
+            }
         };
 
-        return { DRIPPER_CATEGORIES, RECIPE_DATABASE, GRINDER_DATABASE };
-      }, [lang]);
-    }
+        // ==========================================
+        // 3. 動態資料庫 (根據語言切換內容)
+        // ==========================================
+        function useDatabases(lang) {
+            return useMemo(() => {
+                const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
+                
+                const DRIPPER_CATEGORIES = {
+                    [l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
+                        { id: 'Hario V60 01', name: 'Hario V60 01' }, { id: 'Hario V60 02', name: 'Hario V60 02' },
+                        { id: 'Hario Switch 02', name: 'Hario Switch 02' }, { id: 'Tri-Up Flow 01/02', name: 'Tri-Up Flow 01/02' }
+                    ],
+                    [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
+                        { id: 'Orea V3', name: 'Orea V3' },
+                        { id: 'BEANDY SILK 絲綢濾杯', name: l('BEANDY SILK 絲綢濾杯', 'BEANDY SILK Dripper', 'BEANDY SILK ドリッパー') }
+                    ]
+                };
 
+                const RECIPE_DATABASE = [
+                    {
+                        id: 'orea-iced-tilt', name: l('Tilt 冰手沖配方', 'Tilt Iced Pour Over', 'Tilt アイスドリップ'), 
+                        author: 'Tilt', dripper: 'Orea V3', drinkType: 'iced', baseCoffee: 20, temperature: 90,
+                        description: (r) => l(
+                            `研磨度：中細粉 (細挽 / Nuttii 6clicks)\n💡準備工作：\n1. 下壺請預先放入 ${Math.round(50 * r)}g 冰塊。\n2. 飲用杯中放入冰球 ${Math.max(1, Math.round(1 * r))} 顆，約 ${Math.round(100 * r)}g。`,
+                            `Grind: Medium-fine (Nuttii 6 clicks)\n💡Prep:\n1. Add ${Math.round(50 * r)}g ice to the server.\n2. Add ${Math.max(1, Math.round(1 * r))} ice ball(s) (approx. ${Math.round(100 * r)}g) to the cup.`,
+                            `挽き目：中細挽き (Nuttii 6クリック)\n💡準備：\n1. サーバーに氷を ${Math.round(50 * r)}g 入れておく。\n2. グラスに丸氷を ${Math.max(1, Math.round(1 * r))} 個（約 ${Math.round(100 * r)}g）入れる。`
+                        ),
+                        steps: [
+                            { id: 't1', time: '0:00-0:07', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入第一段水至 ${Math.round(40 * r)}g`, `1st pour to ${Math.round(40 * r)}g`, `第1湯を ${Math.round(40 * r)}g まで注ぐ`), water: 40 },
+                            { id: 't2', time: '0:40-0:47', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入第二段水至 ${Math.round(80 * r)}g`, `2nd pour to ${Math.round(80 * r)}g`, `第2湯を ${Math.round(80 * r)}g まで注ぐ`), water: 80 },
+                            { id: 't3', time: '1:20-1:37', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入第三段水至 ${Math.round(120 * r)}g`, `3rd pour to ${Math.round(120 * r)}g`, `第3湯を ${Math.round(120 * r)}g まで注ぐ`), water: 120 },
+                            { id: 't4', time: '2:00-2:07', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入最後一段水至 ${Math.round(160 * r)}g`, `Final pour to ${Math.round(160 * r)}g`, `最後の注湯を ${Math.round(160 * r)}g まで`), water: 160 },
+                            { id: 't5', time: '3:00', action: l('完成', 'Finish', '完了'), note: l('流完移開濾杯，搖晃均勻後倒入裝有冰塊的飲用杯中', 'Remove dripper, swirl, and pour over ice cup.', '落ちきったら外し、揺らして氷入りのグラスに注ぐ。'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'switch-iced-chacha', name: l('冰手沖 (CHACHA 小仙子)', 'Iced Pour Over (CHACHA)', 'アイスドリップ (CHACHA)'), 
+                        author: l('CHACHA 小仙子', 'CHACHA', 'CHACHA'), dripper: 'Hario Switch 02', drinkType: 'iced', baseCoffee: 20, temperature: 92,
+                        description: (r) => l(
+                            `研磨度：中細研磨\n💡準備工作：\n1. 下壺請預先放入 ${Math.round(80 * r)}g 冰塊降溫。\n2. 飲用杯裡放入約 ${Math.round(160 * r)}g 冰塊。`,
+                            `Grind: Medium-fine\n💡Prep:\n1. Add ${Math.round(80 * r)}g ice to the server to cool.\n2. Add approx. ${Math.round(160 * r)}g ice to the cup.`,
+                            `挽き目：中細挽き\n💡準備：\n1. サーバーに冷却用の氷を ${Math.round(80 * r)}g 入れておく。\n2. グラスに約 ${Math.round(160 * r)}g の氷を入れる。`
+                        ),
+                        steps: [
+                            { id: 'c1', time: '0:00', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: l('關上濾杯開關，注水至', 'Close switch, pour to', 'スイッチを閉じ、注湯:'), water: 50 },
+                            { id: 'c2', time: '0:40', action: l('注水', 'Pour', '注湯'), note: l('持續注水至', 'Continue pouring to', '続けて注湯:'), water: 90 },
+                            { id: 'c3', time: l('流乾後', 'Drained', '落ちきり後'), action: l('注水', 'Pour', '注湯'), note: l('水流完了就繼續注水至', 'Once drained, pour to', '落ちきったら注湯:'), water: 130 },
+                            { id: 'c4', time: l('流乾後', 'Drained', '落ちきり後'), action: l('注水', 'Pour', '注湯'), note: l('水流完了就繼續注水至', 'Once drained, pour to', '落ちきったら注湯:'), water: 160 },
+                            { id: 'c5', time: l('完成', 'Finish', '完了'), action: l('倒出', 'Serve', '注ぐ'), note: l('搖晃下壺冷卻後，倒入裝有冰塊的飲用杯中', 'Swirl to cool, then pour into ice cup.', 'サーバーを揺らして冷却後、氷入りのグラスに注ぐ。'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'switch-devil-single', name: l('惡魔手沖 (單人份)', 'Devil Recipe (Single)', '悪魔のレシピ (1人用)'), 
+                        author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 15, temperature: 92,
+                        description: l('2016世界手沖冠軍粕谷哲開發的SOP化流程，不需要注水技巧，非常新手友善。','SOP by 2016 World Brewer Champion Tetsu Kasuya. Beginner-friendly.','粕谷哲考案のSOPレシピ。注ぎの技術が不要で初心者にもおすすめ。'),
+                        steps: [
+                            { id: 's1', time: '0:00', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: l('開關打開，開始計時並注水', 'Open switch, start timer and pour', 'スイッチを開け、タイマー開始と共に注湯'), water: 30 },
+                            { id: 's2', time: '0:40', action: '', note: l('保持滴濾，注水至', 'Keep open, pour to', '開けたまま注湯:'), water: 90 },
+                            { id: 's3', time: '1:20', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: l('關上開關，注水至目標水量浸泡', 'Close switch, pour to target and steep', 'スイッチを閉じ、目標量まで注ぎ浸漬'), water: 225 },
+                            { id: 's4', time: '1:50', action: '', note: l('打開開關，濾出咖啡液', 'Open switch to drain', 'スイッチを開け、コーヒーを落とす'), water: null },
+                            { id: 's5', time: '2:20', action: '', note: l('前流乾', 'Drained', '落ちきり'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'switch-devil-double', name: l('惡魔手沖 (兩杯份)', 'Devil Recipe (Double)', '悪魔のレシピ (2人用)'), 
+                        author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 24, temperature: 92,
+                        description: l('適合兩人共享的惡魔手沖大份量版本。', 'Double portion of the Devil Recipe, suitable for two.', '2人用の大容量版・悪魔のレシピ。'),
+                        steps: [
+                            { id: 'd1', time: '0:00', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: l('開關打開，開始計時並注水', 'Open switch, start timer and pour', 'スイッチを開け、タイマー開始と共に注湯'), water: 50 },
+                            { id: 'd2', time: '0:40', action: '', note: l('保持滴濾，注水至', 'Keep open, pour to', '開けたまま注湯:'), water: 150 },
+                            { id: 'd3', time: '1:20', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: l('關上開關，注水至目標水量浸泡', 'Close switch, pour to target and steep', 'スイッチを閉じ、目標量まで注ぎ浸漬'), water: 360 },
+                            { id: 'd4', time: '2:00', action: '', note: l('打開開關，濾出咖啡液', 'Open switch to drain', 'スイッチを開け、コーヒーを落とす'), water: null },
+                            { id: 'd5', time: '3:00', action: '', note: l('前流乾', 'Drained', '落ちきり'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'beandy-silk-lonich', name: l('Lonich Coffee 沖煮法', 'Lonich Coffee Method', 'Lonich Coffee レシピ'), 
+                        author: 'Tatsumi-san', dripper: 'BEANDY SILK 絲綢濾杯', drinkType: 'hot', baseCoffee: 15, temperature: 90,
+                        description: l('使用 BEANDY SILK 絲綢濾杯，總水量 230g，極其穩定的流速與萃取表現。', 'A multi-pour technique for BEANDY SILK dripper.', '多段注湯により非常に安定した流速と抽出を実現。'),
+                        steps: [
+                            { id: 'b1', time: '00:00', action: l('悶蒸', 'Bloom', '蒸らし'), note: l('注水進行悶蒸', 'Pour to bloom', '注湯して蒸らし'), water: 40 },
+                            { id: 'b2', time: '00:35', action: l('注水', 'Pour', '注湯'), note: l('流速非常穩定', 'Very stable flow rate', '非常に安定した流速'), water: 80 },
+                            { id: 'b3', time: '01:10', action: l('注水', 'Pour', '注湯'), note: l('持續穩定注水', 'Continue stable pour', '安定して注湯を続ける'), water: 160 },
+                            { id: 'b4', time: '01:45', action: l('注水', 'Pour', '注湯'), note: l('完成最後一段注水', 'Final pour', '最後の注湯を完了'), water: 230 },
+                            { id: 'b5', time: '02:15', action: l('完成', 'Finish', '完了'), note: l('全部流完撤濾杯', 'Remove dripper when drained', '落ちきったらドリッパーを外す'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'v60-01-james-hoffmann', name: l('終極V60沖煮法 (2022版)', 'Ultimate V60 Technique (2022)', '究極のV60レシピ (2022版)'), 
+                        author: 'James Hoffmann', dripper: 'Hario V60 01', drinkType: 'hot', baseCoffee: 15, temperature: 100,
+                        description: (r) => l(
+                            '研磨度：中細研磨 (大約細砂糖粗細)\n水溫：淺焙建議使用剛沸騰的熱水 (100°C)\n💡 James Hoffmann 專為單杯 (1 Cup) 設計的 V60 沖煮法，多次小水量注水與搖晃來維持溫度並提升萃取均勻度。',
+                            'Grind: Medium-fine (caster sugar size)\nTemp: Boiling (100°C) for light roasts\n💡 James Hoffmann\'s 1-Cup V60 method, utilizing multiple small pours and swirling.',
+                            '挽き目：中細挽き (グラニュー糖程度)\n湯温：浅煎りの場合は沸騰直後（100℃）\n💡 ジェームズ・ホフマンの1杯用V60レシピ。少量の注湯とスワールで抽出均一性を保ちます。'
+                        ),
+                        steps: [
+                            { id: 'jh1_1', time: '0:00-0:10', action: l('悶蒸', 'Bloom', '蒸らし'), note: (r) => l(`注入 ${Math.round(50 * r)}g 水量進行悶蒸`, `Pour ${Math.round(50 * r)}g to bloom`, `${Math.round(50 * r)}g 注ぎ蒸らし`), water: 50 },
+                            { id: 'jh1_2', time: '0:10-0:15', action: l('搖晃', 'Swirl', '揺らす'), note: l('輕柔搖晃濾杯使粉水充分接觸', 'Gently swirl to mix', '軽く揺らして粉と湯を馴染ませる'), water: null },
+                            { id: 'jh1_3', time: '0:45-1:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入至 ${Math.round(100 * r)}g (總水量的 40%)`, `Pour to ${Math.round(100 * r)}g (40% total)`, `...まで注ぐ (総量の40%)`), water: 100 },
+                            { id: 'jh1_4', time: '1:10-1:20', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(150 * r)}g (總水量的 60%)`, `Pause, pour to ${Math.round(150 * r)}g (60% total)`, `少し待ち、...まで注ぐ (総量の60%)`), water: 150 },
+                            { id: 'jh1_5', time: '1:30-1:40', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(200 * r)}g (總水量的 80%)`, `Pause, pour to ${Math.round(200 * r)}g (80% total)`, `少し待ち、...まで注ぐ (総量の80%)`), water: 200 },
+                            { id: 'jh1_6', time: '1:50-2:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，注入至 ${Math.round(250 * r)}g (總水量的 100%)`, `Pause, pour to ${Math.round(250 * r)}g (100% total)`, `少し待ち、...まで注ぐ (総量の100%)`), water: 250 },
+                            { id: 'jh1_7', time: '2:00-2:05', action: l('搖晃', 'Swirl', '揺らす'), note: l('最後一次輕柔搖晃濾杯', 'Final gentle swirl', '最後に軽く揺らす'), water: null },
+                            { id: 'jh1_8', time: l('約 3:00', '~3:00', '約 3:00'), action: l('完成', 'Finish', '完了'), note: l('流乾後移開。時間會有誤差，以實際風味為準！', 'Remove when drained. Time may vary, taste is king!', '落ちきったら外す。時間は目安、味が最優先！'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'v60-02-james-hoffmann', name: l('終極V60沖煮法 (2022版)', 'Ultimate V60 Technique (2022)', '究極のV60レシピ (2022版)'), 
+                        author: 'James Hoffmann', dripper: 'Hario V60 02', drinkType: 'hot', baseCoffee: 15, temperature: 100,
+                        description: (r) => l(
+                            '研磨度：中細研磨 (大約細砂糖粗細)\n水溫：淺焙建議使用剛沸騰的熱水 (100°C)\n💡 James Hoffmann 專為單杯 (1 Cup) 設計的 V60 沖煮法，多次小水量注水與搖晃來維持溫度並提升萃取均勻度。',
+                            'Grind: Medium-fine (caster sugar size)\nTemp: Boiling (100°C) for light roasts\n💡 James Hoffmann\'s 1-Cup V60 method, utilizing multiple small pours and swirling.',
+                            '挽き目：中細挽き (グラニュー糖程度)\n湯温：浅煎りの場合は沸騰直後（100℃）\n💡 ジェームズ・ホフマンの1杯用V60レシピ。少量の注湯とスワールで抽出均一性を保ちます。'
+                        ),
+                        steps: [
+                            { id: 'jh2_1', time: '0:00-0:10', action: l('悶蒸', 'Bloom', '蒸らし'), note: (r) => l(`注入 ${Math.round(50 * r)}g 水量進行悶蒸`, `Pour ${Math.round(50 * r)}g to bloom`, `${Math.round(50 * r)}g 注ぎ蒸らし`), water: 50 },
+                            { id: 'jh2_2', time: '0:10-0:15', action: l('搖晃', 'Swirl', '揺らす'), note: l('輕柔搖晃濾杯使粉水充分接觸', 'Gently swirl to mix', '軽く揺らして粉と湯を馴染ませる'), water: null },
+                            { id: 'jh2_3', time: '0:45-1:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`注入至 ${Math.round(100 * r)}g (總水量的 40%)`, `Pour to ${Math.round(100 * r)}g (40% total)`, `...まで注ぐ (総量の40%)`), water: 100 },
+                            { id: 'jh2_4', time: '1:10-1:20', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(150 * r)}g (總水量的 60%)`, `Pause, pour to ${Math.round(150 * r)}g (60% total)`, `少し待ち、...まで注ぐ (総量の60%)`), water: 150 },
+                            { id: 'jh2_5', time: '1:30-1:40', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，繼續注入至 ${Math.round(200 * r)}g (總水量的 80%)`, `Pause, pour to ${Math.round(200 * r)}g (80% total)`, `少し待ち、...まで注ぐ (総量の80%)`), water: 200 },
+                            { id: 'jh2_6', time: '1:50-2:00', action: l('注水', 'Pour', '注湯'), note: (r) => l(`停頓後，注入至 ${Math.round(250 * r)}g (總水量的 100%)`, `Pause, pour to ${Math.round(250 * r)}g (100% total)`, `少し待ち、...まで注ぐ (総量の100%)`), water: 250 },
+                            { id: 'jh2_7', time: '2:00-2:05', action: l('搖晃', 'Swirl', '揺らす'), note: l('最後一次輕柔搖晃濾杯', 'Final gentle swirl', '最後に軽く揺らす'), water: null },
+                            { id: 'jh2_8', time: l('約 3:00', '~3:00', '約 3:00'), action: l('完成', 'Finish', '完了'), note: l('流乾後移開。時間會有誤差，以實際風味為準！', 'Remove when drained. Time may vary, taste is king!', '落ちきったら外す。時間は目安、味が最優先！'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'v60-46-method', name: l('4:6 沖煮法', '4:6 Method', '4:6メソッド'), 
+                        author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario V60 02', drinkType: 'hot', baseCoffee: 20, temperature: 90,
+                        description: l('將總水量分為40%與60%，前40%決定酸甜比，後60%決定濃度。此為基礎平衡配方。','Divides water into 40% (balance) and 60% (strength). A perfect baseline recipe.','総湯量を40%と60%に分け、前半で酸味と甘みのバランス、後半で濃度を調整する基本レシピ。'),
+                        steps: [
+                            { id: 'v1', time: '0:00', action: l('悶蒸', 'Bloom', '蒸らし'), note: l('注入第一段水', '1st pour', '第1湯'), water: 60 },
+                            { id: 'v2', time: '0:45', action: l('注水', 'Pour', '注湯'), note: l('注入第二段水 (完成前40%)', '2nd pour (completes first 40%)', '第2湯 (前半40%完了)'), water: 120 },
+                            { id: 'v3', time: '1:30', action: l('注水', 'Pour', '注湯'), note: l('注入第三段水', '3rd pour', '第3湯'), water: 180 },
+                            { id: 'v4', time: '2:15', action: l('注水', 'Pour', '注湯'), note: l('注入第四段水', '4th pour', '第4湯'), water: 240 },
+                            { id: 'v5', time: '2:45', action: l('注水', 'Pour', '注湯'), note: l('注入最後一段水 (完成後60%)', '5th pour (completes last 60%)', '第5湯 (後半60%完了)'), water: 300 },
+                            { id: 'v6', time: '3:30', action: l('完成', 'Finish', '完了'), note: l('濾杯流乾後移開', 'Remove when drained', '落ちきったら外す'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'tri-up-flow-eric', name: l('設計者原廠配方', 'Original Designer Recipe', '公式レシピ'), 
+                        author: 'Eric', dripper: 'Tri-Up Flow 01/02', drinkType: 'hot', baseCoffee: 15, temperature: 92,
+                        description: l(
+                            '研磨度：C40 18-20\n💡沖煮重點：以相同沖煮時間為主，粉量放大後，水量等比放大，相對粗細度需要稍微調整。\n每段注水皆為「快速注水」，大約在 7 秒內完成。',
+                            'Grind: C40 18-20\n💡Pour very fast, finishing each stage within 7 seconds.',
+                            '挽き目：C40 18-20\n💡各段階は7秒以内で素早く注ぐこと。'
+                        ),
+                        steps: [
+                            { id: 'tu1', time: '0:00-0:25', action: l('快速注水', 'Fast Pour', '素早く注湯'), note: (r) => l(`約7秒內快速注入 ${Math.round(80 * r)}g 水量`, `Fast pour ${Math.round(80 * r)}g in ~7s`, `約7秒で ${Math.round(80 * r)}g を素早く注ぐ`), water: 80 },
+                            { id: 'tu2', time: '0:25-1:00', action: l('快速注水', 'Fast Pour', '素早く注湯'), note: (r) => l(`約7秒內快速注入 ${Math.round(100 * r)}g 水量 (累積 ${Math.round(180 * r)}g)`, `Fast pour ${Math.round(100 * r)}g in ~7s (Total ${Math.round(180 * r)}g)`, `約7秒で ${Math.round(100 * r)}g を素早く注ぐ (累計 ${Math.round(180 * r)}g)`), water: 180 },
+                            { id: 'tu3', time: '1:00-流完', action: l('快速注水', 'Fast Pour', '素早く注湯'), note: (r) => l(`約7秒內快速注入 ${Math.round(80 * r)}g 水量 (累積 ${Math.round(260 * r)}g)`, `Fast pour ${Math.round(80 * r)}g in ~7s (Total ${Math.round(260 * r)}g)`, `約7秒で ${Math.round(80 * r)}g を素早く注ぐ (累計 ${Math.round(260 * r)}g)`), water: 260 },
+                            { id: 'tu4', time: '1:50-2:00', action: l('完成', 'Finish', '完了'), note: l('流完咖啡，總時間最多不超過2:30', 'Drain. Total time max 2:30.', '落ちきり。全体の時間は最大2分30秒以内。'), water: null }
+                        ]
+                    }
+                ];
 
-    // ==========================================
-    // 4. 主應用程式 (App)
-    // ==========================================
-    function App() {
-      const [view, setView] = useState('home'); // 'home', 'brew', 'grind'
-      const [lang, setLang] = useState('zh');
-      
-      const t = (key) => i18n[lang][key] || key;
+                const elecGroup = l("⚡ 電動磨豆機", "⚡ Electric", "⚡ 電動ミル");
+                const manualGroup = l("🖐️ 其他手搖", "🖐️ Manual", "🖐️ その他手挽き");
+                const uDialNum = l("數字刻度", "Number Dial", "数字ダイヤル");
+                const uDialMacro = l("大數字 (1-31)", "Macro (1-31)", "マクロ (1-31)");
+                const uDial60 = l("面板數字 (1-60)", "Dial (1-60)", "ダイヤル (1-60)");
+                const uStepless = l("數字 (無段)", "Stepless", "無段階");
+                const uDial10 = l("數字刻度 (0-10)", "Dial (0-10)", "ダイヤル (0-10)");
+                const uDial35 = l("數字刻度 (1-35)", "Dial (1-35)", "ダイヤル (1-35)");
+                const uDial90 = l("數字刻度 (0-90)", "Dial (0-90)", "ダイヤル (0-90)");
+                const uDial14 = l("數字刻度 (0-14)", "Dial (0-14)", "ダイヤル (0-14)");
+                const uDialPour = l("數字刻度 (手沖特化)", "Dial (Pour Over)", "ダイヤル (ドリップ特化)");
+                const uRot = l("圈數.數字", "Rotations", "回転数");
+                const uClicks = l("總格數", "Total Clicks", "合計クリック");
+                const uExtDial = l("外部數字", "External Dial", "外部ダイヤル");
+                const uDialClicks = l("數字.小格", "Dial.Clicks", "数字.クリック");
+                const uDial80 = l("面板格數 (0-80)", "Dial (0-80)", "ダイヤル (0-80)");
 
-      return (
-        <div className={`min-h-screen ${colors.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white`}>
-          {/* --- 頂部導覽列 --- */}
-          <div className={`${colors.primary} text-white shadow-md sticky top-0 z-50`}>
-            <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {view !== 'home' && (
-                  <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors">
-                    <ArrowLeft size={20} />
-                  </button>
-                )}
-                <Coffee size={24} strokeWidth={2.5} />
-                <h1 className="text-xl font-bold tracking-widest hidden sm:block">
-                   {view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : t('tool_grind_title'))}
-                </h1>
-              </div>
-              
-              {/* 語言切換按鈕 */}
-              <div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm">
-                <button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button>
-                <button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button>
-                <button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button>
-              </div>
-            </div>
-          </div>
+                const GRINDER_DATABASE = {
+                    "elec_encore": { group: elecGroup, name: "Baratza Encore", unit: uDialNum, step: 1, ranges: [{ min: 1, max: 5 }, { min: 5, max: 10 }, { min: 10, max: 15 }, { min: 15, max: 25 }, { min: 25, max: 30 }] },
+                    "elec_sette270": { group: elecGroup, name: "Baratza Sette 270", unit: uDialMacro, step: 1, ranges: [{ min: 1, max: 3 }, { min: 3, max: 9 }, { min: 9, max: 15 }, { min: 15, max: 25 }, { min: 25, max: 31 }] },
+                    "elec_sgp": { group: elecGroup, name: "Breville/Sage SGP", unit: uDial60, step: 1, ranges: [{ min: 1, max: 5 }, { min: 5, max: 15 }, { min: 15, max: 30 }, { min: 30, max: 45 }, { min: 45, max: 60 }] },
+                    "elec_df64": { group: elecGroup, name: "DF64 (Gen 1/2)", unit: uDialNum, step: 1, ranges: [{ min: 0, max: 10 }, { min: 10, max: 20 }, { min: 20, max: 40 }, { min: 40, max: 70 }, { min: 70, max: 90 }] },
+                    "elec_eureka": { group: elecGroup, name: "Eureka Mignon", unit: uStepless, step: 0.1, ranges: [{ min: 0, max: 0.5 }, { min: 0.5, max: 2 }, { min: 2, max: 3 }, { min: 3, max: 4.5 }, { min: 4.5, max: 5.5 }] },
+                    "elec_ode2": { group: elecGroup, name: "Fellow Ode (Gen 2)", unit: uDialNum, step: 0.1, ranges: [{ min: null, max: null }, { min: null, max: null }, { min: 1, max: 3 }, { min: 3, max: 8 }, { min: 8, max: 11 }] },
+                    "elec_opus": { group: elecGroup, name: "Fellow Opus", unit: uDialNum, step: 0.1, ranges: [{ min: 0.5, max: 1 }, { min: 1, max: 2.5 }, { min: 2.5, max: 4.5 }, { min: 4.5, max: 8.5 }, { min: 8.5, max: 11 }] },
+                    "elec_ek43": { group: elecGroup, name: "Mahlkönig EK43", unit: uDialNum, step: 0.1, ranges: [{ min: 1, max: 1.5 }, { min: 1.5, max: 2.5 }, { min: 2.5, max: 5 }, { min: 5, max: 8.5 }, { min: 8.5, max: 11 }] },
+                    "elec_x54": { group: elecGroup, name: "Mahlkönig X54", unit: uDial35, step: 0.1, ranges: [{ min: 1, max: 4 }, { min: 4, max: 10 }, { min: 10, max: 20 }, { min: 20, max: 28 }, { min: 28, max: 35 }] },
+                    "elec_philos": { group: elecGroup, name: "Mazzer Philos", unit: uDial90, step: 1, ranges: [{ min: 0, max: 10 }, { min: 10, max: 25 }, { min: 25, max: 45 }, { min: 45, max: 65 }, { min: 65, max: 80 }] },
+                    "elec_niche": { group: elecGroup, name: "Niche Zero", unit: uDialNum, step: 1, ranges: [{ min: 5, max: 10 }, { min: 10, max: 20 }, { min: 20, max: 30 }, { min: 30, max: 45 }, { min: 45, max: 50 }] },
+                    "elec_casa": { group: elecGroup, name: "Option-O Lagom Casa", unit: uDial10, step: 0.1, ranges: [{ min: 0.1, max: 0.8 }, { min: 0.8, max: 2.5 }, { min: 2.5, max: 4.5 }, { min: 4.5, max: 7.5 }, { min: 7.5, max: 9.0 }] },
+                    "elec_mini": { group: elecGroup, name: "Option-O Lagom Mini", unit: uRot, step: 0.1, ranges: [{ min: 0.3, max: 0.7 }, { min: 0.7, max: 1.4 }, { min: 1.4, max: 1.8 }, { min: 1.8, max: 2.6 }, { min: 2.6, max: 3.2 }] },
+                    "elec_p100": { group: elecGroup, name: "Option-O Lagom P100 / 01", unit: uDial10, step: 0.1, ranges: [{ min: 0.1, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.0 }, { min: 4.0, max: 7.0 }, { min: 7.0, max: 9.5 }] },
+                    "elec_p64": { group: elecGroup, name: "Option-O Lagom P64", unit: uDial10, step: 0.1, ranges: [{ min: 0.1, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.5 }, { min: 4.5, max: 7.0 }, { min: 7.0, max: 9.5 }] },
+                    "elec_078": { group: elecGroup, name: "Timemore Sculptor 078", unit: uDialPour, step: 0.1, ranges: [{ min: null, max: null }, { min: null, max: null }, { min: 4.0, max: 8.0 }, { min: 8.0, max: 14.0 }, { min: 14.0, max: 18.0 }] },
+                    "elec_078s": { group: elecGroup, name: "Timemore Sculptor 078s", unit: uDial14, step: 0.1, ranges: [{ min: 0, max: 0.5 }, { min: 0.5, max: 2.5 }, { min: 2.5, max: 6.0 }, { min: 6.0, max: 10.0 }, { min: 10.0, max: 14.0 }] },
+                    "elec_vs3": { group: elecGroup, name: "Varia VS3", unit: uDialNum, step: 0.1, ranges: [{ min: 0, max: 1 }, { min: 1, max: 3 }, { min: 3, max: 5 }, { min: 5, max: 8 }, { min: 8, max: 10 }] },
+                    "elec_eg1": { group: elecGroup, name: "Weber EG-1", unit: uDial90, step: 0.1, ranges: [{ min: 0, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.0 }, { min: 4.0, max: 7.0 }, { min: 7.0, max: 9.0 }] },
+                    "elec_pegasus": { group: elecGroup, name: "Feima 600N/610N", unit: uDialNum, step: 0.5, ranges: [{ min: 0.5, max: 1 }, { min: 1, max: 2.5 }, { min: 2.5, max: 3.5 }, { min: 3.5, max: 5.5 }, { min: 5.5, max: 8 }] },
 
-          {/* --- 畫面切換 --- */}
-          <main className="max-w-3xl mx-auto px-4 py-8">
-            {view === 'home' && <HomeView setView={setView} t={t} />}
-            {view === 'brew' && <BrewTool lang={lang} t={t} />}
-            {view === 'grind' && <GrindTool lang={lang} t={t} />}
-          </main>
-        </div>
-      );
-    }
+                    "1z_q2": { group: "🎯 1Zpresso", name: "1Z Q2 / Q Air", unit: uClicks, step: 1, ranges: [{ min: 15, max: 25 }, { min: 25, max: 35 }, { min: 35, max: 45 }, { min: 45, max: 60 }, { min: 60, max: 75 }] },
+                    "1z_jx": { group: "🎯 1Zpresso", name: "1Z JX", unit: uClicks, step: 1, ranges: [{ min: 20, max: 30 }, { min: 30, max: 40 }, { min: 40, max: 60 }, { min: 60, max: 90 }, { min: 90, max: 120 }] },
+                    "1z_jxpro": { group: "🎯 1Zpresso", name: "1Z JX-Pro", unit: uClicks, step: 1, ranges: [{ min: 30, max: 50 }, { min: 50, max: 70 }, { min: 70, max: 100 }, { min: 100, max: 140 }, { min: 140, max: 160 }] },
+                    "1z_jeplus": { group: "🎯 1Zpresso", name: "1Z JE-Plus", unit: uClicks, step: 1, ranges: [{ min: 20, max: 40 }, { min: 40, max: 60 }, { min: 60, max: 80 }, { min: 80, max: 110 }, { min: 110, max: 130 }] },
+                    "1z_xpro": { group: "🎯 1Zpresso", name: "1Z X-Pro / X-Ultra", unit: uClicks, step: 1, ranges: [{ min: 15, max: 30 }, { min: 30, max: 60 }, { min: 60, max: 100 }, { min: 120, max: 150 }, { min: 150, max: 180 }] },
+                    "1z_jmax": { group: "🎯 1Zpresso", name: "1Z J-Max", unit: uClicks, step: 1, ranges: [{ min: 50, max: 90 }, { min: 90, max: 150 }, { min: 150, max: 200 }, { min: 200, max: 280 }, { min: 280, max: 320 }] },
+                    "1z_jultra": { group: "🎯 1Zpresso", name: "1Z J-Ultra", unit: uClicks, step: 1, ranges: [{ min: 60, max: 100 }, { min: 100, max: 160 }, { min: 160, max: 200 }, { min: 200, max: 270 }, { min: 270, max: 320 }] },
+                    "1z_kmax": { group: "🎯 1Zpresso", name: "1Z K-Pro/Plus/Max", unit: uExtDial, step: 0.1, ranges: [{ min: 2, max: 3 }, { min: 3, max: 4.5 }, { min: 4.5, max: 6.0 }, { min: 6.0, max: 8.5 }, { min: 8.5, max: 10 }] },
+                    "1z_kultra": { group: "🎯 1Zpresso", name: "1Z K-Ultra", unit: uExtDial, step: 0.1, ranges: [{ min: 2, max: 3 }, { min: 3, max: 4.5 }, { min: 4.5, max: 6.5 }, { min: 6.5, max: 9.0 }, { min: 9.0, max: 10 }] },
+                    "1z_zp6": { group: "🎯 1Zpresso", name: "1Z ZP6 Special", unit: uExtDial, step: 0.1, ranges: [{ min: null, max: null }, { min: null, max: null }, { min: 3.0, max: 4.0 }, { min: 4.0, max: 6.0 }, { min: 6.0, max: 7.5 }] },
 
-    // ==========================================
-    // 首頁選擇視圖
-    // ==========================================
-    function HomeView({ setView, t }) {
-      return (
-        <div className="animate-in fade-in zoom-in-95 duration-300">
-          <div className="text-center mb-8">
-             <h2 className={`text-2xl md:text-3xl font-bold ${colors.textDark} mb-2`}>{t('home_title')}</h2>
-             <p className={`${colors.textMuted}`}>{t('home_subtitle')}</p>
-          </div>
+                    "other_c40": { group: manualGroup, name: "Comandante C40", unit: uClicks, step: 1, ranges: [{ min: 5, max: 9 }, { min: 9, max: 15 }, { min: 15, max: 22 }, { min: 22, max: 29 }, { min: 29, max: 40 }] },
+                    "other_k6": { group: manualGroup, name: "Kingrinder K6", unit: uClicks, step: 1, ranges: [{ min: 28, max: 40 }, { min: 40, max: 60 }, { min: 60, max: 90 }, { min: 90, max: 120 }, { min: 120, max: 150 }] },
+                    "other_kinum47": { group: manualGroup, name: "Kinu M47", unit: uRot, step: 0.1, ranges: [{ min: 0.5, max: 1.0 }, { min: 1.1, max: 2.3 }, { min: 2.3, max: 3.5 }, { min: 3.5, max: 5.5 }, { min: 5.5, max: 7.8 }] },
+                    "other_timemore_c2": { group: manualGroup, name: "Timemore C2/C3", unit: uClicks, step: 1, ranges: [{ min: 6, max: 10 }, { min: 10, max: 14 }, { min: 14, max: 17 }, { min: 17, max: 24 }, { min: 24, max: 29 }] },
+                    "other_millab_m01": { group: manualGroup, name: "Timemore Millab M01", unit: uDialClicks, step: 0.1, ranges: [{ min: 0.0, max: 0.5 }, { min: 0.5, max: 1.5 }, { min: 1.5, max: 4.3 }, { min: 4.3, max: 7.6 }, { min: 7.6, max: 10.0 }] },
+                    "other_cocinare_b38": { group: manualGroup, name: "Cocinare B38 Ultra", unit: uDial80, step: 1, ranges: [{ min: 0, max: 14 }, { min: 14, max: 29 }, { min: 29, max: 64 }, { min: 64, max: 79 }, { min: 79, max: 80 }] }
+                };
 
-          <div className="grid md:grid-cols-2 gap-5">
-            <button 
-              onClick={() => setView('brew')}
-              className={`${colors.card} border-2 ${colors.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}
-            >
-              {/* 莫蘭迪黃點綴 */}
-              <div className={`w-14 h-14 rounded-full ${colors.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}>
-                <Thermometer size={28} />
-              </div>
-              <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_brew_title')}</h3>
-              <p className={`text-sm ${colors.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p>
-            </button>
+                return { DRIPPER_CATEGORIES, RECIPE_DATABASE, GRINDER_DATABASE };
+            }, [lang]);
+        }
 
-            <button 
-              onClick={() => setView('grind')}
-              className={`${colors.card} border-2 ${colors.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}
-            >
-              {/* 莫蘭迪藍點綴 */}
-              <div className={`w-14 h-14 rounded-full ${colors.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}>
-                <Wrench size={28} />
-              </div>
-              <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_grind_title')}</h3>
-              <p className={`text-sm ${colors.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p>
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-    // ==========================================
-    // 工具 1: 沖煮參數查詢 (BrewTool)
-    // ==========================================
-    function BrewTool({ lang, t }) {
-      const { DRIPPER_CATEGORIES, RECIPE_DATABASE } = useDatabases(lang);
-      
-      const [selectedDripperId, setSelectedDripperId] = useState('');
-      const [selectedRecipeId, setSelectedRecipeId] = useState(null);
-      const [customWeight, setCustomWeight] = useState(15); 
-      const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-
-      const handleDripperChange = (id) => {
-        setSelectedDripperId(id);
-        setIsSelectorOpen(false);
-        setSelectedRecipeId(null);
-      };
-
-      const handleSelectRecipe = (recipe) => {
-        setSelectedRecipeId(recipe.id);
-        setCustomWeight(recipe.baseCoffee);
-        setIsSelectorOpen(false); 
-      };
-
-      const filteredRecipes = selectedDripperId ? RECIPE_DATABASE.filter(r => r.dripper === selectedDripperId) : [];
-      const selectedRecipe = RECIPE_DATABASE.find(r => r.id === selectedRecipeId);
-
-      return (
-        <div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300">
-          <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-4`}>
-            <label className={`flex items-center gap-2 text-sm font-bold ${colors.textDark} mb-3`}>
-              <Filter size={16} className={colors.primaryText} /> {t('select_dripper')}
-            </label>
-            <div className="relative">
-              <select 
-                value={selectedDripperId}
-                onChange={(e) => handleDripperChange(e.target.value)}
-                className={`w-full bg-[#F9F8F6] border ${selectedDripperId === '' ? 'text-gray-400' : 'text-gray-800'} ${colors.border} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7E8D85] appearance-none`}
-              >
-                <option value="" disabled>{t('select_dripper_placeholder')}</option>
-                {Object.entries(DRIPPER_CATEGORIES).map(([category, drippers]) => (
-                  <optgroup key={category} label={category} className="text-gray-500 font-bold">
-                    {drippers.map(d => (
-                      <option key={d.id} value={d.id} className="text-gray-800 font-medium">{d.name}</option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                 <ChevronDown size={20} />
-              </div>
-            </div>
-          </div>
-
-          {!selectedDripperId ? (
-            <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-12 text-center animate-in fade-in duration-300`}>
-               <div className={`w-16 h-16 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-4 ${colors.secondaryText}`}>
-                  <Filter size={32} />
-               </div>
-               <h3 className={`text-lg font-bold ${colors.textDark} mb-1`}>{t('no_dripper_title')}</h3>
-               <p className={`text-sm ${colors.textMuted}`}>{t('no_dripper_desc')}</p>
-            </div>
-          ) : filteredRecipes.length > 0 ? (
-            <div className="space-y-4 animate-in fade-in duration-300">
-              <div className="relative z-20">
-                <button 
-                  onClick={() => setIsSelectorOpen(!isSelectorOpen)}
-                  className={`w-full text-left bg-white border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : colors.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between`}
-                >
-                  {selectedRecipe ? (
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? colors.icedTag : colors.hotTag}`}>
-                        {selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}
-                      </div>
-                      <div>
-                        <div className="text-[11px] font-bold text-gray-400 mb-0.5">{t('current_recipe')}</div>
-                        <div className={`font-bold text-lg ${colors.textDark}`}>{selectedRecipe.name}</div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="font-bold text-gray-400 text-lg">{t('select_recipe')}</div>
-                  )}
-                  <div className={`p-2 rounded-full ${colors.bg} text-gray-500 transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}>
-                    <ChevronDown size={20} />
-                  </div>
-                </button>
-
-                {isSelectorOpen && (
-                  <div className={`absolute top-full left-0 right-0 mt-2 bg-white border ${colors.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto`}>
-                    <div className={`p-2 bg-[#F9F8F6] border-b border-[#E2DED3]`}>
-                      <p className={`text-xs font-bold ${colors.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p>
-                    </div>
-                    {filteredRecipes.map(recipe => (
-                      <button
-                        key={recipe.id}
-                        onClick={() => handleSelectRecipe(recipe)}
-                        className={`w-full text-left p-4 border-b last:border-0 ${colors.border} hover:bg-[#F9F8F6] transition-colors flex items-center justify-between
-                          ${selectedRecipe?.id === recipe.id ? colors.bg : 'bg-white'}
-                        `}
-                      >
-                         <div className="flex items-center gap-3">
-                            {recipe.drinkType === 'iced' ? <Snowflake size={18} className={colors.icedIcon} /> : <Flame size={18} className={colors.hotIcon} />}
-                            <div>
-                              <div className={`font-bold ${colors.textDark}`}>{recipe.name}</div>
-                              {recipe.author && <div className={`text-xs ${colors.textMuted} mt-0.5`}>by {recipe.author}</div>}
-                            </div>
-                         </div>
-                         {selectedRecipe?.id === recipe.id && (
-                           <CheckCircle2 size={20} className={colors.primaryText} />
-                         )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {selectedRecipe ? (
-                <div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
-                  <BrewRecipeDetail recipe={selectedRecipe} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} />
-                </div>
-              ) : (
-                <div className={`text-center py-10 animate-in fade-in duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
-                  <div className={`w-12 h-12 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-3 ${colors.secondaryText}`}>
-                    <Coffee size={24} />
-                  </div>
-                  <p className={`text-sm font-bold ${colors.textMuted}`}>{t('select_recipe_prompt')}</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-12 text-center animate-in fade-in duration-300`}>
-               <div className={`w-16 h-16 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-4 ${colors.secondaryText}`}>
-                  <Coffee size={32} />
-               </div>
-               <h3 className={`text-lg font-bold ${colors.textDark} mb-1`}>{t('no_recipe_title')}</h3>
-               <p className={`text-sm ${colors.textMuted}`}>{t('no_recipe_desc')}</p>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    function BrewRecipeDetail({ recipe, customWeight, setCustomWeight, t }) {
-      const ratio = (customWeight / recipe.baseCoffee) || 1;
-      const isIced = recipe.drinkType === 'iced';
-      const maxWater = Math.max(...recipe.steps.map(s => s.water || 0));
-      const baseRatio = (maxWater / recipe.baseCoffee).toFixed(1).replace('.0', '');
-
-      const renderDynamicText = (textObj) => typeof textObj === 'function' ? textObj(ratio) : textObj;
-
-      return (
-        <div className="space-y-4">
-          <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
-            <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? colors.blue : colors.secondary}`}></div>
-            <p className={`text-sm font-bold ${colors.textDark} mb-5 flex items-center gap-2`}>
-               {t('auto_calc_title')} <Droplets size={18} className={isIced ? colors.blueText : colors.secondaryText}/>
-            </p>
-            <div className="flex items-center gap-6">
-              <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${colors.border} text-gray-500 hover:bg-[#F4F1EA] active:bg-[#E2DED3] text-2xl font-medium transition-colors`}>-</button>
-              <div className="relative flex items-baseline">
-                <input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${colors.textDark} bg-transparent focus:outline-none`} />
-                <span className={`text-xl font-bold ${colors.textMuted} ml-1`}>g</span>
-              </div>
-              <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${colors.border} text-gray-500 hover:bg-[#F4F1EA] active:bg-[#E2DED3] text-2xl font-medium transition-colors`}>+</button>
-            </div>
-          </div>
-
-          <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} overflow-hidden`}>
-            {recipe.description && (
-               <div className={`p-5 text-[13px] ${colors.textDark} leading-relaxed bg-[#F9F8F6] border-b ${colors.border} whitespace-pre-wrap`}>
-                  {renderDynamicText(recipe.description)}
-               </div>
-            )}
-            <div className="p-4 grid grid-cols-3 gap-2 sm:gap-3 bg-white">
-              <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
-                 <div className={`p-1.5 rounded-full bg-white ${colors.redText} shadow-sm mb-1`}><Thermometer size={16} /></div>
-                 <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('suggest_temp')}</p>
-                 <p className={`font-bold text-base ${colors.textDark}`}>{recipe.temperature}°C</p>
-              </div>
-              <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
-                 <div className={`p-1.5 rounded-full bg-white ${colors.yellowText} shadow-sm mb-1`}><Scale size={16} /></div>
-                 <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('suggest_weight')}</p>
-                 <p className={`font-bold text-base ${colors.textDark}`}>{recipe.baseCoffee}g</p>
-              </div>
-               <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
-                 <div className={`p-1.5 rounded-full bg-white ${colors.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div>
-                 <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('base_ratio')}</p>
-                 <p className={`font-bold text-base ${colors.textDark}`}>1 : {baseRatio}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-5 pb-6`}>
-            <h3 className={`text-lg font-bold ${colors.textDark} mb-6 flex items-center gap-2 pb-3 border-b border-[#F4F1EA]`}>
-               <Clock size={20} className={colors.primaryText}/> {t('brew_steps')}
-               {ratio !== 1 && (
-                 <span className={`ml-auto text-xs font-bold text-white ${colors.secondary} px-2 py-1 rounded-md`}>
-                   {t('converted_ratio')} {(ratio * 100).toFixed(0)}%
-                 </span>
-               )}
-            </h3>
+        // ==========================================
+        // 4. 主應用程式 (App)
+        // ==========================================
+        function App() {
+            const [view, setView] = useState('home'); // 'home', 'brew', 'grind'
+            const [lang, setLang] = useState('zh');
             
-            <div className="relative border-l-2 border-[#E2DED3] ml-3 space-y-8 pb-2">
-              {recipe.steps.map((step, index) => {
-                 const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
-                 const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; 
+            const t = (key) => i18n[lang][key] || key;
 
-                 return (
-                  <div key={step.id || index} className="relative pl-6">
-                    <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white ${step.water ? (isIced ? colors.blue : colors.primary) : colors.secondary}`}></div>
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1 pr-3">
-                        <div className="flex items-center flex-wrap gap-2 mb-1.5">
-                          <span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${colors.textDark}`}>
-                            {step.time}
-                          </span>
-                          {step.action && (
-                            <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? colors.icedTag : colors.hotTag} font-bold whitespace-nowrap`}>
-                              {step.action}
-                            </span>
-                          )}
-                        </div>
-                        <p className={`text-sm ${colors.textDark} leading-relaxed`}>{renderDynamicText(step.note)}</p>
-                      </div>
-                      {scaledWater !== null && (
-                        <div className="text-right shrink-0 bg-[#F9F8F6] px-4 py-2 rounded-xl border border-[#E2DED3] min-w-[70px]">
-                          <div className={`text-2xl font-black ${isIced ? colors.blueText : colors.primaryText} leading-none`}>
-                            {scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span>
-                          </div>
-                          {ratio !== 1 && (
-                            <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>
-                              ({t('original_water')} {step.water}g)
+            return (
+                <div className={`min-h-screen ${colors.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white`}>
+                    <div className={`${colors.primary} text-white shadow-md sticky top-0 z-50`}>
+                        <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                {view !== 'home' && (
+                                    <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors">
+                                        <ArrowLeft size={20} />
+                                    </button>
+                                )}
+                                <Coffee size={24} strokeWidth={2.5} />
+                                <h1 className="text-xl font-bold tracking-widest hidden sm:block">
+                                    {view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : t('tool_grind_title'))}
+                                </h1>
                             </div>
-                          )}
+                            
+                            <div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm">
+                                <button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button>
+                                <button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button>
+                                <button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button>
+                            </div>
                         </div>
-                      )}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      );
-    }
 
-    // ==========================================
-    // 工具 2: 磨豆機刻度轉換 (GrindTool)
-    // ==========================================
-    function GrindTool({ lang, t }) {
-      const { GRINDER_DATABASE } = useDatabases(lang);
-      
-      const [grinderA, setGrinderA] = useState('');
-      const [grinderB, setGrinderB] = useState('');
-      const [valA, setValA] = useState('');
-
-      const groups = useMemo(() => {
-        let grps = {};
-        Object.entries(GRINDER_DATABASE).forEach(([key, g]) => {
-          if (!grps[g.group]) grps[g.group] = [];
-          grps[g.group].push({ key, name: g.name });
-        });
-        return grps;
-      }, [GRINDER_DATABASE]);
-
-      const handleSwap = () => {
-        const temp = grinderA;
-        setGrinderA(grinderB);
-        setGrinderB(temp);
-        if (result && result.valB && result.valB !== '-') {
-          setValA(result.valB.toString());
-        }
-      };
-
-      const result = useMemo(() => {
-        const gA = GRINDER_DATABASE[grinderA];
-        const gB = GRINDER_DATABASE[grinderB];
-        const parsedA = parseFloat(valA);
-
-        if (!gA || !gB || isNaN(parsedA)) return null;
-
-        const rFirst = gA.ranges.find(r => r.min !== null);
-        const rLast = [...gA.ranges].reverse().find(r => r.max !== null);
-
-        if (parsedA < rFirst.min) return { error: `${t('err_low')} ${rFirst.min})`, catIdx: -1 };
-        if (parsedA > rLast.max) return { error: `${t('err_high')} ${rLast.max})`, catIdx: -1 };
-
-        let catIdx = -1;
-        let ratio = 0;
-        for (let i=0; i<gA.ranges.length; i++) {
-          let r = gA.ranges[i];
-          if (r.min !== null && r.max !== null && parsedA >= r.min && parsedA <= r.max) {
-            catIdx = i;
-            ratio = (parsedA - r.min) / (r.max - r.min);
-            break;
-          }
-        }
-
-        if (catIdx === -1) return { error: t('err_match'), catIdx: -1 };
-
-        const rB = gB.ranges[catIdx];
-        if (rB.min === null || rB.max === null) {
-          return { error: `${t('err_notsupport')} ${t('grind_cats_inline')[catIdx]}`, catIdx };
-        }
-
-        let valB = rB.min + ratio * (rB.max - rB.min);
-        if (gB.step === 1) {
-          valB = Math.round(valB);
-        } else {
-          let inv = 1.0 / gB.step;
-          valB = Math.round(valB * inv) / inv;
-          valB = parseFloat(valB.toFixed(2));
-        }
-
-        return { valB, catIdx, catName: t('grind_cats_inline')[catIdx] };
-      }, [grinderA, grinderB, valA, t, GRINDER_DATABASE]);
-
-      const selectOptions = (
-        <>
-          <option value="" disabled>{t('select_dripper_placeholder')}</option>
-          {Object.entries(groups).map(([gName, items]) => (
-            <optgroup key={gName} label={gName} className="text-gray-500 font-bold">
-              {items.map(item => <option key={item.key} value={item.key} className="text-gray-800 font-medium">{item.name}</option>)}
-            </optgroup>
-          ))}
-        </>
-      );
-
-      return (
-        <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
-          <div className="flex flex-col md:flex-row items-center gap-4 relative">
-            <div className={`flex-1 w-full ${colors.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm bg-[#7A93A2]/5`}>
-              <label className={`block text-sm font-bold ${colors.blueText} mb-2`}>{t('from_grinder')}</label>
-              <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 bg-white mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold`}>
-                {selectOptions}
-              </select>
-
-              <label className={`block text-sm font-bold ${colors.blueText} mb-2`}>{t('current_grind')}</label>
-              <input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 bg-white outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
-              <div className={`text-center text-xs font-bold text-[#7A93A2]/80 mt-2 min-h-[32px] flex items-center justify-center`}>
-                {grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}
-              </div>
-            </div>
-
-            <button onClick={handleSwap} className={`p-3 bg-white border-2 ${colors.border} hover:bg-[#F4F1EA] ${colors.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group`}>
-              <ArrowRightLeft size={24} className="group-hover:rotate-180 transition-transform duration-300" />
-            </button>
-
-            <div className={`flex-1 w-full ${colors.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm bg-[#B3A394]/5`}>
-              <label className={`block text-sm font-bold ${colors.secondaryText} mb-2`}>{t('to_grinder')}</label>
-              <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 bg-white mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold`}>
-                {selectOptions}
-              </select>
-
-              <label className={`block text-sm font-bold ${colors.secondaryText} mb-2`}>{t('target_grind')}</label>
-              <div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : colors.secondaryText} bg-white rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>
-                {result ? (result.error ? 'N/A' : result.valB) : '-'}
-              </div>
-              <div className={`text-center text-xs font-bold text-[#B3A394]/80 mt-2 min-h-[32px] flex items-center justify-center`}>
-                {grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}
-              </div>
-            </div>
-          </div>
-
-          {result && (
-            <div className={`${colors.card} p-6 rounded-2xl shadow-sm border ${colors.border} animate-in fade-in duration-300`}>
-              <div className={`text-center text-sm font-bold p-4 bg-[#F9F8F6] rounded-xl border ${colors.border} mb-6 ${result.error ? 'text-red-500' : colors.textDark}`}>
-                {result.error ? result.error : (
-                  <span>{t('grind_result_msg')} <strong className={colors.primaryText}>{result.catName}</strong>{t('mapped_linear')}</span>
-                )}
-              </div>
-
-              <div className="px-2">
-                <div className={`text-xs font-bold ${colors.textMuted} mb-3 flex items-center gap-2`}>
-                  <Settings2 size={16} /> {t('grind_visual')}
+                    <main className="max-w-3xl mx-auto px-4 py-8">
+                        {view === 'home' && <HomeView setView={setView} t={t} />}
+                        {view === 'brew' && <BrewTool lang={lang} t={t} />}
+                        {view === 'grind' && <GrindTool lang={lang} t={t} />}
+                    </main>
                 </div>
-                <div className={`flex h-4 rounded-full overflow-hidden ${colors.bg} shadow-inner border ${colors.border}`}>
-                  {t('grind_cats').map((cat, idx) => (
-                    <div key={idx} className={`w-1/5 border-r border-white/30 transition-colors duration-300 ${result.catIdx === idx ? colors.bar[idx] : ''}`}></div>
-                  ))}
-                </div>
-                <div className={`flex text-[10px] sm:text-xs ${colors.textMuted} mt-2 font-bold`}>
-                  {t('grind_cats').map((cat, idx) => (
-                    <span key={idx} className={`w-1/5 text-center whitespace-pre-wrap ${result.catIdx === idx ? colors.textDark : ''}`}>{cat}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
+            );
+        }
 
-          <div className={`p-5 ${colors.bg} rounded-2xl border ${colors.border} text-[12px] sm:text-[13px] ${colors.textMuted} leading-relaxed`}>
-            <strong className={`${colors.textDark} block mb-2`}>{t('hint_title')}</strong>
-            <ul className="list-disc pl-5 space-y-1.5">
-              <li>{t('hint_1')}</li>
-              <li>{t('hint_2')}</li>
-              <li>{t('hint_3')}</li>
-              <li>{t('hint_4')}</li>
-            </ul>
-          </div>
-        </div>
-      );
-    }
+        // ==========================================
+        // 5. 首頁選擇視圖
+        // ==========================================
+        function HomeView({ setView, t }) {
+            return (
+                <div className="animate-in fade-in zoom-in-95 duration-300">
+                    <div className="text-center mb-8">
+                        <h2 className={`text-2xl md:text-3xl font-bold ${colors.textDark} mb-2`}>{t('home_title')}</h2>
+                        <p className={`${colors.textMuted}`}>{t('home_subtitle')}</p>
+                    </div>
 
-    // 啟動 App 渲染
-    const root = createRoot(document.getElementById('root'));
-    root.render(<App />);
-  </script>
+                    <div className="grid md:grid-cols-2 gap-5">
+                        <button onClick={() => setView('brew')} className={`${colors.card} border-2 ${colors.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}>
+                            <div className={`w-14 h-14 rounded-full ${colors.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div>
+                            <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_brew_title')}</h3>
+                            <p className={`text-sm ${colors.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p>
+                        </button>
+                        <button onClick={() => setView('grind')} className={`${colors.card} border-2 ${colors.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}>
+                            <div className={`w-14 h-14 rounded-full ${colors.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Wrench size={28} /></div>
+                            <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_grind_title')}</h3>
+                            <p className={`text-sm ${colors.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p>
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        // ==========================================
+        // 工具 1: 沖煮參數查詢
+        // ==========================================
+        function BrewTool({ lang, t }) {
+            const { DRIPPER_CATEGORIES, RECIPE_DATABASE } = useDatabases(lang);
+            const [selectedDripperId, setSelectedDripperId] = useState('');
+            const [selectedRecipeId, setSelectedRecipeId] = useState(null);
+            const [customWeight, setCustomWeight] = useState(15); 
+            const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+
+            const handleDripperChange = (id) => { setSelectedDripperId(id); setIsSelectorOpen(false); setSelectedRecipeId(null); };
+            const handleSelectRecipe = (recipe) => { setSelectedRecipeId(recipe.id); setCustomWeight(recipe.baseCoffee); setIsSelectorOpen(false); };
+
+            const filteredRecipes = selectedDripperId ? RECIPE_DATABASE.filter(r => r.dripper === selectedDripperId) : [];
+            const selectedRecipe = RECIPE_DATABASE.find(r => r.id === selectedRecipeId);
+
+            return (
+                <div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300">
+                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-4`}>
+                        <label className={`flex items-center gap-2 text-sm font-bold ${colors.textDark} mb-3`}><Filter size={16} className={colors.primaryText} /> {t('select_dripper')}</label>
+                        <div className="relative">
+                            <select value={selectedDripperId} onChange={(e) => handleDripperChange(e.target.value)} className={`w-full bg-[#F9F8F6] border ${selectedDripperId === '' ? 'text-gray-400' : 'text-gray-800'} ${colors.border} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7E8D85] appearance-none`}>
+                                <option value="" disabled>{t('select_dripper_placeholder')}</option>
+                                {Object.entries(DRIPPER_CATEGORIES).map(([category, drippers]) => (
+                                    <optgroup key={category} label={category} className="text-gray-500 font-bold">
+                                        {drippers.map(d => <option key={d.id} value={d.id} className="text-gray-800 font-medium">{d.name}</option>)}
+                                    </optgroup>
+                                ))}
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><ChevronDown size={20} /></div>
+                        </div>
+                    </div>
+
+                    {!selectedDripperId ? (
+                        <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-12 text-center animate-in fade-in duration-300`}>
+                            <div className={`w-16 h-16 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-4 ${colors.secondaryText}`}><Filter size={32} /></div>
+                            <h3 className={`text-lg font-bold ${colors.textDark} mb-1`}>{t('no_dripper_title')}</h3>
+                            <p className={`text-sm ${colors.textMuted}`}>{t('no_dripper_desc')}</p>
+                        </div>
+                    ) : filteredRecipes.length > 0 ? (
+                        <div className="space-y-4 animate-in fade-in duration-300">
+                            <div className="relative z-20">
+                                <button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left bg-white border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : colors.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between`}>
+                                    {selectedRecipe ? (
+                                        <div className="flex items-center gap-3">
+                                            <div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? colors.icedTag : colors.hotTag}`}>{selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}</div>
+                                            <div>
+                                                <div className="text-[11px] font-bold text-gray-400 mb-0.5">{t('current_recipe')}</div>
+                                                <div className={`font-bold text-lg ${colors.textDark}`}>{selectedRecipe.name}</div>
+                                            </div>
+                                        </div>
+                                    ) : (<div className="font-bold text-gray-400 text-lg">{t('select_recipe')}</div>)}
+                                    <div className={`p-2 rounded-full ${colors.bg} text-gray-500 transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}><ChevronDown size={20} /></div>
+                                </button>
+                                {isSelectorOpen && (
+                                    <div className={`absolute top-full left-0 right-0 mt-2 bg-white border ${colors.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto`}>
+                                        <div className={`p-2 bg-[#F9F8F6] border-b border-[#E2DED3]`}><p className={`text-xs font-bold ${colors.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
+                                        {filteredRecipes.map(recipe => (
+                                            <button key={recipe.id} onClick={() => handleSelectRecipe(recipe)} className={`w-full text-left p-4 border-b last:border-0 ${colors.border} hover:bg-[#F9F8F6] transition-colors flex items-center justify-between ${selectedRecipe?.id === recipe.id ? colors.bg : 'bg-white'}`}>
+                                                <div className="flex items-center gap-3">
+                                                    {recipe.drinkType === 'iced' ? <Snowflake size={18} className={colors.icedIcon} /> : <Flame size={18} className={colors.hotIcon} />}
+                                                    <div>
+                                                        <div className={`font-bold ${colors.textDark}`}>{recipe.name}</div>
+                                                        {recipe.author && <div className={`text-xs ${colors.textMuted} mt-0.5`}>by {recipe.author}</div>}
+                                                    </div>
+                                                </div>
+                                                {selectedRecipe?.id === recipe.id && <CheckCircle2 size={20} className={colors.primaryText} />}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            {selectedRecipe ? (
+                                <div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+                                    <BrewRecipeDetail recipe={selectedRecipe} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} />
+                                </div>
+                            ) : (
+                                <div className={`text-center py-10 animate-in fade-in duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+                                    <div className={`w-12 h-12 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-3 ${colors.secondaryText}`}><Coffee size={24} /></div>
+                                    <p className={`text-sm font-bold ${colors.textMuted}`}>{t('select_recipe_prompt')}</p>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-12 text-center animate-in fade-in duration-300`}>
+                            <div className={`w-16 h-16 mx-auto ${colors.bg} rounded-full flex items-center justify-center mb-4 ${colors.secondaryText}`}><Coffee size={32} /></div>
+                            <h3 className={`text-lg font-bold ${colors.textDark} mb-1`}>{t('no_recipe_title')}</h3>
+                            <p className={`text-sm ${colors.textMuted}`}>{t('no_recipe_desc')}</p>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        function BrewRecipeDetail({ recipe, customWeight, setCustomWeight, t }) {
+            const ratio = (customWeight / recipe.baseCoffee) || 1;
+            const isIced = recipe.drinkType === 'iced';
+            const maxWater = Math.max(...recipe.steps.map(s => s.water || 0));
+            const baseRatio = (maxWater / recipe.baseCoffee).toFixed(1).replace('.0', '');
+            const renderDynamicText = (textObj) => typeof textObj === 'function' ? textObj(ratio) : textObj;
+
+            return (
+                <div className="space-y-4">
+                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
+                        <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? colors.blue : colors.secondary}`}></div>
+                        <p className={`text-sm font-bold ${colors.textDark} mb-5 flex items-center gap-2`}>
+                            {t('auto_calc_title')} <Droplets size={18} className={isIced ? colors.blueText : colors.secondaryText}/>
+                        </p>
+                        <div className="flex items-center gap-6">
+                            <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${colors.border} text-gray-500 hover:bg-[#F4F1EA] active:bg-[#E2DED3] text-2xl font-medium transition-colors`}>-</button>
+                            <div className="relative flex items-baseline">
+                                <input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${colors.textDark} bg-transparent focus:outline-none`} />
+                                <span className={`text-xl font-bold ${colors.textMuted} ml-1`}>g</span>
+                            </div>
+                            <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${colors.border} text-gray-500 hover:bg-[#F4F1EA] active:bg-[#E2DED3] text-2xl font-medium transition-colors`}>+</button>
+                        </div>
+                    </div>
+                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} overflow-hidden`}>
+                        {recipe.description && (
+                            <div className={`p-5 text-[13px] ${colors.textDark} leading-relaxed bg-[#F9F8F6] border-b ${colors.border} whitespace-pre-wrap`}>{renderDynamicText(recipe.description)}</div>
+                        )}
+                        <div className="p-4 grid grid-cols-3 gap-2 sm:gap-3 bg-white">
+                            <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
+                                <div className={`p-1.5 rounded-full bg-white ${colors.redText} shadow-sm mb-1`}><Thermometer size={16} /></div>
+                                <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('suggest_temp')}</p>
+                                <p className={`font-bold text-base ${colors.textDark}`}>{recipe.temperature}°C</p>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
+                                <div className={`p-1.5 rounded-full bg-white ${colors.yellowText} shadow-sm mb-1`}><Scale size={16} /></div>
+                                <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('suggest_weight')}</p>
+                                <p className={`font-bold text-base ${colors.textDark}`}>{recipe.baseCoffee}g</p>
+                            </div>
+                            <div className={`flex flex-col items-center justify-center gap-1.5 ${colors.bg} p-3 rounded-xl border border-transparent`}>
+                                <div className={`p-1.5 rounded-full bg-white ${colors.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div>
+                                <p className={`text-[10px] uppercase font-bold tracking-wider ${colors.textMuted}`}>{t('base_ratio')}</p>
+                                <p className={`font-bold text-base ${colors.textDark}`}>1 : {baseRatio}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={`${colors.card} rounded-2xl shadow-sm border ${colors.border} p-5 pb-6`}>
+                        <h3 className={`text-lg font-bold ${colors.textDark} mb-6 flex items-center gap-2 pb-3 border-b border-[#F4F1EA]`}>
+                            <Clock size={20} className={colors.primaryText}/> {t('brew_steps')}
+                            {ratio !== 1 && <span className={`ml-auto text-xs font-bold text-white ${colors.secondary} px-2 py-1 rounded-md`}>{t('converted_ratio')} {(ratio * 100).toFixed(0)}%</span>}
+                        </h3>
+                        <div className="relative border-l-2 border-[#E2DED3] ml-3 space-y-8 pb-2">
+                            {recipe.steps.map((step, index) => {
+                                const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
+                                const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; 
+                                return (
+                                    <div key={step.id || index} className="relative pl-6">
+                                        <div className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-white ${step.water ? (isIced ? colors.blue : colors.primary) : colors.secondary}`}></div>
+                                        <div className="flex justify-between items-start">
+                                            <div className="flex-1 pr-3">
+                                                <div className="flex items-center flex-wrap gap-2 mb-1.5">
+                                                    <span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${colors.textDark}`}>{step.time}</span>
+                                                    {step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? colors.icedTag : colors.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}
+                                                </div>
+                                                <p className={`text-sm ${colors.textDark} leading-relaxed`}>{renderDynamicText(step.note)}</p>
+                                            </div>
+                                            {scaledWater !== null && (
+                                                <div className="text-right shrink-0 bg-[#F9F8F6] px-4 py-2 rounded-xl border border-[#E2DED3] min-w-[70px]">
+                                                    <div className={`text-2xl font-black ${isIced ? colors.blueText : colors.primaryText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>
+                                                    {ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // ==========================================
+        // 工具 2: 磨豆機刻度轉換
+        // ==========================================
+        function GrindTool({ lang, t }) {
+            const { GRINDER_DATABASE } = useDatabases(lang);
+            const [grinderA, setGrinderA] = useState('');
+            const [grinderB, setGrinderB] = useState('');
+            const [valA, setValA] = useState('');
+
+            const groups = useMemo(() => {
+                let grps = {};
+                Object.entries(GRINDER_DATABASE).forEach(([key, g]) => {
+                    if (!grps[g.group]) grps[g.group] = [];
+                    grps[g.group].push({ key, name: g.name });
+                });
+                return grps;
+            }, [GRINDER_DATABASE]);
+
+            const handleSwap = () => {
+                const temp = grinderA; setGrinderA(grinderB); setGrinderB(temp);
+                if (result && result.valB && result.valB !== '-') setValA(result.valB.toString());
+            };
+
+            const result = useMemo(() => {
+                const gA = GRINDER_DATABASE[grinderA]; const gB = GRINDER_DATABASE[grinderB]; const parsedA = parseFloat(valA);
+                if (!gA || !gB || isNaN(parsedA)) return null;
+
+                const rFirst = gA.ranges.find(r => r.min !== null);
+                const rLast = [...gA.ranges].reverse().find(r => r.max !== null);
+
+                if (parsedA < rFirst.min) return { error: `${t('err_low')} ${rFirst.min})`, catIdx: -1 };
+                if (parsedA > rLast.max) return { error: `${t('err_high')} ${rLast.max})`, catIdx: -1 };
+
+                let catIdx = -1; let ratio = 0;
+                for (let i=0; i<gA.ranges.length; i++) {
+                    let r = gA.ranges[i];
+                    if (r.min !== null && r.max !== null && parsedA >= r.min && parsedA <= r.max) { catIdx = i; ratio = (parsedA - r.min) / (r.max - r.min); break; }
+                }
+
+                if (catIdx === -1) return { error: t('err_match'), catIdx: -1 };
+
+                const rB = gB.ranges[catIdx];
+                if (rB.min === null || rB.max === null) return { error: `${t('err_notsupport')} ${t('grind_cats_inline')[catIdx]}`, catIdx };
+
+                let valB = rB.min + ratio * (rB.max - rB.min);
+                if (gB.step === 1) { valB = Math.round(valB); } 
+                else { let inv = 1.0 / gB.step; valB = Math.round(valB * inv) / inv; valB = parseFloat(valB.toFixed(2)); }
+
+                return { valB, catIdx, catName: t('grind_cats_inline')[catIdx] };
+            }, [grinderA, grinderB, valA, t, GRINDER_DATABASE]);
+
+            const selectOptions = (
+                <React.Fragment>
+                    <option value="" disabled>{t('select_dripper_placeholder')}</option>
+                    {Object.entries(groups).map(([gName, items]) => (
+                        <optgroup key={gName} label={gName} className="text-gray-500 font-bold">
+                            {items.map(item => <option key={item.key} value={item.key} className="text-gray-800 font-medium">{item.name}</option>)}
+                        </optgroup>
+                    ))}
+                </React.Fragment>
+            );
+
+            return (
+                <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
+                    <div className="flex flex-col md:flex-row items-center gap-4 relative">
+                        <div className={`flex-1 w-full ${colors.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm bg-[#7A93A2]/5`}>
+                            <label className={`block text-sm font-bold ${colors.blueText} mb-2`}>{t('from_grinder')}</label>
+                            <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 bg-white mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold`}>{selectOptions}</select>
+                            <label className={`block text-sm font-bold ${colors.blueText} mb-2`}>{t('current_grind')}</label>
+                            <input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 bg-white outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
+                            <div className={`text-center text-xs font-bold text-[#7A93A2]/80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}</div>
+                        </div>
+
+                        <button onClick={handleSwap} className={`p-3 bg-white border-2 ${colors.border} hover:bg-[#F4F1EA] ${colors.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group`}>
+                            <ArrowRightLeft size={24} className="group-hover:rotate-180 transition-transform duration-300" />
+                        </button>
+
+                        <div className={`flex-1 w-full ${colors.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm bg-[#B3A394]/5`}>
+                            <label className={`block text-sm font-bold ${colors.secondaryText} mb-2`}>{t('to_grinder')}</label>
+                            <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 bg-white mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold`}>{selectOptions}</select>
+                            <label className={`block text-sm font-bold ${colors.secondaryText} mb-2`}>{t('target_grind')}</label>
+                            <div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : colors.secondaryText} bg-white rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>
+                                {result ? (result.error ? 'N/A' : result.valB) : '-'}
+                            </div>
+                            <div className={`text-center text-xs font-bold text-[#B3A394]/80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
+                        </div>
+                    </div>
+
+                    {result && (
+                        <div className={`${colors.card} p-6 rounded-2xl shadow-sm border ${colors.border} animate-in fade-in duration-300`}>
+                            <div className={`text-center text-sm font-bold p-4 bg-[#F9F8F6] rounded-xl border ${colors.border} mb-6 ${result.error ? 'text-red-500' : colors.textDark}`}>
+                                {result.error ? result.error : (<span>{t('grind_result_msg')} <strong className={colors.primaryText}>{result.catName}</strong>{t('mapped_linear')}</span>)}
+                            </div>
+                            <div className="px-2">
+                                <div className={`text-xs font-bold ${colors.textMuted} mb-3 flex items-center gap-2`}><Settings2 size={16} /> {t('grind_visual')}</div>
+                                <div className={`flex h-4 rounded-full overflow-hidden ${colors.bg} shadow-inner border ${colors.border}`}>
+                                    {t('grind_cats').map((cat, idx) => (<div key={idx} className={`w-1/5 border-r border-white/30 transition-colors duration-300 ${result.catIdx === idx ? colors.bar[idx] : ''}`}></div>))}
+                                </div>
+                                <div className={`flex text-[10px] sm:text-xs ${colors.textMuted} mt-2 font-bold`}>
+                                    {t('grind_cats').map((cat, idx) => (<span key={idx} className={`w-1/5 text-center whitespace-pre-wrap ${result.catIdx === idx ? colors.textDark : ''}`}>{cat}</span>))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className={`p-5 ${colors.bg} rounded-2xl border ${colors.border} text-[12px] sm:text-[13px] ${colors.textMuted} leading-relaxed`}>
+                        <strong className={`${colors.textDark} block mb-2`}>{t('hint_title')}</strong>
+                        <ul className="list-disc pl-5 space-y-1.5">
+                            <li>{t('hint_1')}</li>
+                            <li>{t('hint_2')}</li>
+                            <li>{t('hint_3')}</li>
+                            <li>{t('hint_4')}</li>
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        // 初始化渲染
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
