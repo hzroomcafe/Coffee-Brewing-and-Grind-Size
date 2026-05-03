@@ -98,6 +98,7 @@
                 no_recipe_desc: '這個濾杯尚未建立參數資料庫', select_recipe_prompt: '👆 請從上方選擇沖煮手法',
                 auto_calc_title: '調整手邊粉重，自動換算水量', suggest_temp: '建議水溫', suggest_weight: '建議粉量',
                 base_ratio: '基準比例', brew_steps: '沖煮流程', converted_ratio: '已換算', original_water: '原',
+                select_grinder_placeholder: '請選擇磨豆機...',
                 from_grinder: '從此磨豆機 (A)', to_grinder: '轉換至磨豆機 (B)', current_grind: '目前刻度',
                 target_grind: '建議對應刻度', input_placeholder: '輸入數值', unit: '單位', grind_result_msg: '刻度約落在',
                 mapped_linear: '，已為您線性對應。', grind_visual: '沖煮粗細度落點',
@@ -108,7 +109,13 @@
                 hint_1: '圈數標示：遇圈數+小格（如 1 圈又 5 小格），請輸入小數點 1.5。',
                 hint_2: '數字標示：面板標示數字的機型，請直接輸入小數（如 6.5）。',
                 hint_3: '總格數標示：轉圈式的手搖磨豆機，請換算為 總格數 輸入。',
-                hint_4: '由於刀盤種類、磨損或歸零點設定不同，實際結果可能有微小偏差。'
+                hint_4: '由於刀盤種類、磨損或歸零點設定不同，實際結果可能有微小偏差。',
+                changelog_title: '版本更新紀錄',
+                changelog: [
+                    { version: 'v1.2.0', date: '2026.05', changes: ['整合「沖煮參數查詢」與「磨豆機刻度轉換」雙工具', '全面導入莫蘭迪色系質感 UI 與多國語系 (中/英/日) 切換', '新增 Tri-Up Flow、Orea V3 等濾杯參數', '優化冰咖啡「下壺/飲用杯」分離的冰塊計算邏輯'] },
+                    { version: 'v1.1.0', date: '2026.04', changes: ['新增「磨豆機刻度轉換」工具，支援 36 款常見設備', '新增粉量比例動態連動換算功能'] },
+                    { version: 'v1.0.0', date: '2026.04', changes: ['「村民咖啡沖煮參數查詢」1.0 正式上線'] }
+                ]
             },
             en: {
                 app_title: 'Villager Coffee Tools', home_title: 'Select Tool', home_subtitle: 'Choose a coffee utility to get started',
@@ -120,6 +127,7 @@
                 no_recipe_desc: 'No recipes registered for this dripper yet.', select_recipe_prompt: '👆 Select a brew recipe above',
                 auto_calc_title: 'Adjust coffee weight to auto-calculate', suggest_temp: 'Water Temp', suggest_weight: 'Coffee Wt.',
                 base_ratio: 'Base Ratio', brew_steps: 'Brew Steps', converted_ratio: 'Scaled', original_water: 'Orig.',
+                select_grinder_placeholder: 'Select a grinder...',
                 from_grinder: 'From Grinder (A)', to_grinder: 'To Grinder (B)', current_grind: 'Current Grind',
                 target_grind: 'Target Grind', input_placeholder: 'Input value', unit: 'Unit', grind_result_msg: 'The grind falls into',
                 mapped_linear: ', linearly mapped.', grind_visual: 'Grind Size Category',
@@ -130,7 +138,13 @@
                 hint_1: 'Rotations: For rotations + clicks (e.g. 1 rot. 5 clicks), input 1.5.',
                 hint_2: 'Dials: Input the exact decimal (e.g. 6.5).',
                 hint_3: 'Total Clicks: Use absolute total clicks for manual grinders.',
-                hint_4: 'Results may vary slightly due to burrs, wear, or zero-point calibration.'
+                hint_4: 'Results may vary slightly due to burrs, wear, or zero-point calibration.',
+                changelog_title: 'Release Notes',
+                changelog: [
+                    { version: 'v1.2.0', date: 'May 2026', changes: ['Integrated Brew Guide and Grind Converter into a single app.', 'Applied Morandi color theme and added multi-language support (ZH/EN/JA).', 'Added new drippers: Tri-Up Flow, Orea V3, etc.', 'Improved ice calculation logic for iced coffee recipes.'] },
+                    { version: 'v1.1.0', date: 'Apr 2026', changes: ['Added Grind Size Converter supporting 36 grinders.', 'Added dynamic water volume calculation based on coffee weight.'] },
+                    { version: 'v1.0.0', date: 'Apr 2026', changes: ['Initial release of Brew Recipe Guide v1.0.'] }
+                ]
             },
             ja: {
                 app_title: '村人コーヒーツール', home_title: 'ツール選択', home_subtitle: '使用するツールを選択してください',
@@ -142,6 +156,7 @@
                 no_recipe_desc: 'このドリッパーのレシピはまだありません', select_recipe_prompt: '👆 上からレシピを選択してください',
                 auto_calc_title: '粉量を調整して湯量を自動計算', suggest_temp: '推奨湯温', suggest_weight: '推奨粉量',
                 base_ratio: '基本比率', brew_steps: '抽出手順', converted_ratio: '換算済', original_water: '元',
+                select_grinder_placeholder: 'ミルを選択...',
                 from_grinder: '変換元ミル (A)', to_grinder: '変換先ミル (B)', current_grind: '現在の設定',
                 target_grind: '推奨設定値', input_placeholder: '数値を入力', unit: '単位', grind_result_msg: '挽き目の目安は',
                 mapped_linear: '。線形変換されました。', grind_visual: '挽き目カテゴリー',
@@ -152,7 +167,13 @@
                 hint_1: '回転数: 1回転5クリックの場合は「1.5」と入力。',
                 hint_2: 'ダイヤル: そのまま小数で入力（例: 6.5）。',
                 hint_3: '合計クリック: 手挽きミルの場合は「合計クリック数」を入力。',
-                hint_4: '刃の種類、摩耗、ゼロ点設定により微小な誤差が生じる場合があります。'
+                hint_4: '刃の種類、摩耗、ゼロ点設定により微小な誤差が生じる場合があります。',
+                changelog_title: 'リリースノート',
+                changelog: [
+                    { version: 'v1.2.0', date: '2026年5月', changes: ['「抽出レシピ」と「挽き目変換」ツールを統合。', 'モランディカラーの適用と多言語（中/英/日）対応を追加。', 'Tri-Up Flow、Orea V3などの新しいドリッパーを追加。', 'アイスコーヒーの氷量計算ロジックを改善。'] },
+                    { version: 'v1.1.0', date: '2026年4月', changes: ['36種類のミルに対応した「挽き目コンバーター」を追加。', '粉量に基づいた湯量の動的計算機能を追加。'] },
+                    { version: 'v1.0.0', date: '2026年4月', changes: ['「抽出レシピガイド 1.0」を初公開。'] }
+                ]
             }
         };
 
@@ -419,6 +440,8 @@
         // 5. 首頁選擇視圖
         // ==========================================
         function HomeView({ setView, t }) {
+            const changelog = t('changelog');
+
             return (
                 <div className="animate-in fade-in zoom-in-95 duration-300">
                     <div className="text-center mb-8">
@@ -426,7 +449,7 @@
                         <p className={`${colors.textMuted}`}>{t('home_subtitle')}</p>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-5">
+                    <div className="grid md:grid-cols-2 gap-5 mb-10">
                         <button onClick={() => setView('brew')} className={`${colors.card} border-2 ${colors.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}>
                             <div className={`w-14 h-14 rounded-full ${colors.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div>
                             <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_brew_title')}</h3>
@@ -437,6 +460,40 @@
                             <h3 className={`text-xl font-bold ${colors.textDark} mb-2`}>{t('tool_grind_title')}</h3>
                             <p className={`text-sm ${colors.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p>
                         </button>
+                    </div>
+
+                    {/* 版本更新紀錄 (Changelog Timeline) */}
+                    <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+                        <div className="flex items-center justify-center gap-3 mb-6">
+                            <div className="h-px bg-[#E2DED3] flex-1"></div>
+                            <h3 className={`flex items-center gap-2 text-lg font-bold ${colors.textDark} px-2`}>
+                                <Clock size={18} className={colors.primaryText} />
+                                {t('changelog_title')}
+                            </h3>
+                            <div className="h-px bg-[#E2DED3] flex-1"></div>
+                        </div>
+                        
+                        <div className={`${colors.card} p-6 sm:p-8 rounded-2xl shadow-sm border ${colors.border}`}>
+                            <div className="space-y-8">
+                                {Array.isArray(changelog) && changelog.map((log, idx) => (
+                                    <div key={idx} className="relative pl-6 sm:pl-8 border-l-2 border-[#E2DED3]">
+                                        {/* 時間軸節點 (最新版用主色，歷史版用淺色) */}
+                                        <div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 border-white ${idx === 0 ? colors.primary : colors.accent}`}></div>
+                                        
+                                        <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-3">
+                                            <span className={`text-lg font-black ${colors.textDark}`}>{log.version}</span>
+                                            <span className={`text-xs font-bold ${colors.textMuted}`}>{log.date}</span>
+                                        </div>
+                                        
+                                        <ul className={`list-disc pl-5 text-[13px] sm:text-sm ${colors.textDark} space-y-1.5 leading-relaxed`}>
+                                            {log.changes.map((change, i) => (
+                                                <li key={i}>{change}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -670,7 +727,7 @@
 
             const selectOptions = (
                 <React.Fragment>
-                    <option value="" disabled>{t('select_dripper_placeholder')}</option>
+                    <option value="" disabled>{t('select_grinder_placeholder')}</option>
                     {Object.entries(groups).map(([gName, items]) => (
                         <optgroup key={gName} label={gName} className="text-gray-500 font-bold">
                             {items.map(item => <option key={item.key} value={item.key} className="text-gray-800 font-medium">{item.name}</option>)}
