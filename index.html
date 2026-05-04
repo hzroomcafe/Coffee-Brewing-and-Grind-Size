@@ -44,6 +44,32 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        
+        /* 針對 range 滑桿客製化 */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #7E8D85;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #E2DED3;
+            border-radius: 2px;
+        }
+        .dark input[type=range]::-webkit-slider-runnable-track {
+            background: #3F454A;
+        }
     </style>
 </head>
 <body>
@@ -109,8 +135,6 @@
             infoBg: isDark ? 'bg-[#33383D]' : 'bg-[#F4F1EA]',
             iconBg: isDark ? 'bg-[#434A51]' : 'bg-white',
             timelineBg: isDark ? 'bg-[#2D3237]' : 'bg-[#F9F8F6]',
-            
-            // 高亮步驟專屬背景與邊框 (極致對比優化)
             activeHotBg: isDark ? 'bg-[#3A332A]' : 'bg-[#FFFCF5]',
             activeIcedBg: isDark ? 'bg-[#29363D]' : 'bg-[#F2F7FA]',
             activeHotBorder: isDark ? 'border-[#5C5346] border-l-[#C9B793]' : 'border-[#EAE1CF] border-l-[#C9B793]',
@@ -135,7 +159,7 @@
                 select_grinder_placeholder: '請選擇磨豆機...', timer_title: '沖煮計時器',
                 from_grinder: '從此磨豆機 (A)', to_grinder: '轉換至磨豆機 (B)', current_grind: '目前刻度',
                 target_grind: '建議對應刻度', input_placeholder: '輸入數值', unit: '單位', grind_result_msg: '刻度約落在',
-                mapped_linear: '，已為您線性對應。', grind_visual: '沖煮粗細度區間',
+                mapped_linear: '，已為您線性對應。', grind_visual: '沖煮粗細度落點',
                 grind_cats: ['土耳其\n(極細)', '義式濃縮\n(細)', '愛樂壓\n(中細)', '手沖\n(中等)', '法壓\n(粗)'],
                 grind_cats_inline: ['土耳其咖啡 (極細)', '義式濃縮 (細)', '摩卡壺/愛樂壓 (中細)', '手沖咖啡 (中等)', '法式濾壓/冷萃 (粗)'],
                 err_low: '數值過低 (常見下限為', err_high: '數值過高 (常見上限為', err_match: '無法匹配區間',
@@ -146,8 +170,8 @@
                 hint_4: '由於刀盤種類、磨損或歸零點設定不同，實際結果可能有微小偏差。',
                 changelog_title: '版本更新紀錄',
                 changelog: [
-                    { version: 'v1.4.0', date: '2026.05', changes: ['新增「科學精準版研磨顆粒模擬器」，具備 μm 數據與實體比例尺。'] },
-                    { version: 'v1.3.0', date: '2026.05', changes: ['新增「深色模式」日夜主題無縫切換', '新增「智慧沖煮計時器」，自動高亮引導當前步驟', '磨豆機轉換器加入單機「粗細區間字典」顯示', '全面優化跨裝置響應式排版'] },
+                    { version: 'v1.4.0', date: '2026.05', changes: ['新增「科學精準版研磨顆粒模擬器」，具備實體比例校準器與真實 μm 數據計算。'] },
+                    { version: 'v1.3.0', date: '2026.05', changes: ['新增「深色模式」日夜主題無縫切換', '新增「智慧沖煮計時器」，自動高亮引導當前步驟', '全面優化跨裝置響應式排版'] },
                     { version: 'v1.2.0', date: '2026.05', changes: ['整合「沖煮參數」與「磨豆機轉換」雙工具', '導入莫蘭迪色系 UI 與多國語系 (中/英/日)', '優化冰咖啡「下壺/飲用杯」分離的冰塊計算邏輯'] }
                 ]
             },
@@ -164,7 +188,7 @@
                 select_grinder_placeholder: 'Select a grinder...', timer_title: 'Brew Timer',
                 from_grinder: 'From Grinder (A)', to_grinder: 'To Grinder (B)', current_grind: 'Current Grind',
                 target_grind: 'Target Grind', input_placeholder: 'Input value', unit: 'Unit', grind_result_msg: 'The grind falls into',
-                mapped_linear: ', linearly mapped.', grind_visual: 'Grind Size Range',
+                mapped_linear: ', linearly mapped.', grind_visual: 'Grind Size Category',
                 grind_cats: ['Turkish\n(X-Fine)', 'Espresso\n(Fine)', 'AeroPress\n(M-Fine)', 'Pour Over\n(Medium)', 'French\n(Coarse)'],
                 grind_cats_inline: ['Turkish (X-Fine)', 'Espresso (Fine)', 'AeroPress (M-Fine)', 'Pour Over (Medium)', 'French Press (Coarse)'],
                 err_low: 'Value too low (Min:', err_high: 'Value too high (Max:', err_match: 'Cannot match range',
@@ -175,8 +199,8 @@
                 hint_4: 'Results may vary slightly due to burrs, wear, or zero-point calibration.',
                 changelog_title: 'Release Notes',
                 changelog: [
-                    { version: 'v1.4.0', date: 'May 2026', changes: ['Added Scientific Grind Visualizer with exact micron (μm) data and scale bar.'] },
-                    { version: 'v1.3.0', date: 'May 2026', changes: ['Added Dark Mode toggle.', 'Added Smart Brew Timer with automatic step highlighting.', 'Added specific grind size range display for targeted grinder.', 'Responsive UI improvements for mobile and desktop.'] },
+                    { version: 'v1.4.0', date: 'May 2026', changes: ['Added Scientific Grind Visualizer with exact micron (μm) data and physical scale calibrator.'] },
+                    { version: 'v1.3.0', date: 'May 2026', changes: ['Added Dark Mode toggle.', 'Added Smart Brew Timer with automatic step highlighting.', 'Responsive UI improvements for mobile and desktop.'] },
                     { version: 'v1.2.0', date: 'May 2026', changes: ['Integrated Brew Guide and Grind Converter into a single app.', 'Applied Morandi color theme and added multi-language support.', 'Improved ice calculation logic for iced coffee recipes.'] }
                 ]
             },
@@ -204,15 +228,15 @@
                 hint_4: '刃の種類、摩耗、ゼロ点設定により微小な誤差が生じる場合があります。',
                 changelog_title: 'リリースノート',
                 changelog: [
-                    { version: 'v1.4.0', date: '2026年5月', changes: ['正確なミクロン（μm）データとスケールバーを備えた科学的な挽き目ビジュアライザーを追加。'] },
-                    { version: 'v1.3.0', date: '2026年5月', changes: ['ダークモード機能を追加。', '自動ステップハイライト機能付きのスマート抽出タイマーを追加。', 'グラインダーごとの具体的な挽き目範囲表示を追加。', '各種デバイス向けにUIデザインを最適化。'] },
+                    { version: 'v1.4.0', date: '2026年5月', changes: ['正確なミクロン（μm）データと実寸キャリブレーターを備えた科学的な挽き目ビジュアライザーを追加。'] },
+                    { version: 'v1.3.0', date: '2026年5月', changes: ['ダークモード機能を追加。', '自動ステップハイライト機能付きのスマート抽出タイマーを追加。', '各種デバイス向けにUIデザインを最適化。'] },
                     { version: 'v1.2.0', date: '2026年5月', changes: ['「抽出レシピ」と「挽き目変換」ツールを統合。', 'モランディカラーの適用と多言語対応を追加。', 'アイスコーヒーの氷量計算ロジックを改善。'] }
                 ]
             }
         };
 
         // ==========================================
-        // 3. 動態資料庫 (根據語言切換內容)
+        // 3. 動態資料庫 (完整保留版)
         // ==========================================
         function useDatabases(lang) {
             return useMemo(() => {
@@ -434,8 +458,11 @@
         function GrindVisualizer({ catIdx, c, lang }) {
             const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
 
+            // 用戶校準比例
+            const [scale, setScale] = useState(1);
+            const pxPerMm = 3.779527559 * scale; // 1mm 基準像素轉換
+
             // 嚴格對照真實世界粒徑 (Microns, μm)
-            // 渲染基準：絕對 CSS 物理單位 (mm), 1000 μm = 1 mm
             const visualData = [
                 { 
                     micron: "200 - 300 μm", mean: 250, 
@@ -472,8 +499,11 @@
                 const area = 1600; 
                 const meanArea = Math.pow(current.mean / 1000, 2);
                 
-                // 動態計算顆粒數，填滿約 20% 的畫面，最多不超過 400 顆以確保效能
-                const count = Math.max(30, Math.min(400, Math.floor((area * 0.2) / meanArea)));
+                // 💡 視覺補償係數：解決 3D 顆粒在 2D 螢幕上看起來偏小缺乏體積感的問題 (放大約 1.35 倍)
+                const visualCompensation = 1.35;
+                
+                // 動態計算顆粒數，避免放大後過度擁擠
+                const count = Math.max(20, Math.min(250, Math.floor((area * 0.18) / (meanArea * visualCompensation))));
 
                 // 真實的烘焙咖啡豆色階 (稍微調亮增加中淺焙色系，讓層次更明顯)
                 const colors = ['#3E2723', '#4E342E', '#5D4037', '#6D4C41', '#795548', '#8D6E63'];
@@ -481,59 +511,82 @@
                 return Array.from({ length: count }).map((_, i) => {
                     // 模擬粒徑分佈：決定這顆是主顆粒還是細粉 (Fines)
                     const isFine = Math.random() < current.finesRatio;
-                    // 細粉大約在 100~200μm，主顆粒則在平均值上下浮動
-                    const sizeUm = isFine ? 100 + Math.random() * 150 : current.mean * (0.7 + Math.random() * 0.6);
-                    const sizeMm = sizeUm / 1000; // 轉換為絕對物理單位 mm
+                    
+                    // 細粉大約在 150~300μm，主顆粒則在平均值上下浮動，並乘上視覺補償
+                    const baseUm = isFine ? 150 + Math.random() * 150 : current.mean * (0.8 + Math.random() * 0.5);
+                    const sizeUm = baseUm * visualCompensation;
+                    const sizeMm = sizeUm / 1000;
 
                     // 產生真實的不規則多邊形 (模擬咖啡碎裂的稜角)
                     const points = [];
                     const numPoints = 6 + Math.floor(Math.random() * 4); // 6 到 9 個邊
                     for(let j = 0; j < numPoints; j++) {
                         const angle = (j / numPoints) * Math.PI * 2;
-                        // 讓半徑在 25% ~ 50% 之間隨機凹凸
-                        const r = 25 + Math.random() * 25; 
+                        // 讓半徑在 30% ~ 50% 之間隨機凹凸 (咖啡粉塊狀較多，稍微飽滿一點)
+                        const r = 30 + Math.random() * 20; 
                         points.push(`${50 + r * Math.cos(angle)}% ${50 + r * Math.sin(angle)}%`);
                     }
 
                     // 隨機分佈在 40mm 的圓形觀測窗內
-                    const rDist = Math.random() * 42; // 0~42% (避免太貼邊界)
+                    const rDist = Math.random() * 40; // 0~40% (避免太貼邊界)
                     const theta = Math.random() * 2 * Math.PI;
                     const x = 50 + rDist * Math.cos(theta);
                     const y = 50 + rDist * Math.sin(theta);
 
                     return {
                         id: i,
-                        size: `${sizeMm}mm`, // CSS 絕對單位
+                        sizeMm: sizeMm, // 儲存真實尺寸以便之後乘上 pxPerMm
                         color: colors[Math.floor(Math.random() * colors.length)],
                         clipPath: `polygon(${points.join(', ')})`,
                         rot: Math.random() * 360,
                         left: `${x}%`,
                         top: `${y}%`,
-                        opacity: isFine ? 0.7 : 0.95
+                        opacity: isFine ? 0.75 : 0.95
                     };
                 });
             }, [catIdx, current]);
 
             return (
                 <div className={`mt-6 pt-5 border-t border-dashed ${c.border} flex flex-col items-center animate-in fade-in duration-500`}>
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex flex-col items-center gap-2 mb-6 w-full">
                         <span className={`text-sm font-bold ${c.textDark}`}>🔬 {l('實體比例顯微鏡 (1:1)', 'Real Scale View (1:1)', '実寸顕微鏡 (1:1)')}</span>
+                        
+                        {/* 螢幕校準區塊 */}
+                        <div className={`mt-2 flex flex-col items-center p-3 rounded-xl ${c.inputBg} border ${c.border} w-full max-w-[320px]`}>
+                            <label className={`text-[11px] font-bold ${c.primaryText} mb-2 text-center`}>
+                                {l('📐 螢幕校準：請拿出一把實體尺，調整滑桿讓下方線段與您的 1cm 尺等長，以克服各種裝置解析度的誤差。', '📐 Calibration: Adjust slider so the bar matches 1cm on your ruler.', '📐 画面補正: 定規を使い、下のバーが実際の1cmと重なるよう調整してください。')}
+                            </label>
+                            <div className="flex items-center gap-3 w-full px-2">
+                                <button onClick={() => setScale(Math.max(0.5, scale - 0.05))} className={`w-7 h-7 rounded-full flex items-center justify-center bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 active:scale-95 shadow-sm font-medium pb-0.5`}>-</button>
+                                <input 
+                                    type="range" min="0.5" max="2.5" step="0.01" 
+                                    value={scale} 
+                                    onChange={(e) => setScale(Number(e.target.value))}
+                                    className="flex-1 accent-[#7E8D85]"
+                                />
+                                <button onClick={() => setScale(Math.min(2.5, scale + 0.05))} className={`w-7 h-7 rounded-full flex items-center justify-center bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 active:scale-95 shadow-sm font-medium pb-0.5`}>+</button>
+                            </div>
+                            {scale !== 1 && (
+                                <button onClick={() => setScale(1)} className={`mt-2 text-[10px] ${c.textMuted} hover:${c.textDark} underline underline-offset-2`}>
+                                    {l('重設比例', 'Reset Scale', 'リセット')}
+                                </button>
+                            )}
+                        </div>
                     </div>
                     
                     <div className="relative flex flex-col items-center">
-                        {/* 顯微鏡圓框 - 強制鎖定長寬 (40mm = 4cm 絕對物理尺寸) */}
-                        {/* 💡 模擬將咖啡粉倒在「白紙」或「透光觀察板」上，深色模式也維持柔和的明亮底色以凸顯深色咖啡粉 */}
+                        {/* 顯微鏡圓框 - 絕對物理尺寸 */}
                         <div 
                             className={`relative shrink-0 rounded-full border-4 border-[#E2DED3] dark:border-[#5B6B61] bg-[#F9F8F6] dark:bg-[#EAE5D9] shadow-[inset_0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_4px_12px_rgba(0,0,0,0.3)] overflow-hidden z-10 transition-colors duration-500`}
-                            style={{ width: '40mm', height: '40mm' }}
+                            style={{ width: `${40 * pxPerMm}px`, height: `${40 * pxPerMm}px` }}
                         >
                             {particles.map(p => (
                                 <div 
                                     key={p.id} 
                                     className="absolute"
                                     style={{
-                                        width: p.size,
-                                        height: p.size,
+                                        width: `${p.sizeMm * pxPerMm}px`,
+                                        height: `${p.sizeMm * pxPerMm}px`,
                                         left: p.left,
                                         top: p.top,
                                         backgroundColor: p.color,
@@ -547,9 +600,9 @@
 
                         {/* 絕對比例尺 (Scale Bar) - 10mm = 1cm */}
                         <div className="mt-5 flex flex-col items-center">
-                            <div className="flex items-end justify-between border-b-2 border-x-2 border-gray-500" style={{ width: '10mm', height: '6px' }}></div>
+                            <div className="flex items-end justify-between border-b-2 border-x-2 border-gray-800 dark:border-gray-500" style={{ width: `${10 * pxPerMm}px`, height: '8px' }}></div>
                             <span className={`text-[11px] font-black font-mono mt-1.5 ${c.textDark}`}>10 mm (1 cm)</span>
-                            <span className={`text-[10px] font-bold ${c.redText} mt-1`}>{l('請確保此線段與實體 1cm 等長', 'Ensure this bar is exactly 1cm', 'この線が実寸1cmであることを確認')}</span>
+                            <span className={`text-[10px] font-bold ${c.redText} mt-1`}>{l('↑ 請對齊實體 1cm ↑', '↑ Align to physical 1cm ↑', '↑ 実際の1cmに合わせる ↑')}</span>
                         </div>
                     </div>
                     
