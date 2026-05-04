@@ -287,7 +287,7 @@
                         ]
                     },
                     {
-                        id: 'switch-devil-single', name: l('惡魔手沖 (單人份)', 'Devil Recipe (Single)', '悪魔のレシピ (1人用)'), 
+                        id: 'switch-devil-single', name: l('惡魔手沖 (單人份 - 店內使用版)', 'Devil Recipe (Single - Shop Ver.)', '悪魔のレシピ (1人用 - 店舗版)'), 
                         author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 15, temperature: 92,
                         description: l('2016世界手沖冠軍粕谷哲開發的SOP化流程，不需要注水技巧，非常新手友善。','SOP by 2016 World Brewer Champion Tetsu Kasuya. Beginner-friendly.','粕谷哲考案のSOPレシピ。注ぎの技術が不要で初心者にもおすすめ。'),
                         steps: [
@@ -299,7 +299,7 @@
                         ]
                     },
                     {
-                        id: 'switch-devil-double', name: l('惡魔手沖 (兩杯份)', 'Devil Recipe (Double)', '悪魔のレシピ (2人用)'), 
+                        id: 'switch-devil-double', name: l('惡魔手沖 (兩杯份 - 店內使用版)', 'Devil Recipe (Double - Shop Ver.)', '悪魔のレシピ (2人用 - 店舗版)'), 
                         author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 24, temperature: 92,
                         description: l('適合兩人共享的惡魔手沖大份量版本。', 'Double portion of the Devil Recipe, suitable for two.', '2人用の大容量版・悪魔のレシピ。'),
                         steps: [
@@ -308,6 +308,39 @@
                             { id: 'd3', time: '1:20', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: l('關上開關，注水至目標水量浸泡', 'Close switch, pour to target and steep', 'スイッチを閉じ、目標量まで注ぎ浸漬'), water: 360 },
                             { id: 'd4', time: '2:00', action: '', note: l('打開開關，濾出咖啡液', 'Open switch to drain', 'スイッチを開け、コーヒーを落とす'), water: null },
                             { id: 'd5', time: '3:00', action: '', note: l('前流乾', 'Drained', '落ちきり'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'switch-devil-original', name: l('惡魔手沖手法 (原始版)', 'Devil Recipe (Original Ver.)', '悪魔のレシピ (オリジナル版)'), 
+                        author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 20, temperature: 92,
+                        description: l(
+                            '這是粕谷哲最初發布的惡魔手沖版本，結合了高溫滴濾與低溫浸泡的優點。\n💡總滴濾時間盡量不要超過 3 分鐘。',
+                            'The original Devil recipe by Tetsu Kasuya, combining high-temp drip and low-temp steep.\n💡Total time should not exceed 3 mins.',
+                            '粕谷哲による初期の悪魔のレシピ。高温の透過と低温の浸漬を組み合わせます。\n💡全体の抽出時間は3分を超えないようにします。'
+                        ),
+                        steps: [
+                            { id: 'do1', time: '0:00', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: (r) => l(`注入 ${Math.round(60 * r)}g 熱水 (92°C) 進行悶蒸`, `Pour ${Math.round(60 * r)}g hot water (92°C) to bloom`, `熱湯(92℃)を ${Math.round(60 * r)}g 注ぎ蒸らし`), water: 60 },
+                            { id: 'do2', time: '0:30', action: l('注水', 'Pour', '注湯'), note: (r) => l(`保持打開，注入熱水至 ${Math.round(120 * r)}g，等待至 1:10`, `Keep open, pour hot water to ${Math.round(120 * r)}g, wait till 1:10`, `開けたまま、熱湯を ${Math.round(120 * r)}g まで注ぐ (1:10まで待機)`), water: 120 },
+                            { id: 'do3', time: '1:10', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: (r) => l(`關上開關，注入 70°C 低溫水至 ${Math.round(280 * r)}g`, `Close switch, pour 70°C water to ${Math.round(280 * r)}g`, `スイッチを閉じ、70℃の湯を ${Math.round(280 * r)}g まで注ぐ`), water: 280 },
+                            { id: 'do4', time: '1:45', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: l('打開開關，濾出咖啡液', 'Open switch to drain', 'スイッチを開け、コーヒーを落とす'), water: null },
+                            { id: 'do5', time: '3:00', action: l('完成', 'Finish', '完了'), note: l('總時間勿超過 3 分鐘，若未滴完直接移開濾杯', 'Max 3:00 total time. Remove dripper if not done.', '全体で3分を超えないこと。超える場合は外す'), water: null }
+                        ]
+                    },
+                    {
+                        id: 'switch-devil-improved', name: l('惡魔手沖 (改良版)', 'Devil Recipe (Improved Ver.)', '悪魔のレシピ (改良版)'), 
+                        author: l('粕谷哲', 'Tetsu Kasuya', '粕谷哲'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 20, temperature: 92,
+                        description: l(
+                            '進階改良的惡魔手沖，首段採浸泡、中段滴濾、尾段低溫浸泡，帶來更豐富的層次。',
+                            'Improved Devil recipe: steep first, then drip, and finish with a low-temp steep for more complexity.',
+                            '改良版の悪魔のレシピ。浸漬から始まり、透過、最後に低温の浸漬を行うことで層の厚い風味に。'
+                        ),
+                        steps: [
+                            { id: 'di1', time: '0:00', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: (r) => l(`關上開關，注入 ${Math.round(40 * r)}~${Math.round(50 * r)}g 熱水 (92°C) 浸泡`, `Close switch, pour ${Math.round(40 * r)}~${Math.round(50 * r)}g hot water (92°C) to steep`, `スイッチを閉じ、熱湯(92℃)を ${Math.round(40 * r)}~${Math.round(50 * r)}g 注ぎ浸漬`), water: 50 },
+                            { id: 'di2', time: '0:40', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: (r) => l(`打開開關，注入熱水至 ${Math.round(120 * r)}g，等待至 1:30`, `Open switch, pour hot water to ${Math.round(120 * r)}g, wait till 1:30`, `スイッチを開け、熱湯を ${Math.round(120 * r)}g まで注ぐ (1:30まで待機)`), water: 120 },
+                            { id: 'di3', time: '1:30', action: l('注水', 'Pour', '注湯'), note: (r) => l(`保持打開，注入熱水至 ${Math.round(200 * r)}g，等待至 2:10`, `Keep open, pour hot water to ${Math.round(200 * r)}g, wait till 2:10`, `開けたまま、熱湯を ${Math.round(200 * r)}g まで注ぐ (2:10まで待機)`), water: 200 },
+                            { id: 'di4', time: '2:10', action: l('[浸泡] 關上', '[Steep] Close', '[浸漬] 閉じる'), note: (r) => l(`關上開關，注入 70°C 低溫水至 ${Math.round(300 * r)}g`, `Close switch, pour 70°C water to ${Math.round(300 * r)}g`, `スイッチを閉じ、70℃の湯を ${Math.round(300 * r)}g まで注ぐ`), water: 300 },
+                            { id: 'di5', time: '2:45', action: l('[滴濾] 打開', '[Drip] Open', '[透過] 開く'), note: l('打開開關，濾出咖啡液', 'Open switch to drain', 'スイッチを開け、コーヒーを落とす'), water: null },
+                            { id: 'di6', time: l('滴完', 'Drained', '落ちきり'), action: l('完成', 'Finish', '完了'), note: l('咖啡液流乾後移開濾杯', 'Remove when drained', '落ちきったら外す'), water: null }
                         ]
                     },
                     {
