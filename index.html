@@ -1,73 +1,70 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>村民咖啡工具箱</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type="number"] { -moz-appearance: textfield; }
-        select optgroup { font-weight: bold; color: #7E8D85; background-color: #F9F8F6; }
-        select option { font-weight: normal; color: #1f2937; background-color: #ffffff; }
-        body { -webkit-tap-highlight-color: transparent; transition: background-color 0.4s ease; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        input[type=range] { -webkit-appearance: none; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #7E8D85; cursor: pointer; margin-top: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #E2DED3; border-radius: 2px; }
-        .dark input[type=range]::-webkit-slider-runnable-track { background: #3F454A; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>村民咖啡工具箱</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; }
+select optgroup { font-weight: bold; color: #7E8D85; background-color: #F9F8F6; }
+select option { font-weight: normal; color: #1f2937; background-color: #ffffff; }
+body { -webkit-tap-highlight-color: transparent; transition: background-color 0.4s ease; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+input[type=range] { -webkit-appearance: none; background: transparent; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #7E8D85; cursor: pointer; margin-top: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #E2DED3; border-radius: 2px; }
+.dark input[type=range]::-webkit-slider-runnable-track { background: #3F454A; }
+</style>
 </head>
 <body>
-    <div id="root"></div>
-
-    <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
-
-        // --- SVGs ---
-        const IconBase = ({ children, size=24, className="" }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>;
-        const Coffee=p=><IconBase {...p}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M9 2v2"/><path d="M15 2v2"/></IconBase>;
-        const Settings2=p=><IconBase {...p}><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></IconBase>;
-        const Droplets=p=><IconBase {...p}><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 6.3 7 6.3s-2.29 2.76-3.29 3.69C2.57 10.92 2 12.02 2 13.18 2 15.4 3.8 17.2 6 17.2z"/><path d="M17.5 21.5c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19-.53-.43-1.63-1.46-2.29-2.15v0c-.66.69-1.76 1.72-2.29 2.15-1.14.93-1.71 2.03-1.71 3.19 0 2.22 1.8 4.05 4 4.05z"/></IconBase>;
-        const Thermometer=p=><IconBase {...p}><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></IconBase>;
-        const Clock=p=><IconBase {...p}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></IconBase>;
-        const Filter=p=><IconBase {...p}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></IconBase>;
-        const Flame=p=><IconBase {...p}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></IconBase>;
-        const Snowflake=p=><IconBase {...p}><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></IconBase>;
-        const ChevronDown=p=><IconBase {...p}><path d="m6 9 6 6 6-6"/></IconBase>;
-        const CheckCircle2=p=><IconBase {...p}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
-        const ScaleIcon=p=><IconBase {...p}><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></IconBase>;
-        const ArrowLeft=p=><IconBase {...p}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconBase>;
-        const ArrowRightLeft=p=><IconBase {...p}><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></IconBase>;
-        const Wrench=p=><IconBase {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></IconBase>;
-        const Moon=p=><IconBase {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></IconBase>;
-        const Sun=p=><IconBase {...p}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></IconBase>;
-        const Play=p=><IconBase {...p}><polygon points="5 3 19 12 5 21 5 3"/></IconBase>;
-        const Pause=p=><IconBase {...p}><rect width="4" height="16" x="6" y="4"/><rect width="4" height="16" x="14" y="4"/></IconBase>;
-        const RotateCcw=p=><IconBase {...p}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconBase>;
-
-        // --- Theme Colors ---
-        const getColors = (isDark) => ({
-            bg: isDark?'bg-[#1C1F22]':'bg-[#F4F1EA]', card: isDark?'bg-[#2A2E32]':'bg-[#FFFFFF]',
-            primary: isDark?'bg-[#5B6B61]':'bg-[#7E8D85]', primaryText: isDark?'text-[#8AA192]':'text-[#7E8D85]',
-            secondary: isDark?'bg-[#8C7A6B]':'bg-[#B3A394]', secondaryText: isDark?'text-[#C7B5A5]':'text-[#B3A394]',
-            blue: isDark?'bg-[#5A7485]':'bg-[#7A93A2]', blueText: isDark?'text-[#8EA8B8]':'text-[#7A93A2]',
-            red: isDark?'bg-[#A36D6D]':'bg-[#C18F8F]', redText: isDark?'text-[#D4A3A3]':'text-[#C18F8F]',
-            yellow: isDark?'bg-[#A89671]':'bg-[#C9B793]', yellowText: isDark?'text-[#E0CCAB]':'text-[#C9B793]',
-            textDark: isDark?'text-[#E2E2E2]':'text-[#4A4A4A]', textMuted: isDark?'text-[#9CA3AF]':'text-[#8C8C8C]',
-            border: isDark?'border-[#3F454A]':'border-[#E2DED3]', accent: isDark?'bg-[#3F454A]':'bg-[#D9D0C1]',
-            hotTag: isDark?'bg-[#402B2B] text-[#D4A3A3]':'bg-[#F3EBEB] text-[#C18F8F]', icedTag: isDark?'bg-[#25323C] text-[#8EA8B8]':'bg-[#E9EDF0] text-[#7A93A2]',
-            hotIcon: isDark?'text-[#D4A3A3]':'text-[#C18F8F]', icedIcon: isDark?'text-[#8EA8B8]':'text-[#7A93A2]',
-            bar: isDark?['bg-[#A36D6D]','bg-[#A89671]','bg-[#5B6B61]','bg-[#5A7485]','bg-[#8C7A6B]']:['bg-[#C18F8F]','bg-[#C9B793]','bg-[#7E8D85]','bg-[#7A93A2]','bg-[#B3A394]'],
-            inputBg: isDark?'bg-[#222529]':'bg-[#F9F8F6]', infoBg: isDark?'bg-[#33383D]':'bg-[#F4F1EA]', iconBg: isDark?'bg-[#434A51]':'bg-white',
-            timelineBg: isDark?'bg-[#2D3237]':'bg-[#F9F8F6]', activeHotBg: isDark?'bg-[#3A332A]':'bg-[#FFFCF5]', activeIcedBg: isDark?'bg-[#29363D]':'bg-[#F2F7FA]',
-            activeHotBorder: isDark?'border-[#5C5346] border-l-[#C9B793]':'border-[#EAE1CF] border-l-[#C9B793]', activeIcedBorder: isDark?'border-[#3D4F59] border-l-[#7A93A2]':'border-[#D5E1E8] border-l-[#7A93A2]',
-            activeText: isDark?'text-[#FFFFFF]':'text-[#1A1A1A]',
-        });
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useMemo, useRef } = React;
+// --- SVGs ---
+const IconBase = ({ children, size=24, className="" }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>;
+const Coffee=p=><IconBase {...p}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M9 2v2"/><path d="M15 2v2"/></IconBase>;
+const Settings2=p=><IconBase {...p}><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></IconBase>;
+const Droplets=p=><IconBase {...p}><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 6.3 7 6.3s-2.29 2.76-3.29 3.69C2.57 10.92 2 12.02 2 13.18 2 15.4 3.8 17.2 6 17.2z"/><path d="M17.5 21.5c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19-.53-.43-1.63-1.46-2.29-2.15v0c-.66.69-1.76 1.72-2.29 2.15-1.14.93-1.71 2.03-1.71 3.19 0 2.22 1.8 4.05 4 4.05z"/></IconBase>;
+const Thermometer=p=><IconBase {...p}><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></IconBase>;
+const Clock=p=><IconBase {...p}><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></IconBase>;
+const Filter=p=><IconBase {...p}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></IconBase>;
+const Flame=p=><IconBase {...p}><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></IconBase>;
+const Snowflake=p=><IconBase {...p}><line x1="2" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="22"/><path d="m20 16-4-4 4-4"/><path d="m4 8 4 4-4 4"/><path d="m16 4-4 4-4-4"/><path d="m8 20 4-4 4 4"/></IconBase>;
+const ChevronDown=p=><IconBase {...p}><path d="m6 9 6 6 6-6"/></IconBase>;
+const CheckCircle2=p=><IconBase {...p}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></IconBase>;
+const ScaleIcon=p=><IconBase {...p}><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></IconBase>;
+const ArrowLeft=p=><IconBase {...p}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></IconBase>;
+const ArrowRightLeft=p=><IconBase {...p}><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></IconBase>;
+const Wrench=p=><IconBase {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></IconBase>;
+const Moon=p=><IconBase {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></IconBase>;
+const Sun=p=><IconBase {...p}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></IconBase>;
+const Play=p=><IconBase {...p}><polygon points="5 3 19 12 5 21 5 3"/></IconBase>;
+const Pause=p=><IconBase {...p}><rect width="4" height="16" x="6" y="4"/><rect width="4" height="16" x="14" y="4"/></IconBase>;
+const RotateCcw=p=><IconBase {...p}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconBase>;
+// --- Theme Colors ---
+const getColors = (isDark) => ({
+bg: isDark?'bg-[#1C1F22]':'bg-[#F4F1EA]', card: isDark?'bg-[#2A2E32]':'bg-[#FFFFFF]',
+primary: isDark?'bg-[#5B6B61]':'bg-[#7E8D85]', primaryText: isDark?'text-[#8AA192]':'text-[#7E8D85]',
+secondary: isDark?'bg-[#8C7A6B]':'bg-[#B3A394]', secondaryText: isDark?'text-[#C7B5A5]':'text-[#B3A394]',
+blue: isDark?'bg-[#5A7485]':'bg-[#7A93A2]', blueText: isDark?'text-[#8EA8B8]':'text-[#7A93A2]',
+red: isDark?'bg-[#A36D6D]':'bg-[#C18F8F]', redText: isDark?'text-[#D4A3A3]':'text-[#C18F8F]',
+yellow: isDark?'bg-[#A89671]':'bg-[#C9B793]', yellowText: isDark?'text-[#E0CCAB]':'text-[#C9B793]',
+textDark: isDark?'text-[#E2E2E2]':'text-[#4A4A4A]', textMuted: isDark?'text-[#9CA3AF]':'text-[#8C8C8C]',
+border: isDark?'border-[#3F454A]':'border-[#E2DED3]', accent: isDark?'bg-[#3F454A]':'bg-[#D9D0C1]',
+hotTag: isDark?'bg-[#402B2B] text-[#D4A3A3]':'bg-[#F3EBEB] text-[#C18F8F]', icedTag: isDark?'bg-[#25323C] text-[#8EA8B8]':'bg-[#E9EDF0] text-[#7A93A2]',
+hotIcon: isDark?'text-[#D4A3A3]':'text-[#C18F8F]', icedIcon: isDark?'text-[#8EA8B8]':'text-[#7A93A2]',
+bar: isDark?['bg-[#A36D6D]','bg-[#A89671]','bg-[#5B6B61]','bg-[#5A7485]','bg-[#8C7A6B]']:['bg-[#C18F8F]','bg-[#C9B793]','bg-[#7E8D85]','bg-[#7A93A2]','bg-[#B3A394]'],
+inputBg: isDark?'bg-[#222529]':'bg-[#F9F8F6]', infoBg: isDark?'bg-[#33383D]':'bg-[#F4F1EA]', iconBg: isDark?'bg-[#434A51]':'bg-white',
+timelineBg: isDark?'bg-[#2D3237]':'bg-[#F9F8F6]', activeHotBg: isDark?'bg-[#3A332A]':'bg-[#FFFCF5]', activeIcedBg: isDark?'bg-[#29363D]':'bg-[#F2F7FA]',
+activeHotBorder: isDark?'border-[#5C5346] border-l-[#C9B793]':'border-[#EAE1CF] border-l-[#C9B793]', activeIcedBorder: isDark?'border-[#3D4F59] border-l-[#7A93A2]':'border-[#D5E1E8] border-l-[#7A93A2]',
+activeText: isDark?'text-[#FFFFFF]':'text-[#1A1A1A]',
+});
 // ==========================================
 // 2. 多語系翻譯字典與版本更新
 // ==========================================
@@ -166,85 +163,80 @@ changelog: [
 ]
 }
 };
-
-    // ==========================================
-    // 3. 動態資料庫 (高密度壓縮版)
-    // ==========================================
-    function useDatabases(lang) {
-        return useMemo(() => {
-            const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
-            
-            const DRIPPER_CATEGORIES = {
-                [l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
-                    { id:'Hario V60 01',name:'Hario V60 01'},{id:'Hario V60 02',name:'Hario V60 02'},
-                    { id:'Hario Switch 02',name:'Hario Switch 02'},{id:'Tri-Up Flow 01/02',name:'Tri-Up Flow 01/02'}
-                ],
-                [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
-                    { id:'Orea V3',name:'Orea V3'},{id:'BEANDY SILK',name:l('BEANDY SILK 絲綢濾杯','BEANDY SILK','BEANDY SILK')}
-                ]
-            };
-
-            const rs = (id, time, action, note, water) => ({id, time, action, note, water});
-            const RECIPE_DATABASE = [
-                { id:'orea-iced-tilt', name:l('Tilt 冰手沖','Tilt Iced','Tilt アイス'), author:'Tilt', dripper:'Orea V3', drinkType:'iced', baseCoffee:20, temperature:90, description:r=>`💡下壺加冰 ${Math.round(50*r)}g。\n杯中加冰球約 ${Math.round(100*r)}g。`, steps:[rs('t1','0:00-0:07','注水',r=>`注至 ${Math.round(40*r)}g`,40),rs('t2','0:40-0:47','注水',r=>`注至 ${Math.round(80*r)}g`,80),rs('t3','1:20-1:37','注水',r=>`注至 ${Math.round(120*r)}g`,120),rs('t4','2:00-2:07','注水',r=>`注至 ${Math.round(160*r)}g`,160),rs('t5','3:00','完成','搖晃後倒出',null)] },
-                { id:'switch-iced-chacha', name:l('冰手沖(CHACHA)','Iced(CHACHA)','アイス(CHACHA)'), author:'CHACHA', dripper:'Hario Switch 02', drinkType:'iced', baseCoffee:20, temperature:92, description:r=>`💡下壺冰 ${Math.round(80*r)}g，杯冰 ${Math.round(100*r)}g。`, steps:[rs('c1','0:00','[浸泡] 關上','關開關注水',50),rs('c2','0:40','注水','注水至',90),rs('c3','流乾','注水','注水至',130),rs('c4','流乾','注水','注水至',160),rs('c5','完成','倒出','搖晃倒出',null)] },
-                { id:'switch-devil-single', name:l('惡魔手沖(單人)','Devil(Single)','悪魔(1人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:92, description:'SOP化流程，新手友善。', steps:[rs('s1','0:00','[滴濾] 打開','開關注水',30),rs('s2','0:40','','保持滴濾注水至',90),rs('s3','1:20','[浸泡] 關上','關開關注水至目標水量',225),rs('s4','1:50','','打開開關',null),rs('s5','2:20','','前流乾',null)] },
-                { id:'switch-devil-double', name:l('惡魔手沖(雙人)','Devil(Double)','悪魔(2人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:24, temperature:92, description:'大份量版本。', steps:[rs('d1','0:00','[滴濾] 打開','開關注水',50),rs('d2','0:40','','保持滴濾注水至',150),rs('d3','1:20','[浸泡] 關上','關開關注水至目標水量',360),rs('d4','2:00','','打開開關',null),rs('d5','3:00','','前流乾',null)] },
-                { id:'switch-devil-original', name:l('惡魔手沖(原始)','Devil(Original)','悪魔(オリジナル)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, description:'高溫滴濾與低溫浸泡。', steps:[rs('do1','0:00','[滴濾] 打開',r=>`92°C注 ${Math.round(60*r)}g`,60),rs('do2','0:30','注水',r=>`注至 ${Math.round(120*r)}g等至1:10`,120),rs('do3','1:10','[浸泡] 關上',r=>`70°C水注至 ${Math.round(280*r)}g`,280),rs('do4','1:45','打開','打開開關濾出',null),rs('do5','3:00','完成','未滴完移開',null)] },
-                { id:'switch-devil-improved', name:l('惡魔手沖(改良)','Devil(Improved)','悪魔(改良版)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, description:'浸泡-滴濾-低溫浸泡。', steps:[rs('di1','0:00','[浸泡] 關上',r=>`92°C注 ${Math.round(50*r)}g`,50),rs('di2','0:40','[滴濾] 打開',r=>`注至 ${Math.round(120*r)}g`,120),rs('di3','1:30','注水',r=>`注至 ${Math.round(200*r)}g`,200),rs('di4','2:10','[浸泡] 關上',r=>`70°C注至 ${Math.round(300*r)}g`,300),rs('di5','2:45','打開','打開開關',null),rs('di6','滴完','完成','流乾移開',null)] },
-                { id:'beandy-silk', name:'Lonich Coffee', author:'Tatsumi', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:15, temperature:90, description:'穩定流速。', steps:[rs('b1','0:00','悶蒸','悶蒸',40),rs('b2','0:35','注水','注水',80),rs('b3','1:10','注水','注水',160),rs('b4','1:45','注水','最後注水',230),rs('b5','2:15','完成','撤杯',null)] },
-                { id:'v60-01-jh', name:l('終極V60(2022)','Ultimate V60','究極V60'), author:'Hoffmann', dripper:'Hario V60 01', drinkType:'hot', baseCoffee:15, temperature:100, description:r=>`多次小水量注水。`, steps:[rs('j1','0:00-0:10','悶蒸',r=>`注 ${Math.round(50*r)}g`,50),rs('j2','0:10-0:15','搖晃','搖晃',null),rs('j3','0:45-1:00','注水',r=>`至 ${Math.round(100*r)}g (40%)`,100),rs('j4','1:10-1:20','注水',r=>`至 ${Math.round(150*r)}g (60%)`,150),rs('j5','1:30-1:40','注水',r=>`至 ${Math.round(200*r)}g (80%)`,200),rs('j6','1:50-2:00','注水',r=>`至 ${Math.round(250*r)}g (100%)`,250),rs('j7','2:00-2:05','搖晃','輕搖',null),rs('j8','3:00','完成','流乾移開',null)] },
-                { id:'v60-02-jh', name:l('終極V60(2022)','Ultimate V60','究極V60'), author:'Hoffmann', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:15, temperature:100, description:r=>`多次小水量注水。`, steps:[rs('j1','0:00-0:10','悶蒸',r=>`注 ${Math.round(50*r)}g`,50),rs('j2','0:10-0:15','搖晃','搖晃',null),rs('j3','0:45-1:00','注水',r=>`至 ${Math.round(100*r)}g (40%)`,100),rs('j4','1:10-1:20','注水',r=>`至 ${Math.round(150*r)}g (60%)`,150),rs('j5','1:30-1:40','注水',r=>`至 ${Math.round(200*r)}g (80%)`,200),rs('j6','1:50-2:00','注水',r=>`至 ${Math.round(250*r)}g (100%)`,250),rs('j7','2:00-2:05','搖晃','輕搖',null),rs('j8','3:00','完成','流乾移開',null)] },
-                { id:'v60-46', name:'4:6 Method', author:'粕谷哲', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:20, temperature:90, description:'前40%定酸甜，後60%定濃度。', steps:[rs('v1','0:00','注水','第一段',60),rs('v2','0:45','注水','第二段(40%)',120),rs('v3','1:30','注水','第三段',180),rs('v4','2:15','注水','第四段',240),rs('v5','2:45','注水','第五段(60%)',300),rs('v6','3:30','完成','流乾',null)] },
-                { id:'tri-up', name:'Designer Recipe', author:'Eric', dripper:'Tri-Up Flow 01/02', drinkType:'hot', baseCoffee:15, temperature:92, description:'每段約 7 秒快速注水。', steps:[rs('t1','0:00','快注',r=>`注 ${Math.round(80*r)}g`,80),rs('t2','0:25','快注',r=>`注 ${Math.round(100*r)}g`,180),rs('t3','1:00','快注',r=>`注 ${Math.round(80*r)}g`,260),rs('t4','1:50','完成','不超過2:30',null)] }
-            ];
-
-            const g1 = l("⚡ 電動", "Electric", "電動"); const g2 = l("🖐️ 手搖", "Manual", "手挽き");
-            const uN=l("數字","Dial","ダイヤル"); const uM=l("大數字","Macro","マクロ"); const uS=l("無段","Stepless","無段階");
-            const uC=l("格數","Clicks","クリック"); const uR=l("圈數","Rots","回転");
-            
-            const mg = (gr, name, unit, step, r) => ({ group: gr, name, unit, step, ranges: r.map(x => ({ min: x[0], max: x[1] })) });
-            const GRINDER_DATABASE = {
-                "e_enc": mg(g1, "Baratza Encore", uN, 1, [[1,5],[5,10],[10,15],[15,25],[25,30]]),
-                "e_270": mg(g1, "Baratza Sette 270", uM, 1, [[1,3],[3,9],[9,15],[15,25],[25,31]]),
-                "e_sgp": mg(g1, "Breville SGP", uN, 1, [[1,5],[5,15],[15,30],[30,45],[45,60]]),
-                "e_df64": mg(g1, "DF64 (Gen1/2)", uN, 1, [[0,10],[10,20],[20,40],[40,70],[70,90]]),
-                "e_eur": mg(g1, "Eureka Mignon", uS, 0.1, [[0,0.5],[0.5,2],[2,3],[3,4.5],[4.5,5.5]]),
-                "e_ode2": mg(g1, "Ode Gen 2", uN, 0.1, [[null,null],[null,null],[1,3],[3,8],[8,11]]),
-                "e_opus": mg(g1, "Opus", uN, 0.1, [[0.5,1],[1,2.5],[2.5,4.5],[4.5,8.5],[8,11]]),
-                "e_ek43": mg(g1, "EK43", uN, 0.1, [[1,1.5],[1.5,2.5],[2.5,5],[5,8.5],[8.5,11]]),
-                "e_x54": mg(g1, "X54", uN, 0.1, [[1,4],[4,10],[10,20],[20,28],[28,35]]),
-                "e_phi": mg(g1, "Philos", uN, 1, [[0,10],[10,25],[25,45],[45,65],[65,80]]),
-                "e_nz": mg(g1, "Niche Zero", uN, 1, [[5,10],[10,20],[20,30],[30,45],[45,50]]),
-                "e_casa": mg(g1, "Lagom Casa", uN, 0.1, [[0.1,0.8],[0.8,2.5],[2.5,4.5],[4.5,7.5],[7.5,9]]),
-                "e_mini": mg(g1, "Lagom Mini", uR, 0.1, [[0.3,0.7],[0.7,1.4],[1.4,1.8],[1.8,2.6],[2.6,3.2]]),
-                "e_p100": mg(g1, "Lagom P100/01", uN, 0.1, [[0.1,0.5],[0.5,1.5],[1.5,4],[4,7],[7,9.5]]),
-                "e_p64": mg(g1, "Lagom P64", uN, 0.1, [[0.1,0.5],[0.5,1.5],[1.5,4.5],[4.5,7],[7,9.5]]),
-                "e_078": mg(g1, "Sculptor 078", uN, 0.1, [[null,null],[null,null],[4,8],[8,14],[14,18]]),
-                "e_078s": mg(g1, "Sculptor 078s", uN, 0.1, [[0,0.5],[0.5,2.5],[2.5,6],[6,10],[10,14]]),
-                "e_vs3": mg(g1, "Varia VS3", uN, 0.1, [[0,1],[1,3],[3,5],[5,8],[8,10]]),
-                "e_eg1": mg(g1, "Weber EG-1", uN, 0.1, [[0,0.5],[0.5,1.5],[1.5,4],[4,7],[7,9]]),
-                "e_600n": mg(g1, "Feima 600N", uN, 0.5, [[0.5,1],[1,2.5],[2.5,3.5],[3.5,5.5],[5.5,8]]),
-                "1z_q2": mg("🎯 1Zpresso", "Q2 / Q Air", uC, 1, [[15,25],[25,35],[35,45],[45,60],[60,75]]),
-                "1z_jx": mg("🎯 1Zpresso", "JX", uC, 1, [[20,30],[30,40],[40,60],[60,90],[90,120]]),
-                "1z_jxpro": mg("🎯 1Zpresso", "JX-Pro", uC, 1, [[30,50],[50,70],[70,100],[100,140],[140,160]]),
-                "1z_jeplus": mg("🎯 1Zpresso", "JE-Plus", uC, 1, [[20,40],[40,60],[60,80],[80,110],[110,130]]),
-                "1z_xpro": mg("🎯 1Zpresso", "X-Pro/Ultra", uC, 1, [[15,30],[30,60],[60,100],[120,150],[150,180]]),
-                "1z_jmax": mg("🎯 1Zpresso", "J-Max", uC, 1, [[50,90],[90,150],[150,200],[200,280],[280,320]]),
-                "1z_jultra": mg("🎯 1Zpresso", "J-Ultra", uC, 1, [[60,100],[100,160],[160,200],[200,270],[270,320]]),
-                "1z_kmax": mg("🎯 1Zpresso", "K-Pro/Plus/Max", uN, 0.1, [[2,3],[3,4.5],[4.5,6],[6,8.5],[8.5,10]]),
-                "1z_kultra": mg("🎯 1Zpresso", "K-Ultra", uN, 0.1, [[2,3],[3,4.5],[4.5,6.5],[6.5,9],[9,10]]),
-                "1z_zp6": mg("🎯 1Zpresso", "ZP6 Special", uN, 0.1, [[null,null],[null,null],[3,4],[4,6],[6,7.5]]),
-                "m_c40": mg(g2, "Comandante C40", uC, 1, [[5,9],[9,15],[15,22],[22,29],[29,40]]),
-                "m_k6": mg(g2, "Kingrinder K6", uC, 1, [[28,40],[40,60],[60,90],[90,120],[120,150]]),
-                "m_kinu": mg(g2, "Kinu M47", uR, 0.1, [[0.5,1],[1.1,2.3],[2.3,3.5],[3.5,5.5],[5.5,7.8]]),
-                "m_c2": mg(g2, "Timemore C2/C3", uC, 1, [[6,10],[10,14],[14,17],[17,24],[24,29]]),
-                "m_m01": mg(g2, "Timemore M01", uN, 0.1, [[0,0.5],[0.5,1.5],[1.5,4.3],[4.3,7.6],[7.6,10]]),
-                "m_b38": mg(g2, "Cocinare B38", uN, 1, [[0,14],[14,29],[29,64],[64,79],[79,80]])
-            };
-            return { DRIPPER_CATEGORIES, RECIPE_DATABASE, GRINDER_DATABASE };
-        }, [lang]);
-    }
+// ==========================================
+// 3. 動態資料庫 (高密度壓縮版)
+// ==========================================
+function useDatabases(lang) {
+return useMemo(() => {
+const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
+const DRIPPER_CATEGORIES = {
+[l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
+{ id:'Hario V60 01',name:'Hario V60 01'},{id:'Hario V60 02',name:'Hario V60 02'},
+{ id:'Hario Switch 02',name:'Hario Switch 02'},{id:'Tri-Up Flow 01/02',name:'Tri-Up Flow 01/02'}
+],
+[l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
+{ id:'Orea V3',name:'Orea V3'},{id:'BEANDY SILK',name:l('BEANDY SILK 絲綢濾杯','BEANDY SILK','BEANDY SILK')}
+]
+};
+const rs = (id, time, action, note, water) => ({id, time, action, note, water});
+const RECIPE_DATABASE = [
+{ id:'orea-iced-tilt', name:l('Tilt 冰手沖','Tilt Iced','Tilt アイス'), author:'Tilt', dripper:'Orea V3', drinkType:'iced', baseCoffee:20, temperature:90, description:r=>`💡下壺加冰 ${Math.round(50*r)}g。\n杯中加冰球約 ${Math.round(100*r)}g。`, steps:[rs('t1','0:00-0:07','注水',r=>`注至 ${Math.round(40*r)}g`,40),rs('t2','0:40-0:47','注水',r=>`注至 ${Math.round(80*r)}g`,80),rs('t3','1:20-1:37','注水',r=>`注至 ${Math.round(120*r)}g`,120),rs('t4','2:00-2:07','注水',r=>`注至 ${Math.round(160*r)}g`,160),rs('t5','3:00','完成','搖晃後倒出',null)] },
+{ id:'switch-iced-chacha', name:l('冰手沖(CHACHA)','Iced(CHACHA)','アイス(CHACHA)'), author:'CHACHA', dripper:'Hario Switch 02', drinkType:'iced', baseCoffee:20, temperature:92, description:r=>`💡下壺冰 ${Math.round(80*r)}g，杯冰 ${Math.round(100*r)}g。`, steps:[rs('c1','0:00','[浸泡] 關上','關開關注水',50),rs('c2','0:40','注水','注水至',90),rs('c3','流乾','注水','注水至',130),rs('c4','流乾','注水','注水至',160),rs('c5','完成','倒出','搖晃倒出',null)] },
+{ id:'switch-devil-single', name:l('惡魔手沖(單人)','Devil(Single)','悪魔(1人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:92, description:'SOP化流程，新手友善。', steps:[rs('s1','0:00','[滴濾] 打開','開關注水',30),rs('s2','0:40','','保持滴濾注水至',90),rs('s3','1:20','[浸泡] 關上','關開關注水至目標水量',225),rs('s4','1:50','','打開開關',null),rs('s5','2:20','','前流乾',null)] },
+{ id:'switch-devil-double', name:l('惡魔手沖(雙人)','Devil(Double)','悪魔(2人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:24, temperature:92, description:'大份量版本。', steps:[rs('d1','0:00','[滴濾] 打開','開關注水',50),rs('d2','0:40','','保持滴濾注水至',150),rs('d3','1:20','[浸泡] 關上','關開關注水至目標水量',360),rs('d4','2:00','','打開開關',null),rs('d5','3:00','','前流乾',null)] },
+{ id:'switch-devil-original', name:l('惡魔手沖(原始)','Devil(Original)','悪魔(オリジナル)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, description:'高溫滴濾與低溫浸泡。', steps:[rs('do1','0:00','[滴濾] 打開',r=>`92°C注 ${Math.round(60*r)}g`,60),rs('do2','0:30','注水',r=>`注至 ${Math.round(120*r)}g等至1:10`,120),rs('do3','1:10','[浸泡] 關上',r=>`70°C水注至 ${Math.round(280*r)}g`,280),rs('do4','1:45','打開','打開開關濾出',null),rs('do5','3:00','完成','未滴完移開',null)] },
+{ id:'switch-devil-improved', name:l('惡魔手沖(改良)','Devil(Improved)','悪魔(改良版)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, description:'浸泡-滴濾-低溫浸泡。', steps:[rs('di1','0:00','[浸泡] 關上',r=>`92°C注 ${Math.round(50*r)}g`,50),rs('di2','0:40','[滴濾] 打開',r=>`注至 ${Math.round(120*r)}g`,120),rs('di3','1:30','注水',r=>`注至 ${Math.round(200*r)}g`,200),rs('di4','2:10','[浸泡] 關上',r=>`70°C注至 ${Math.round(300*r)}g`,300),rs('di5','2:45','打開','打開開關',null),rs('di6','滴完','完成','流乾移開',null)] },
+{ id:'beandy-silk', name:'Lonich Coffee', author:'Tatsumi', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:15, temperature:90, description:'穩定流速。', steps:[rs('b1','0:00','悶蒸','悶蒸',40),rs('b2','0:35','注水','注水',80),rs('b3','1:10','注水','注水',160),rs('b4','1:45','注水','最後注水',230),rs('b5','2:15','完成','撤杯',null)] },
+{ id:'v60-01-jh', name:l('終極V60(2022)','Ultimate V60','究極V60'), author:'Hoffmann', dripper:'Hario V60 01', drinkType:'hot', baseCoffee:15, temperature:100, description:r=>`多次小水量注水。`, steps:[rs('j1','0:00-0:10','悶蒸',r=>`注 ${Math.round(50*r)}g`,50),rs('j2','0:10-0:15','搖晃','搖晃',null),rs('j3','0:45-1:00','注水',r=>`至 ${Math.round(100*r)}g (40%)`,100),rs('j4','1:10-1:20','注水',r=>`至 ${Math.round(150*r)}g (60%)`,150),rs('j5','1:30-1:40','注水',r=>`至 ${Math.round(200*r)}g (80%)`,200),rs('j6','1:50-2:00','注水',r=>`至 ${Math.round(250*r)}g (100%)`,250),rs('j7','2:00-2:05','搖晃','輕搖',null),rs('j8','3:00','完成','流乾移開',null)] },
+{ id:'v60-02-jh', name:l('終極V60(2022)','Ultimate V60','究極V60'), author:'Hoffmann', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:15, temperature:100, description:r=>`多次小水量注水。`, steps:[rs('j1','0:00-0:10','悶蒸',r=>`注 ${Math.round(50*r)}g`,50),rs('j2','0:10-0:15','搖晃','搖晃',null),rs('j3','0:45-1:00','注水',r=>`至 ${Math.round(100*r)}g (40%)`,100),rs('j4','1:10-1:20','注水',r=>`至 ${Math.round(150*r)}g (60%)`,150),rs('j5','1:30-1:40','注水',r=>`至 ${Math.round(200*r)}g (80%)`,200),rs('j6','1:50-2:00','注水',r=>`至 ${Math.round(250*r)}g (100%)`,250),rs('j7','2:00-2:05','搖晃','輕搖',null),rs('j8','3:00','完成','流乾移開',null)] },
+{ id:'v60-46', name:'4:6 Method', author:'粕谷哲', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:20, temperature:90, description:'前40%定酸甜，後60%定濃度。', steps:[rs('v1','0:00','注水','第一段',60),rs('v2','0:45','注水','第二段(40%)',120),rs('v3','1:30','注水','第三段',180),rs('v4','2:15','注水','第四段',240),rs('v5','2:45','注水','第五段(60%)',300),rs('v6','3:30','完成','流乾',null)] },
+{ id:'tri-up', name:'Designer Recipe', author:'Eric', dripper:'Tri-Up Flow 01/02', drinkType:'hot', baseCoffee:15, temperature:92, description:'每段約 7 秒快速注水。', steps:[rs('t1','0:00','快注',r=>`注 ${Math.round(80*r)}g`,80),rs('t2','0:25','快注',r=>`注 ${Math.round(100*r)}g`,180),rs('t3','1:00','快注',r=>`注 ${Math.round(80*r)}g`,260),rs('t4','1:50','完成','不超過2:30',null)] }
+];
+const g1 = l("⚡ 電動", "Electric", "電動"); const g2 = l("🖐️ 手搖", "Manual", "手挽き");
+const uN=l("數字","Dial","ダイヤル"); const uM=l("大數字","Macro","マクロ"); const uS=l("無段","Stepless","無段階");
+const uC=l("格數","Clicks","クリック"); const uR=l("圈數","Rots","回転");
+const mg = (gr, name, unit, step, r) => ({ group: gr, name, unit, step, ranges: r.map(x => ({ min: x[0], max: x[1] })) });
+const GRINDER_DATABASE = {
+"e_enc": mg(g1, "Baratza Encore", uN, 1, [[1,5],[5,10],[10,15],[15,25],[25,30]]),
+"e_270": mg(g1, "Baratza Sette 270", uM, 1, [[1,3],[3,9],[9,15],[15,25],[25,31]]),
+"e_sgp": mg(g1, "Breville SGP", uN, 1, [[1,5],[5,15],[15,30],[30,45],[45,60]]),
+"e_df64": mg(g1, "DF64 (Gen1/2)", uN, 1, [[0,10],[10,20],[20,40],[40,70],[70,90]]),
+"e_eur": mg(g1, "Eureka Mignon", uS, 0.1, [[0,0.5],[0.5,2],[2,3],[3,4.5],[4.5,5.5]]),
+"e_ode2": mg(g1, "Ode Gen 2", uN, 0.1, [[null,null],[null,null],[1,3],[3,8],[8,11]]),
+"e_opus": mg(g1, "Opus", uN, 0.1, [[0.5,1],[1,2.5],[2.5,4.5],[4.5,8.5],[8,11]]),
+"e_ek43": mg(g1, "EK43", uN, 0.1, [[1,1.5],[1.5,2.5],[2.5,5],[5,8.5],[8.5,11]]),
+"e_x54": mg(g1, "X54", uN, 0.1, [[1,4],[4,10],[10,20],[20,28],[28,35]]),
+"e_phi": mg(g1, "Philos", uN, 1, [[0,10],[10,25],[25,45],[45,65],[65,80]]),
+"e_nz": mg(g1, "Niche Zero", uN, 1, [[5,10],[10,20],[20,30],[30,45],[45,50]]),
+"e_casa": mg(g1, "Lagom Casa", uN, 0.1, [[0.1,0.8],[0.8,2.5],[2.5,4.5],[4.5,7.5],[7.5,9]]),
+"e_mini": mg(g1, "Lagom Mini", uR, 0.1, [[0.3,0.7],[0.7,1.4],[1.4,1.8],[1.8,2.6],[2.6,3.2]]),
+"e_p100": mg(g1, "Lagom P100/01", uN, 0.1, [[0.1,0.5],[0.5,1.5],[1.5,4],[4,7],[7,9.5]]),
+"e_p64": mg(g1, "Lagom P64", uN, 0.1, [[0.1,0.5],[0.5,1.5],[1.5,4.5],[4.5,7],[7,9.5]]),
+"e_078": mg(g1, "Sculptor 078", uN, 0.1, [[null,null],[null,null],[4,8],[8,14],[14,18]]),
+"e_078s": mg(g1, "Sculptor 078s", uN, 0.1, [[0,0.5],[0.5,2.5],[2.5,6],[6,10],[10,14]]),
+"e_vs3": mg(g1, "Varia VS3", uN, 0.1, [[0,1],[1,3],[3,5],[5,8],[8,10]]),
+"e_eg1": mg(g1, "Weber EG-1", uN, 0.1, [[0,0.5],[0.5,1.5],[1.5,4],[4,7],[7,9]]),
+"e_600n": mg(g1, "Feima 600N", uN, 0.5, [[0.5,1],[1,2.5],[2.5,3.5],[3.5,5.5],[5.5,8]]),
+"1z_q2": mg("🎯 1Zpresso", "Q2 / Q Air", uC, 1, [[15,25],[25,35],[35,45],[45,60],[60,75]]),
+"1z_jx": mg("🎯 1Zpresso", "JX", uC, 1, [[20,30],[30,40],[40,60],[60,90],[90,120]]),
+"1z_jxpro": mg("🎯 1Zpresso", "JX-Pro", uC, 1, [[30,50],[50,70],[70,100],[100,140],[140,160]]),
+"1z_jeplus": mg("🎯 1Zpresso", "JE-Plus", uC, 1, [[20,40],[40,60],[60,80],[80,110],[110,130]]),
+"1z_xpro": mg("🎯 1Zpresso", "X-Pro/Ultra", uC, 1, [[15,30],[30,60],[60,100],[120,150],[150,180]]),
+"1z_jmax": mg("🎯 1Zpresso", "J-Max", uC, 1, [[50,90],[90,150],[150,200],[200,280],[280,320]]),
+"1z_jultra": mg("🎯 1Zpresso", "J-Ultra", uC, 1, [[60,100],[100,160],[160,200],[200,270],[270,320]]),
+"1z_kmax": mg("🎯 1Zpresso", "K-Pro/Plus/Max", uN, 0.1, [[2,3],[3,4.5],[4.5,6],[6,8.5],[8.5,10]]),
+"1z_kultra": mg("🎯 1Zpresso", "K-Ultra", uN, 0.1, [[2,3],[3,4.5],[4.5,6.5],[6.5,9],[9,10]]),
+"1z_zp6": mg("🎯 1Zpresso", "ZP6 Special", uN, 0.1, [[null,null],[null,null],[3,4],[4,6],[6,7.5]]),
+"m_c40": mg(g2, "Comandante C40", uC, 1, [[5,9],[9,15],[15,22],[22,29],[29,40]]),
+"m_k6": mg(g2, "Kingrinder K6", uC, 1, [[28,40],[40,60],[60,90],[90,120],[120,150]]),
+"m_kinu": mg(g2, "Kinu M47", uR, 0.1, [[0.5,1],[1.1,2.3],[2.3,3.5],[3.5,5.5],[5.5,7.8]]),
+"m_c2": mg(g2, "Timemore C2/C3", uC, 1, [[6,10],[10,14],[14,17],[17,24],[24,29]]),
+"m_m01": mg(g2, "Timemore M01", uN, 0.1, [[0,0.5],[0.5,1.5],[1.5,4.3],[4.3,7.6],[7.6,10]]),
+"m_b38": mg(g2, "Cocinare B38", uN, 1, [[0,14],[14,29],[29,64],[64,79],[79,80]])
+};
+return { DRIPPER_CATEGORIES, RECIPE_DATABASE, GRINDER_DATABASE };
+}, [lang]);
+}
 // ==========================================
 // 4. 研磨顆粒模擬視覺化 (GrindVisualizer)
 // ==========================================
@@ -252,714 +244,650 @@ function GrindVisualizer({ catIdx, c, lang }) {
 const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
 const [scale, setScale] = useState(1);
 const pxPerMm = 3.779527559 * scale;
-
-        const visualData = [
-            { micron: "200 - 300 μm", mean: 250, texture: l("麵粉狀 / 糖粉", "Powder / Sugar", "パウダー"), finesRatio: 0.15 },
-            { micron: "300 - 500 μm", mean: 400, texture: l("細鹽狀", "Fine Salt", "細かい塩"), finesRatio: 0.15 },
-            { micron: "500 - 800 μm", mean: 650, texture: l("細砂糖", "Caster Sugar", "グラニュー糖"), finesRatio: 0.2 },
-            { micron: "800 - 1200 μm", mean: 1000, texture: l("粗砂", "Coarse Sand", "粗糖 / 粗砂"), finesRatio: 0.2 },
-            { micron: "1200 - 1500+ μm", mean: 1350, texture: l("粗鹽 / 碎胡椒", "Coarse Salt", "粗塩 / 砕いた黒胡椒"), finesRatio: 0.25 }
-        ];
-
-        const current = visualData[catIdx] || visualData[3];
-
-        const particles = React.useMemo(() => {
-            const meanArea = Math.pow(current.mean / 1000, 2);
-            const count = Math.max(20, Math.min(250, Math.floor((1600 * 0.18) / (meanArea * 1.35))));
-            const colors = ['#3E2723', '#4E342E', '#5D4037', '#6D4C41', '#795548', '#8D6E63'];
-
-            return Array.from({ length: count }).map((_, i) => {
-                const isFine = Math.random() < current.finesRatio;
-                const baseUm = isFine ? 150 + Math.random() * 150 : current.mean * (0.8 + Math.random() * 0.5);
-                const sizeMm = (baseUm * 1.35) / 1000;
-                const points = [];
-                const numPoints = 6 + Math.floor(Math.random() * 4); 
-                for(let j = 0; j < numPoints; j++) {
-                    const angle = (j / numPoints) * Math.PI * 2;
-                    const r = 30 + Math.random() * 20; 
-                    points.push(`${50 + r * Math.cos(angle)}% ${50 + r * Math.sin(angle)}%`);
-                }
-                const rDist = Math.random() * 40; 
-                const theta = Math.random() * 2 * Math.PI;
-                return {
-                    id: i, sizeMm: sizeMm, color: colors[Math.floor(Math.random() * colors.length)],
-                    clipPath: `polygon(${points.join(', ')})`, rot: Math.random() * 360, left: `${50 + rDist * Math.cos(theta)}%`, top: `${50 + rDist * Math.sin(theta)}%`,
-                    opacity: isFine ? 0.75 : 0.95
-                };
-            });
-        }, [catIdx, current]);
-
-        return (
-            <div className={`mt-6 pt-5 border-t border-dashed ${c.border} flex flex-col items-center animate-in fade-in duration-500`}>
-                <div className="flex flex-col items-center gap-2 mb-6 w-full">
-                    <span className={`text-sm font-bold ${c.textDark}`}>🔬 {l('實體比例顯微鏡 (1:1)', 'Real Scale View (1:1)', '実寸顕微鏡')}</span>
-                    <div className={`mt-2 flex flex-col items-center p-3 rounded-xl ${c.inputBg} border ${c.border} w-full max-w-[320px]`}>
-                        <label className={`text-[11px] font-bold ${c.primaryText} mb-2 text-center`}>{l('📐 調整滑桿讓下方線段與實體 1cm 等長', '📐 Adjust slider to match 1cm ruler', '📐 定規で実際の1cmに調整')}</label>
-                        <div className="flex items-center gap-3 w-full px-2">
-                            <button onClick={() => setScale(Math.max(0.5, scale - 0.05))} className={`w-7 h-7 rounded-full bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 shadow-sm font-medium`}>-</button>
-                            <input type="range" min="0.5" max="2.5" step="0.01" value={scale} onChange={(e) => setScale(Number(e.target.value))} className="flex-1 accent-[#7E8D85]" />
-                            <button onClick={() => setScale(Math.min(2.5, scale + 0.05))} className={`w-7 h-7 rounded-full bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 shadow-sm font-medium`}>+</button>
-                        </div>
-                        {scale !== 1 && <button onClick={() => setScale(1)} className={`mt-2 text-[10px] ${c.textMuted} hover:${c.textDark} underline`}>{l('重設比例', 'Reset Scale', 'リセット')}</button>}
-                    </div>
-                </div>
-                <div className="relative flex flex-col items-center">
-                    <div className={`relative shrink-0 rounded-full border-4 border-[#E2DED3] dark:border-[#5B6B61] bg-[#F9F8F6] dark:bg-[#EAE5D9] shadow-inner overflow-hidden z-10 transition-colors duration-500`} style={{ width: `${40 * pxPerMm}px`, height: `${40 * pxPerMm}px` }}>
-                        {particles.map(p => (<div key={p.id} className="absolute" style={{ width: `${p.sizeMm * pxPerMm}px`, height: `${p.sizeMm * pxPerMm}px`, left: p.left, top: p.top, backgroundColor: p.color, opacity: p.opacity, clipPath: p.clipPath, transform: `translate(-50%, -50%) rotate(${p.rot}deg)` }}></div>))}
-                    </div>
-                    <div className="mt-5 flex flex-col items-center">
-                        <div className="flex items-end justify-between border-b-2 border-x-2 border-gray-800 dark:border-gray-500" style={{ width: `${10 * pxPerMm}px`, height: '8px' }}></div>
-                        <span className={`text-[11px] font-black font-mono mt-1.5 ${c.textDark}`}>10 mm (1 cm)</span>
-                    </div>
-                </div>
-                <div className="text-center mt-6">
-                    <p className={`text-xl font-black font-mono ${c.textDark} tracking-widest`}>{current.micron}</p>
-                    <p className={`text-sm font-bold ${c.primaryText} mt-1.5`}>{current.texture}</p>
-                </div>
-            </div>
-        );
-    }
-
-    // ==========================================
-    // 5. WaterTool (礦物水計算)
-    // ==========================================
-    function WaterTool({ lang, c }) {
-        const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
-        const [brand, setBrand] = useState('aquacode'); 
-        const formatNum = (val) => Math.round(val * 10) / 10 <= 0 ? 0 : Math.round(val * 10) / 10;
-
-        // AQUACODE
-        const [mode, setMode] = useState('single'); 
-        const [tds, setTds] = useState(''); const [targetTds, setTargetTds] = useState('');
-        const [water, setWater] = useState(''); const [waterReq, setWaterReq] = useState(''); const [tdsComp, setTdsComp] = useState('');
-
-        const tdsOpts = [590, 393, 295, 197, 148, 118, 98, 85, 74, 66, 59, 54, 49, 45, 42, 39, 37, 35, 33, 31, 30];
-        const tdssizeOptions = tdsOpts.map((v,i) => ({ value: v, label: (i===1)?'1.5L':(i===5)?'4.5L':`${i<1?1:i<5?i+1:i+4}L` }));
-
-        const calcResult = (tdsVal, targetVal, waterVal) => {
-            const tdsResult = (parseFloat(targetVal) * parseFloat(waterVal)) / parseFloat(tdsVal);
-            return [tdsResult, parseFloat(waterVal) - tdsResult];
-        };
-
-        let singleResult = null; let singleError = null;
-        if (tds && targetTds && water && parseFloat(tds) > 0 && parseFloat(targetTds) > 0 && parseFloat(water) > 0) {
-            if (parseFloat(targetTds) > parseFloat(tds)) singleError = l('目標 TDS 不可大於濃縮液', 'Target cannot exceed Concentrate', '目標が濃縮液を超えています');
-            else {
-                const [r1, r2] = calcResult(tds, targetTds, water);
-                singleResult = { tdsAmount: r1, waterAmount: r2 };
-            }
-        }
-
-        let multiResults = [];
-        if (waterReq && tdsComp && parseFloat(waterReq) > 0 && parseFloat(tdsComp) > 0) {
-            for (let i = 100; i > 0; i -= 5) {
-                if (i <= parseFloat(tdsComp)) {
-                    const [r1, r2] = calcResult(tdsComp, i, waterReq);
-                    multiResults.push({ target: i, tdsAmount: r1, waterAmount: r2 });
-                }
-            }
-        }
-
-        // NAIRO DROP
-        const [nairoVolume, setNairoVolume] = useState('500'); const [nairoTds, setNairoTds] = useState('80');
-        let nairoDrops = 0; let nairoGrams = 0;
-        if (nairoVolume && nairoTds && parseFloat(nairoVolume) > 0 && parseFloat(nairoTds) > 0) {
-            nairoDrops = (parseFloat(nairoTds) * parseFloat(nairoVolume)) / 20000;
-            nairoGrams = nairoDrops * 0.06;
-        }
-
-        // APAX LAB
-        const [apaxCustomDrops, setApaxCustomDrops] = useState({ t: 0, j: 0, l: 0 });
-        const [apaxVolume, setApaxVolume] = useState('250');
-        const [apaxSelectedProfile, setApaxSelectedProfile] = useState('standard');
-
-        const apaxProfiles = {
-            'standard': { name: l('標準杯測', 'Standard Cupping', '標準カッピング'), tD: 9, jD: 4, lD: 2 },
-            'washed': { name: l('水洗處理', 'Washed', 'ウォッシュド'), tD: 9, jD: 2, lD: 4 },
-            'natural': { name: l('日曬處理', 'Natural', 'ナチュラル'), tD: 4, jD: 10, lD: 2 },
-            'honey': { name: l('蜜處理', 'Honey', 'ハニープロセス'), tD: 4, jD: 2, lD: 9 },
-            'lactic': { name: l('乳酸發酵', 'Lactic', '乳酸発酵'), tD: 4, jD: 6, lD: 6 },
-            'fermented': { name: l('重度發酵', 'Heavily Fermented', '強発酵'), tD: 4, jD: 8, lD: 4 },
-            'light': { name: l('淺焙', 'Light Roasted', '浅煎り'), tD: 4, jD: 11, lD: 0 },
-            'medium': { name: l('中焙', 'Medium Roasted', '中煎り'), tD: 4, jD: 7, lD: 4 },
-            'dark': { name: l('中深焙', 'Dark Roasted', '深煎り'), tD: 11, jD: 0, lD: 4 },
-            'martin': { name: l('世界冠軍 Martin', 'Champion Martin', '世界チャンピオン'), tD: 4, jD: 4, lD: 8 },
-            'custom': { name: l('自定義配方', 'Custom', 'カスタム設定'), tD: apaxCustomDrops.t, jD: apaxCustomDrops.j, lD: apaxCustomDrops.l }
-        };
-
-        const apaxRatio = (parseFloat(apaxVolume) || 0) / 250;
-        const currentApax = apaxProfiles[apaxSelectedProfile];
-        const calcApaxGrams = (drops) => formatNum(drops * 0.0625 * apaxRatio);
-
-        const apaxCards = [
-            { key: 't', name: 'TONIK [1]', color: c.red, text: c.redText, drops: currentApax.tD },
-            { key: 'j', name: 'JAMM [2]', color: c.yellow, text: c.yellowText, drops: currentApax.jD },
-            { key: 'l', name: 'LYLAC [3]', color: c.blue, text: c.blueText, drops: currentApax.lD }
-        ];
-
-        return (
-            <div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300 relative">
-                <div className={`flex flex-col sm:flex-row p-1.5 rounded-2xl border ${c.border} ${c.inputBg} gap-1.5`}>
-                    <button onClick={() => setBrand('aquacode')} className={`flex-1 py-2.5 px-2 text-sm font-bold rounded-xl transition-all duration-300 ${brand === 'aquacode' ? `${c.card} shadow-sm ${c.textDark}` : `text-gray-400 hover:text-gray-500`}`}>Aquacode</button>
-                    <button onClick={() => setBrand('nairo')} className={`flex-1 py-2.5 px-2 text-sm font-bold rounded-xl transition-all duration-300 ${brand === 'nairo' ? `${c.card} shadow-sm ${c.blueText}` : `text-gray-400 hover:text-gray-500`}`}>NAIRO DROP</button>
-                    <button onClick={() => setBrand('apax')} className={`flex-1 py-2.5 px-2 text-sm font-bold rounded-xl transition-all duration-300 ${brand === 'apax' ? `${c.card} shadow-sm ${c.redText}` : `text-gray-400 hover:text-gray-500`}`}>APAX LAB</button>
-                </div>
-
-                {brand === 'aquacode' && (
-                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 sm:p-6 space-y-5 animate-in fade-in`}>
-                        <div className="flex gap-2">
-                            <button onClick={() => setMode('single')} className={`flex-1 py-3 font-bold rounded-xl transition-colors ${mode === 'single' ? `${c.primary} text-white` : `${c.inputBg} ${c.textDark} border ${c.border}`}`}>{l('單個TDS', 'Single Target', '単一目標TDS')}</button>
-                            <button onClick={() => setMode('multiple')} className={`flex-1 py-3 font-bold rounded-xl transition-colors ${mode === 'multiple' ? `${c.primary} text-white` : `${c.inputBg} ${c.textDark} border ${c.border}`}`}>{l('多個TDS', 'Multiple Targets', '複数TDSリスト')}</button>
-                        </div>
-                        <div className={`p-4 rounded-xl ${c.infoBg} border ${c.border}`}><p className={`text-sm ${c.textDark} leading-relaxed font-medium`}>{mode === 'single' ? l('計算濃縮液與純水比例。', 'Calculate concentrate and pure water ratio.', '濃縮液と純水の割合を計算。') : l('列出不同 TDS 目標對應的比例清單。', 'Generate a table of various target TDS ratios.', '異なるTDS目標に対応する比率リストを生成。')}</p></div>
-                        {mode === 'single' ? (
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('濃縮液 TDS', 'Concentrate TDS', '濃縮液 TDS')}</label><input type="number" value={tds} onChange={e => setTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
-                                    <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('快速代入 (容量)', 'Auto-fill (Vol)', '自動入力')}</label><select onChange={(e) => setTds(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tds) ? tds : ""} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}><option value="" disabled>{l('選擇...', 'Select...', '選択...')}</option>{tdssizeOptions.map(opt => <option key={opt.label} value={opt.value}>{opt.label}</option>)}</select></div>
-                                </div>
-                                <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('目標 TDS', 'Target TDS', '目標 TDS')}</label><input type="number" value={targetTds} onChange={e => setTargetTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
-                                <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('沖煮水量', 'Total Water', '抽出水量')}</label><input type="number" value={water} onChange={e => setWater(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
-                                {singleError && <div className="mt-4 p-4 rounded-xl bg-red-500/10 text-red-600 text-sm font-bold text-center">{singleError}</div>}
-                                {singleResult && !singleError && (
-                                    <div className={`mt-6 pt-5 border-t border-dashed ${c.border} flex flex-col gap-3`}>
-                                        <div className={`flex justify-between items-center p-4 rounded-xl ${c.inputBg} border ${c.border}`}><span className={`font-bold ${c.textMuted}`}>{l('濃縮液', 'Concentrate', '濃縮液')}</span><span className={`text-xl font-black ${c.redText}`}>{formatNum(singleResult.tdsAmount)} g</span></div>
-                                        <div className={`flex justify-between items-center p-4 rounded-xl ${c.inputBg} border ${c.border}`}><span className={`font-bold ${c.textMuted}`}>{l('純水', 'Pure Water', '純水')}</span><span className={`text-xl font-black ${c.blueText}`}>{formatNum(singleResult.waterAmount)} g</span></div>
-                                    </div>
-                                )}
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('濃縮液 TDS', 'Concentrate TDS', '濃縮液 TDS')}</label><input type="number" value={tdsComp} onChange={e => setTdsComp(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
-                                    <div>
-                                        <label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('快速代入', 'Auto-fill', '自動入力')}</label>
-                                        <select onChange={(e) => setTdsComp(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tdsComp) ? tdsComp : ""} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}>
-                                            <option value="" disabled>{l('選擇...', 'Select...', '選択...')}</option>
-                                            {tdssizeOptions.map(opt => <option key={opt.label} value={opt.value}>{opt.label}</option>)}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('需求水量', 'Required Water', '必要な水量')}</label><input type="number" value={waterReq} onChange={e => setWaterReq(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
-                                {multiResults.length > 0 && (
-                                    <div className={`mt-6 overflow-hidden rounded-xl border ${c.border}`}>
-                                        <table className="w-full text-center text-sm">
-                                            <thead className={`${c.infoBg} ${c.textDark} font-bold`}><tr><th className={`py-3 border-b ${c.border}`}>TDS</th><th className={`py-3 border-b ${c.border}`}>{l('濃縮液', 'Concentrate', '濃縮液')}</th><th className={`py-3 border-b ${c.border}`}>{l('純水', 'Pure Water', '純水')}</th></tr></thead>
-                                            <tbody className={`${c.card} ${c.textDark}`}>
-                                                {multiResults.map((row, idx) => (
-                                                    <tr key={idx} className={`border-b last:border-b-0 ${c.border} ${idx % 2 === 0 ? '' : 'bg-black/5 dark:bg-white/5'}`}><td className="py-3 font-bold">{row.target}</td><td className={`py-3 font-black ${c.redText}`}>{formatNum(row.tdsAmount)}</td><td className={`py-3 font-black ${c.blueText}`}>{formatNum(row.waterAmount)}</td></tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {brand === 'nairo' && (
-                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 sm:p-6 space-y-5 animate-in fade-in`}>
-                        <div className={`p-4 rounded-xl ${c.blue} bg-opacity-10 border border-[#7A93A2]/20`}>
-                            <p className={`text-sm ${c.textDark} leading-relaxed font-bold`}>{l('NAIRO DROP 深層海洋礦物', 'NAIRO DROP', 'NAIRO DROP')}</p>
-                            <p className={`text-[13px] ${c.textMuted} leading-relaxed mt-1 font-medium`}>{l('依據總硬度 30萬 ppm 高鎂濃縮液計算，1 滴 ≈ 0.06g。', 'Calculated based on 300,000 ppm. 1 drop ≈ 0.06g.', '硬度30万ppm基準。1滴約0.06g。')}</p>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('目標 TDS', 'Target TDS', '目標TDS')}</label><input type="number" value={nairoTds} onChange={e => setNairoTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A93A2]`} /></div>
-                            <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('目標水量 (ml)', 'Target Vol (ml)', '抽出水総量 (ml)')}</label><input type="number" value={nairoVolume} onChange={e => setNairoVolume(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A93A2]`} /></div>
-                        </div>
-                        {(parseFloat(nairoTds) > 0 && parseFloat(nairoVolume) > 0) && (
-                            <div className={`mt-6 pt-6 border-t border-dashed ${c.border}`}>
-                                <p className={`text-center text-[11px] font-bold ${c.textMuted} mb-3 uppercase tracking-widest`}>{l('所需添加量', 'Required Addition', '必要な追加量')}</p>
-                                <div className={`flex flex-col items-center justify-center p-8 rounded-2xl ${c.inputBg} border ${c.border} shadow-inner`}>
-                                    <div className="flex items-baseline gap-2 mb-2"><span className={`text-6xl font-black ${c.blueText}`}>{formatNum(nairoDrops)}</span><span className={`text-xl font-bold ${c.textMuted}`}>{l('滴', 'Drops', '滴')}</span></div>
-                                    <div className={`px-3 py-1 mt-2 rounded-full ${c.blue} bg-opacity-20 text-[#7A93A2] text-sm font-bold border border-[#7A93A2]/20`}>{l('約合', 'approx.', '約')} {formatNum(nairoGrams)} g</div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {brand === 'apax' && (
-                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 sm:p-6 space-y-5 animate-in fade-in`}>
-                        <div className={`p-4 sm:p-5 rounded-xl ${c.red} bg-opacity-10 border border-[#C18F8F]/30`}>
-                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-3">
-                                <p className={`text-sm sm:text-base ${c.textDark} leading-relaxed font-black flex items-center gap-2`}>APAX LAB {l('配方換算', 'Recipe Calc', 'レシピ計算')}</p>
-                                <a href="https://apaxlab.com/pages/water-recipe-calculator" target="_blank" rel="noreferrer" className={`text-[11px] font-bold ${c.redText} hover:opacity-80 underline flex items-center gap-1`}>{l('官方計算機', 'Official Source', '公式ソース')} ↗</a>
-                            </div>
-                            <p className={`text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed font-medium mb-4`}>{l('內建官方建議配方，1滴等於 0.0625g。', 'Built-in official profiles. 1 drop = 0.0625g.', '公式レシピ内蔵（1滴=0.0625g）。')}</p>
-                            <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-[#C18F8F]/20">
-                                <p className={`text-[11px] sm:text-xs font-bold ${c.redText}`}>[1] TONIK (Mg)：{l('提升明亮酸值', 'Enhances vibrant acidity', '明るい酸味を引き立てる')}</p>
-                                <p className={`text-[11px] sm:text-xs font-bold ${c.yellowText}`}>[2] JAMM (Ca)：{l('放大醇厚度與甜感', 'Enhances richness & sweet', 'コクと甘みを増幅させる')}</p>
-                                <p className={`text-[11px] sm:text-xs font-bold ${c.blueText}`}>[3] LYLAC (Buffer)：{l('突顯細緻花香', 'Highlights delicate floral', '繊細なフローラルを際立たせる')}</p>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('沖煮水量 (ml)', 'Target Vol (ml)', '抽出水量 (ml)')}</label><input type="number" value={apaxVolume} onChange={e => setApaxVolume(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C18F8F]`} /></div>
-                            <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('選擇配方', 'Select Profile', 'プロファイル選択')}</label><select value={apaxSelectedProfile} onChange={e => setApaxSelectedProfile(e.target.value)} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C18F8F]`}>{Object.entries(apaxProfiles).map(([key, data]) => (<option key={key} value={key}>{data.name}</option>))}</select></div>
-                        </div>
-                        
-                        {apaxSelectedProfile === 'custom' && (
-                            <div className={`p-4 rounded-xl ${c.inputBg} border ${c.border}`}>
-                                <label className={`block text-xs font-bold ${c.textDark} mb-3`}>{l('自定義基準滴數 (以 250ml 為基準)', 'Custom Drops (per 250ml)', 'カスタム滴数 (250ml基準)')}</label>
-                                <div className="grid grid-cols-3 gap-3">
-                                    <div><label className={`block text-[10px] font-black ${c.redText} mb-1`}>TONIK</label><input type="number" min="0" value={apaxCustomDrops.t || ''} onChange={e => setApaxCustomDrops({...apaxCustomDrops, t: Number(e.target.value)})} placeholder="0" className={`w-full bg-white dark:bg-[#1C1F22] border ${c.border} ${c.textDark} font-bold py-2 px-2 rounded-lg text-center`} /></div>
-                                    <div><label className={`block text-[10px] font-black ${c.yellowText} mb-1`}>JAMM</label><input type="number" min="0" value={apaxCustomDrops.j || ''} onChange={e => setApaxCustomDrops({...apaxCustomDrops, j: Number(e.target.value)})} placeholder="0" className={`w-full bg-white dark:bg-[#1C1F22] border ${c.border} ${c.textDark} font-bold py-2 px-2 rounded-lg text-center`} /></div>
-                                    <div><label className={`block text-[10px] font-black ${c.blueText} mb-1`}>LYLAC</label><input type="number" min="0" value={apaxCustomDrops.l || ''} onChange={e => setApaxCustomDrops({...apaxCustomDrops, l: Number(e.target.value)})} placeholder="0" className={`w-full bg-white dark:bg-[#1C1F22] border ${c.border} ${c.textDark} font-bold py-2 px-2 rounded-lg text-center`} /></div>
-                                </div>
-                            </div>
-                        )}
-
-                        {parseFloat(apaxVolume) > 0 && (
-                            <div className={`mt-6 pt-6 border-t border-dashed ${c.border}`}>
-                                <p className={`text-center text-[11px] font-bold ${c.textMuted} mb-4 uppercase tracking-widest`}>{l('總水量所需添加量', 'Required Addition', '必要な追加量')}</p>
-                                <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                                    {apaxCards.map(item => (
-                                        <div key={item.key} className={`flex flex-col items-center justify-center p-3 sm:p-5 rounded-2xl ${c.inputBg} border ${c.border} shadow-sm relative overflow-hidden`}>
-                                            <div className={`absolute top-0 w-full h-1.5 ${item.color}`}></div>
-                                            <div className={`text-[10px] font-black ${item.text} mb-2`}>{item.name}</div>
-                                            <div className={`text-2xl sm:text-4xl font-black ${c.textDark} mb-1`}>{formatNum(item.drops * apaxRatio)}</div>
-                                            <div className={`text-[10px] sm:text-xs font-bold ${c.textMuted}`}>{l('滴', 'Drops', '滴')}</div>
-                                            <div className={`mt-2 text-[10px] sm:text-[11px] font-bold ${c.textMuted} bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded`}>{calcApaxGrams(item.drops)} g</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div>
-        );
-    }
-
-    // ==========================================
-    // 6. BrewTool (沖煮參數查詢)
-    // ==========================================
-    function BrewTool({ lang, t, c }) {
-        const { DRIPPER_CATEGORIES, RECIPE_DATABASE } = useDatabases(lang);
-        const [selectedDripperId, setSelectedDripperId] = useState('');
-        const [selectedRecipeId, setSelectedRecipeId] = useState(null);
-        const [customWeight, setCustomWeight] = useState(15); 
-        const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-
-        const handleDripperChange = (id) => { setSelectedDripperId(id); setIsSelectorOpen(false); setSelectedRecipeId(null); };
-        const handleSelectRecipe = (recipe) => { setSelectedRecipeId(recipe.id); setCustomWeight(recipe.baseCoffee); setIsSelectorOpen(false); };
-
-        const filteredRecipes = selectedDripperId ? RECIPE_DATABASE.filter(r => r.dripper === selectedDripperId) : [];
-        const selectedRecipe = RECIPE_DATABASE.find(r => r.id === selectedRecipeId);
-
-        return (
-            <div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300 relative">
-                <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-4`}>
-                    <label className={`flex items-center gap-2 text-sm font-bold ${c.textDark} mb-3`}><Filter size={16} className={c.primaryText} /> {t('select_dripper')}</label>
-                    <div className="relative">
-                        <select value={selectedDripperId} onChange={(e) => handleDripperChange(e.target.value)} className={`w-full ${c.inputBg} border ${selectedDripperId === '' ? 'text-gray-400' : c.textDark} ${c.border} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7E8D85] appearance-none transition-colors`}>
-                            <option value="" disabled>{t('select_dripper_placeholder')}</option>
-                            {Object.entries(DRIPPER_CATEGORIES).map(([category, drippers]) => (
-                                <optgroup key={category} label={category} className={`${c.textMuted} font-bold`}>{drippers.map(d => <option key={d.id} value={d.id} className={`${c.textDark} font-medium`}>{d.name}</option>)}</optgroup>
-                            ))}
-                        </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><ChevronDown size={20} /></div>
-                    </div>
-                </div>
-
-                {!selectedDripperId ? (
-                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Filter size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_dripper_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_dripper_desc')}</p></div>
-                ) : filteredRecipes.length > 0 ? (
-                    <div className="space-y-4 animate-in fade-in duration-300">
-                        <div className="relative z-20">
-                            <button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left ${c.card} border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : c.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between`}>
-                                {selectedRecipe ? (
-                                    <div className="flex items-center gap-3"><div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? c.icedTag : c.hotTag}`}>{selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}</div><div><div className={`text-[11px] font-bold ${c.textMuted} mb-0.5`}>{t('current_recipe')}</div><div className={`font-bold text-lg ${c.textDark}`}>{selectedRecipe.name}</div></div></div>
-                                ) : (<div className={`font-bold ${c.textMuted} text-lg`}>{t('select_recipe')}</div>)}
-                                <div className={`p-2 rounded-full ${c.infoBg} ${c.textMuted} transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}><ChevronDown size={20} /></div>
-                            </button>
-                            {isSelectorOpen && (
-                                <div className={`absolute top-full left-0 right-0 mt-2 ${c.card} border ${c.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto no-scrollbar`}>
-                                    <div className={`p-2 ${c.inputBg} border-b ${c.border}`}><p className={`text-xs font-bold ${c.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
-                                    {filteredRecipes.map(recipe => (
-                                        <button key={recipe.id} onClick={() => handleSelectRecipe(recipe)} className={`w-full text-left p-4 border-b last:border-0 ${c.border} hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center justify-between ${selectedRecipe?.id === recipe.id ? c.infoBg : c.card}`}>
-                                            <div className="flex items-center gap-3">{recipe.drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}<div><div className={`font-bold ${c.textDark}`}>{recipe.name}</div>{recipe.author && <div className={`text-xs ${c.textMuted} mt-0.5`}>by {recipe.author}</div>}</div></div>
-                                            {selectedRecipe?.id === recipe.id && <CheckCircle2 size={20} className={c.primaryText} />}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        {selectedRecipe ? (
-                            <div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><BrewRecipeDetail recipe={selectedRecipe} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} c={c} lang={lang} /></div>
-                        ) : (
-                            <div className={`text-center py-10 animate-in fade-in duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><div className={`w-12 h-12 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-3 ${c.secondaryText}`}><Coffee size={24} /></div><p className={`text-sm font-bold ${c.textMuted}`}>{t('select_recipe_prompt')}</p></div>
-                        )}
-                    </div>
-                ) : (
-                    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Coffee size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_recipe_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_recipe_desc')}</p></div>
-                )}
-            </div>
-        );
-    }
-
-    function BrewRecipeDetail({ recipe, customWeight, setCustomWeight, t, c, lang }) {
-        const ratio = (customWeight / recipe.baseCoffee) || 1;
-        const isIced = recipe.drinkType === 'iced';
-        const maxWater = Math.max(...recipe.steps.map(s => s.water || 0));
-        const baseRatio = (maxWater / recipe.baseCoffee).toFixed(1).replace('.0', '');
-        const renderDynamicText = (textObj) => typeof textObj === 'function' ? textObj(ratio) : textObj;
-
-        const [elapsed, setElapsed] = useState(0);
-        const [isRunning, setIsRunning] = useState(false);
-
-        useEffect(() => {
-            let interval;
-            if (isRunning) interval = setInterval(() => setElapsed(e => e + 1), 1000);
-            return () => clearInterval(interval);
-        }, [isRunning]);
-
-        useEffect(() => { setElapsed(0); setIsRunning(false); }, [recipe.id]);
-
-        const formatTime = (secs) => {
-            const m = Math.floor(secs / 60); const s = secs % 60;
-            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        };
-
-        const stepStartTimes = useMemo(() => {
-            const times = recipe.steps.map(s => {
-                const m = s.time.match(/(\d+):(\d+)/);
-                return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : -1;
-            });
-            for(let i = 1; i < times.length; i++) {
-                if(times[i] === -1) times[i] = times[i-1] + 30; 
-            }
-            return times;
-        }, [recipe]);
-
-        const activeStepIndex = useMemo(() => {
-            if (elapsed === 0 && !isRunning) return -1; 
-            let idx = 0;
-            for(let i = 0; i < stepStartTimes.length; i++) {
-                if (elapsed >= stepStartTimes[i]) idx = i;
-            }
-            return idx;
-        }, [elapsed, isRunning, stepStartTimes]);
-
-        return (
-            <div className="space-y-4">
-                <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
-                    <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
-                    <p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>
-                        {t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText}/>
-                    </p>
-                    <div className="flex items-center gap-6">
-                        <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>-</button>
-                        <div className="relative flex items-baseline">
-                            <input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${c.textDark} bg-transparent focus:outline-none`} />
-                            <span className={`text-xl font-bold ${c.textMuted} ml-1`}>g</span>
-                        </div>
-                        <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>+</button>
-                    </div>
-                </div>
-
-                <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} overflow-hidden`}>
-                    {recipe.description && (
-                        <div className={`p-5 text-[13px] sm:text-sm ${c.textDark} leading-relaxed ${c.infoBg} border-b ${c.border} whitespace-pre-wrap`}>{renderDynamicText(recipe.description)}</div>
-                    )}
-                    <div className={`p-4 grid grid-cols-3 gap-2 sm:gap-3 ${c.card}`}>
-                        <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
-                            <div className={`p-1.5 rounded-full ${c.iconBg} ${c.redText} shadow-sm mb-1`}><Thermometer size={16} /></div>
-                            <p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_temp')}</p>
-                            <p className={`font-bold text-base ${c.textDark}`}>{recipe.temperature}°C</p>
-                        </div>
-                        <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
-                            <div className={`p-1.5 rounded-full ${c.iconBg} ${c.yellowText} shadow-sm mb-1`}><ScaleIcon size={16} /></div>
-                            <p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_weight')}</p>
-                            <p className={`font-bold text-base ${c.textDark}`}>{recipe.baseCoffee}g</p>
-                        </div>
-                        <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
-                            <div className={`p-1.5 rounded-full ${c.iconBg} ${c.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div>
-                            <p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('base_ratio')}</p>
-                            <p className={`font-bold text-base ${c.textDark}`}>1 : {baseRatio}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
-                    <div className={`${c.card} rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border ${c.border} p-4 flex items-center justify-between`}>
-                        <div className="flex items-center gap-3">
-                            <button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all`}>
-                                {isRunning ? <Pause size={24}/> : <Play size={24} className="ml-1"/>}
-                            </button>
-                            <button onClick={() => { setElapsed(0); setIsRunning(false); }} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all hover:bg-black/5 dark:hover:bg-white/5`}>
-                                <RotateCcw size={18}/>
-                            </button>
-                        </div>
-                        <div className="text-right">
-                            <div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div>
-                            <div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 pb-6`}>
-                    <h3 className={`text-lg font-bold ${c.textDark} mb-6 flex items-center gap-2 pb-3 border-b ${c.border}`}>
-                        <Clock size={20} className={c.primaryText}/> {t('brew_steps')}
-                        {ratio !== 1 && <span className={`ml-auto text-xs font-bold text-white ${c.secondary} px-2 py-1 rounded-md`}>{t('converted_ratio')} {(ratio * 100).toFixed(0)}%</span>}
-                    </h3>
-                    
-                    <div className={`relative border-l-2 ${c.border} ml-4 space-y-8 pb-4 mt-4`}>
-                        {recipe.steps.map((step, index) => {
-                            const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
-                            const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; 
-                            const isActive = activeStepIndex === index;
-                            const isPast = activeStepIndex > index;
-                            const isUpcoming = activeStepIndex < index && activeStepIndex !== -1;
-
-                            return (
-                                <div key={step.id || index} className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
-                                    <div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
-                                    <div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02] transform-gpu` : 'py-2 border border-transparent'}`}>
-                                        <div className="flex-1 pr-3">
-                                            <div className="flex items-center flex-wrap gap-2 mb-1.5">
-                                                <span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark} transition-colors`}>{step.time}</span>
-                                                {step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}
-                                            </div>
-                                            <p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'} transition-colors`}>{renderDynamicText(step.note)}</p>
-                                        </div>
-                                        {scaledWater !== null && (
-                                            <div className={`text-right shrink-0 px-4 py-2 rounded-xl border ${isActive ? `${c.card} border-transparent shadow-sm` : `${c.inputBg} ${c.border}`} min-w-[70px] transition-colors`}>
-                                                <div className={`text-2xl font-black ${isIced ? c.blueText : c.yellowText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>
-                                                {ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    // ==========================================
-    // 7. GrindTool (刻度轉換)
-    // ==========================================
-    function GrindTool({ lang, t, c }) {
-        const { GRINDER_DATABASE } = useDatabases(lang);
-        const [grinderA, setGrinderA] = useState('');
-        const [grinderB, setGrinderB] = useState('');
-        const [valA, setValA] = useState('');
-
-        const groups = useMemo(() => {
-            let grps = {};
-            Object.entries(GRINDER_DATABASE).forEach(([key, g]) => {
-                if (!grps[g.group]) grps[g.group] = [];
-                grps[g.group].push({ key, name: g.name });
-            });
-            return grps;
-        }, [GRINDER_DATABASE]);
-
-        const handleSwap = () => {
-            const temp = grinderA; setGrinderA(grinderB); setGrinderB(temp);
-            if (result && result.valB && result.valB !== '-') setValA(result.valB.toString());
-        };
-
-        const result = useMemo(() => {
-            const gA = GRINDER_DATABASE[grinderA]; const gB = GRINDER_DATABASE[grinderB]; const parsedA = parseFloat(valA);
-            if (!gA || !gB || isNaN(parsedA)) return null;
-
-            const rFirst = gA.ranges.find(r => r.min !== null);
-            const rLast = [...gA.ranges].reverse().find(r => r.max !== null);
-
-            if (parsedA < rFirst.min) return { error: `${t('err_low')} ${rFirst.min})`, catIdx: -1 };
-            if (parsedA > rLast.max) return { error: `${t('err_high')} ${rLast.max})`, catIdx: -1 };
-
-            let catIdx = -1; let ratio = 0;
-            for (let i=0; i<gA.ranges.length; i++) {
-                let r = gA.ranges[i];
-                if (r.min !== null && r.max !== null && parsedA >= r.min && parsedA <= r.max) { catIdx = i; ratio = (parsedA - r.min) / (r.max - r.min); break; }
-            }
-
-            if (catIdx === -1) return { error: t('err_match'), catIdx: -1 };
-
-            const rB = gB.ranges[catIdx];
-            if (rB.min === null || rB.max === null) return { error: `${t('err_notsupport')} ${t('grind_cats_inline')[catIdx]}`, catIdx };
-
-            let valB = rB.min + ratio * (rB.max - rB.min);
-            if (gB.step === 1) { valB = Math.round(valB); } 
-            else { let inv = 1.0 / gB.step; valB = Math.round(valB * inv) / inv; valB = parseFloat(valB.toFixed(2)); }
-
-            return { valB, catIdx, catName: t('grind_cats_inline')[catIdx] };
-        }, [grinderA, grinderB, valA, t, GRINDER_DATABASE]);
-
-        const selectOptions = (
-            <React.Fragment>
-                <option value="" disabled>{t('select_grinder_placeholder')}</option>
-                {Object.entries(groups).map(([gName, items]) => (
-                    <optgroup key={gName} label={gName} className={`${c.textMuted} font-bold`}>
-                        {items.map(item => <option key={item.key} value={item.key} className={`${c.textDark} font-medium`}>{item.name}</option>)}
-                    </optgroup>
-                ))}
-            </React.Fragment>
-        );
-
-        return (
-            <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
-                <div className="flex flex-col md:flex-row items-center gap-4 relative">
-                    <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm ${c.blue} bg-opacity-5 dark:bg-opacity-10`}>
-                        <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('from_grinder')}</label>
-                        <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
-                        <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('current_grind')}</label>
-                        <input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 ${c.inputBg} ${c.textDark} outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
-                        <div className={`text-center text-xs font-bold ${c.blueText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}</div>
-                    </div>
-
-                    <button onClick={handleSwap} className={`p-3 ${c.card} border-2 ${c.border} hover:opacity-80 ${c.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group`}>
-                        <ArrowRightLeft size={24} className="group-hover:rotate-180 transition-transform duration-300" />
-                    </button>
-
-                    <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm ${c.secondary} bg-opacity-5 dark:bg-opacity-10`}>
-                        <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('to_grinder')}</label>
-                        <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
-                        <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('target_grind')}</label>
-                        <div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : c.secondaryText} ${c.inputBg} rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>
-                            {result ? (result.error ? 'N/A' : result.valB) : '-'}
-                        </div>
-                        <div className={`text-center text-xs font-bold ${c.secondaryText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
-                    </div>
-                </div>
-
-                {grinderB && (
-                    <div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border} animate-in fade-in duration-300`}>
-                        {result && !result.error && (
-                            <div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 ${c.textDark}`}>
-                                {t('grind_result_msg')} <strong className={c.primaryText}>{result.catName}</strong>{t('mapped_linear')}
-                            </div>
-                        )}
-                        {result && result.error && (
-                            <div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 text-red-500`}>
-                                {result.error}
-                            </div>
-                        )}
-
-                        <div className="px-2">
-                            <div className={`text-xs font-bold ${c.textMuted} mb-3 flex items-center gap-2`}>
-                                <Settings2 size={16} /> 
-                                {GRINDER_DATABASE[grinderB].name} {t('grind_visual')}
-                            </div>
-                            <div className={`flex h-4 rounded-full overflow-hidden ${c.bg} shadow-inner border ${c.border}`}>
-                                {t('grind_cats').map((cat, idx) => (
-                                    <div key={idx} className={`w-1/5 border-r border-black/5 dark:border-white/10 transition-colors duration-300 ${(result && result.catIdx === idx) ? c.bar[idx] : 'bg-transparent'}`}></div>
-                                ))}
-                            </div>
-                            <div className={`flex text-[10px] sm:text-xs ${c.textMuted} mt-3 font-bold`}>
-                                {t('grind_cats').map((cat, idx) => {
-                                    const range = GRINDER_DATABASE[grinderB].ranges[idx];
-                                    const rangeText = range && range.min !== null ? `${range.min} - ${range.max}` : '-';
-                                    const isHighlight = result && result.catIdx === idx;
-                                    return (
-                                        <div key={idx} className={`w-1/5 flex flex-col items-center gap-1.5 whitespace-pre-wrap ${isHighlight ? c.textDark : ''}`}>
-                                            <span className="text-center leading-tight">{cat}</span>
-                                            <span className={`px-1.5 py-0.5 rounded-md font-mono transition-all duration-300 ${isHighlight ? `${c.bar[idx]} text-white shadow-md scale-110` : `${c.inputBg} border ${c.border}`}`}>
-                                                {rangeText}
-                                            </span>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </div>
-                        {result && result.catIdx !== -1 && <GrindVisualizer catIdx={result.catIdx} c={c} lang={lang} />}
-                    </div>
-                )}
-
-                <div className={`p-5 ${c.infoBg} rounded-2xl border ${c.border} text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed`}>
-                    <strong className={`${c.textDark} block mb-2`}>{t('hint_title')}</strong>
-                    <ul className="list-disc pl-5 space-y-1.5">
-                        <li>{t('hint_1')}</li>
-                        <li>{t('hint_2')}</li>
-                        <li>{t('hint_3')}</li>
-                        <li>{t('hint_4')}</li>
-                    </ul>
-                </div>
-            </div>
-        );
-    }
-
-    // ==========================================
-    // 9. App 主程式與掛載點
-    // ==========================================
-    function App() {
-        const [view, setView] = useState('home'); 
-        const [lang, setLang] = useState('zh');
-        const [isDark, setIsDark] = useState(false);
-        
-        const t = (key) => i18n[lang][key] || key;
-        const c = getColors(isDark); 
-
-        useEffect(() => {
-            document.body.className = c.bg;
-        }, [isDark, c.bg]);
-
-        return (
-            <div className={`min-h-screen ${c.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
-                <button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full shadow-lg border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300`}>
-                    {isDark ? <Sun size={24} /> : <Moon size={24} />}
-                </button>
-
-                <div className={`${c.primary} text-white shadow-md sticky top-0 z-50 transition-colors duration-300`}>
-                    <div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            {view !== 'home' && <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors"><ArrowLeft size={20} /></button>}
-                            <Coffee size={24} strokeWidth={2.5} />
-                            <h1 className="text-xl font-bold tracking-widest hidden sm:block">
-                                {view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : (view === 'water' ? t('tool_water_title') : t('tool_grind_title')))}
-                            </h1>
-                        </div>
-                        <div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm">
-                            <button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button>
-                            <button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button>
-                            <button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button>
-                        </div>
-                    </div>
-                </div>
-                <main className="max-w-3xl mx-auto px-4 py-8 relative">
-                    {view === 'home' && <HomeView setView={setView} t={t} c={c} />}
-                    {view === 'brew' && <BrewTool lang={lang} t={t} c={c} />}
-                    {view === 'grind' && <GrindTool lang={lang} t={t} c={c} />}
-                    {view === 'water' && <WaterTool lang={lang} c={c} />}
-                </main>
-            </div>
-        );
-    }
-
-    function HomeView({ setView, t, c }) {
-        const changelog = t('changelog');
-        return (
-            <div className="animate-in fade-in zoom-in-95 duration-300">
-                <div className="text-center mb-8"><h2 className={`text-2xl md:text-3xl font-bold ${c.textDark} mb-2`}>{t('home_title')}</h2><p className={`${c.textMuted}`}>{t('home_subtitle')}</p></div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-                    <button onClick={() => setView('brew')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_brew_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p></button>
-                    <button onClick={() => setView('grind')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Wrench size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_grind_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p></button>
-                    <button onClick={() => setView('water')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#8AA192] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.primary} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Droplets size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_water_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_water_desc')}</p></button>
-                </div>
-                <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-                    <div className="flex items-center justify-center gap-3 mb-6"><div className={`h-px ${c.border} flex-1`}></div><h3 className={`flex items-center gap-2 text-lg font-bold ${c.textDark} px-2`}><Clock size={18} className={c.primaryText} />{t('changelog_title')}</h3><div className={`h-px ${c.border} flex-1`}></div></div>
-                    <div className={`${c.card} p-6 sm:p-8 rounded-2xl shadow-sm border ${c.border}`}>
-                        <div className="space-y-8">
-                            {Array.isArray(changelog) && changelog.map((log, idx) => (
-                                <div key={idx} className={`relative pl-6 sm:pl-8 border-l-2 ${c.border}`}>
-                                    <div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 ${c.card} ${idx === 0 ? c.primary : c.accent}`}></div>
-                                    <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-3"><span className={`text-lg font-black ${c.textDark}`}>{log.version}</span><span className={`text-xs font-bold ${c.textMuted}`}>{log.date}</span></div>
-                                    <ul className={`list-disc pl-5 text-[13px] sm:text-sm ${c.textDark} space-y-1.5 leading-relaxed`}>{log.changes.map((change, i) => (<li key={i}>{change}</li>))}</ul>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+const visualData = [
+{ micron: "200 - 300 μm", mean: 250, texture: l("麵粉狀 / 糖粉", "Powder / Sugar", "パウダー"), finesRatio: 0.15 },
+{ micron: "300 - 500 μm", mean: 400, texture: l("細鹽狀", "Fine Salt", "細かい塩"), finesRatio: 0.15 },
+{ micron: "500 - 800 μm", mean: 650, texture: l("細砂糖", "Caster Sugar", "グラニュー糖"), finesRatio: 0.2 },
+{ micron: "800 - 1200 μm", mean: 1000, texture: l("粗砂", "Coarse Sand", "粗糖 / 粗砂"), finesRatio: 0.2 },
+{ micron: "1200 - 1500+ μm", mean: 1350, texture: l("粗鹽 / 碎胡椒", "Coarse Salt", "粗塩 / 砕いた黒胡椒"), finesRatio: 0.25 }
+];
+const current = visualData[catIdx] || visualData[3];
+const particles = React.useMemo(() => {
+const meanArea = Math.pow(current.mean / 1000, 2);
+const count = Math.max(20, Math.min(250, Math.floor((1600 * 0.18) / (meanArea * 1.35))));
+const colors = ['#3E2723', '#4E342E', '#5D4037', '#6D4C41', '#795548', '#8D6E63'];
+return Array.from({ length: count }).map((_, i) => {
+const isFine = Math.random() < current.finesRatio;
+const baseUm = isFine ? 150 + Math.random() * 150 : current.mean * (0.8 + Math.random() * 0.5);
+const sizeMm = (baseUm * 1.35) / 1000;
+const points = [];
+const numPoints = 6 + Math.floor(Math.random() * 4); 
+for(let j = 0; j < numPoints; j++) {
+const angle = (j / numPoints) * Math.PI * 2;
+const r = 30 + Math.random() * 20; 
+points.push(`${50 + r * Math.cos(angle)}% ${50 + r * Math.sin(angle)}%`);
+}
+const rDist = Math.random() * 40; 
+const theta = Math.random() * 2 * Math.PI;
+return {
+id: i, sizeMm: sizeMm, color: colors[Math.floor(Math.random() * colors.length)],
+clipPath: `polygon(${points.join(', ')})`, rot: Math.random() * 360, left: `${50 + rDist * Math.cos(theta)}%`, top: `${50 + rDist * Math.sin(theta)}%`,
+opacity: isFine ? 0.75 : 0.95
+};
+});
+}, [catIdx, current]);
+return (
+<div className={`mt-6 pt-5 border-t border-dashed ${c.border} flex flex-col items-center animate-in fade-in duration-500`}>
+<div className="flex flex-col items-center gap-2 mb-6 w-full">
+<span className={`text-sm font-bold ${c.textDark}`}>🔬 {l('實體比例顯微鏡 (1:1)', 'Real Scale View (1:1)', '実寸顕微鏡')}</span>
+<div className={`mt-2 flex flex-col items-center p-3 rounded-xl ${c.inputBg} border ${c.border} w-full max-w-[320px]`}>
+<label className={`text-[11px] font-bold ${c.primaryText} mb-2 text-center`}>{l('📐 調整滑桿讓下方線段與實體 1cm 等長', '📐 Adjust slider to match 1cm ruler', '📐 定規で実際の1cmに調整')}</label>
+<div className="flex items-center gap-3 w-full px-2">
+<button onClick={() => setScale(Math.max(0.5, scale - 0.05))} className={`w-7 h-7 rounded-full bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 shadow-sm font-medium`}>-</button>
+<input type="range" min="0.5" max="2.5" step="0.01" value={scale} onChange={(e) => setScale(Number(e.target.value))} className="flex-1 accent-[#7E8D85]" />
+<button onClick={() => setScale(Math.min(2.5, scale + 0.05))} className={`w-7 h-7 rounded-full bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 shadow-sm font-medium`}>+</button>
+</div>
+{scale !== 1 && <button onClick={() => setScale(1)} className={`mt-2 text-[10px] ${c.textMuted} hover:${c.textDark} underline`}>{l('重設比例', 'Reset Scale', 'リセット')}</button>}
+</div>
+</div>
+<div className="relative flex flex-col items-center">
+<div className={`relative shrink-0 rounded-full border-4 border-[#E2DED3] dark:border-[#5B6B61] bg-[#F9F8F6] dark:bg-[#EAE5D9] shadow-inner overflow-hidden z-10 transition-colors duration-500`} style={{ width: `${40 * pxPerMm}px`, height: `${40 * pxPerMm}px` }}>
+{particles.map(p => (<div key={p.id} className="absolute" style={{ width: `${p.sizeMm * pxPerMm}px`, height: `${p.sizeMm * pxPerMm}px`, left: p.left, top: p.top, backgroundColor: p.color, opacity: p.opacity, clipPath: p.clipPath, transform: `translate(-50%, -50%) rotate(${p.rot}deg)` }}></div>))}
+</div>
+<div className="mt-5 flex flex-col items-center">
+<div className="flex items-end justify-between border-b-2 border-x-2 border-gray-800 dark:border-gray-500" style={{ width: `${10 * pxPerMm}px`, height: '8px' }}></div>
+<span className={`text-[11px] font-black font-mono mt-1.5 ${c.textDark}`}>10 mm (1 cm)</span>
+</div>
+</div>
+<div className="text-center mt-6">
+<p className={`text-xl font-black font-mono ${c.textDark} tracking-widest`}>{current.micron}</p>
+<p className={`text-sm font-bold ${c.primaryText} mt-1.5`}>{current.texture}</p>
+</div>
+</div>
+);
+}
+// ==========================================
+// 5. WaterTool (礦物水計算)
+// ==========================================
+function WaterTool({ lang, c }) {
+const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
+const [brand, setBrand] = useState('aquacode'); 
+const formatNum = (val) => Math.round(val * 10) / 10 <= 0 ? 0 : Math.round(val * 10) / 10;
+// AQUACODE
+const [mode, setMode] = useState('single'); 
+const [tds, setTds] = useState(''); const [targetTds, setTargetTds] = useState('');
+const [water, setWater] = useState(''); const [waterReq, setWaterReq] = useState(''); const [tdsComp, setTdsComp] = useState('');
+const tdsOpts = [590, 393, 295, 197, 148, 118, 98, 85, 74, 66, 59, 54, 49, 45, 42, 39, 37, 35, 33, 31, 30];
+const tdssizeOptions = tdsOpts.map((v,i) => ({ value: v, label: (i===1)?'1.5L':(i===5)?'4.5L':`${i<1?1:i<5?i+1:i+4}L` }));
+const calcResult = (tdsVal, targetVal, waterVal) => {
+const tdsResult = (parseFloat(targetVal) * parseFloat(waterVal)) / parseFloat(tdsVal);
+return [tdsResult, parseFloat(waterVal) - tdsResult];
+};
+let singleResult = null; let singleError = null;
+if (tds && targetTds && water && parseFloat(tds) > 0 && parseFloat(targetTds) > 0 && parseFloat(water) > 0) {
+if (parseFloat(targetTds) > parseFloat(tds)) singleError = l('目標 TDS 不可大於濃縮液', 'Target cannot exceed Concentrate', '目標が濃縮液を超えています');
+else {
+const [r1, r2] = calcResult(tds, targetTds, water);
+singleResult = { tdsAmount: r1, waterAmount: r2 };
+}
+}
+let multiResults = [];
+if (waterReq && tdsComp && parseFloat(waterReq) > 0 && parseFloat(tdsComp) > 0) {
+for (let i = 100; i > 0; i -= 5) {
+if (i <= parseFloat(tdsComp)) {
+const [r1, r2] = calcResult(tdsComp, i, waterReq);
+multiResults.push({ target: i, tdsAmount: r1, waterAmount: r2 });
+}
+}
+}
+// NAIRO DROP
+const [nairoVolume, setNairoVolume] = useState('500'); const [nairoTds, setNairoTds] = useState('80');
+let nairoDrops = 0; let nairoGrams = 0;
+if (nairoVolume && nairoTds && parseFloat(nairoVolume) > 0 && parseFloat(nairoTds) > 0) {
+nairoDrops = (parseFloat(nairoTds) * parseFloat(nairoVolume)) / 20000;
+nairoGrams = nairoDrops * 0.06;
+}
+// APAX LAB
+const [apaxCustomDrops, setApaxCustomDrops] = useState({ t: 0, j: 0, l: 0 });
+const [apaxVolume, setApaxVolume] = useState('250');
+const [apaxSelectedProfile, setApaxSelectedProfile] = useState('standard');
+const apaxProfiles = {
+'standard': { name: l('標準杯測', 'Standard Cupping', '標準カッピング'), tD: 9, jD: 4, lD: 2 },
+'washed': { name: l('水洗處理', 'Washed', 'ウォッシュド'), tD: 9, jD: 2, lD: 4 },
+'natural': { name: l('日曬處理', 'Natural', 'ナチュラル'), tD: 4, jD: 10, lD: 2 },
+'honey': { name: l('蜜處理', 'Honey', 'ハニープロセス'), tD: 4, jD: 2, lD: 9 },
+'lactic': { name: l('乳酸發酵', 'Lactic', '乳酸発酵'), tD: 4, jD: 6, lD: 6 },
+'fermented': { name: l('重度發酵', 'Heavily Fermented', '強発酵'), tD: 4, jD: 8, lD: 4 },
+'light': { name: l('淺焙', 'Light Roasted', '浅煎り'), tD: 4, jD: 11, lD: 0 },
+'medium': { name: l('中焙', 'Medium Roasted', '中煎り'), tD: 4, jD: 7, lD: 4 },
+'dark': { name: l('中深焙', 'Dark Roasted', '深煎り'), tD: 11, jD: 0, lD: 4 },
+'martin': { name: l('世界冠軍 Martin', 'Champion Martin', '世界チャンピオン'), tD: 4, jD: 4, lD: 8 },
+'custom': { name: l('自定義配方', 'Custom', 'カスタム設定'), tD: apaxCustomDrops.t, jD: apaxCustomDrops.j, lD: apaxCustomDrops.l }
+};
+const apaxRatio = (parseFloat(apaxVolume) || 0) / 250;
+const currentApax = apaxProfiles[apaxSelectedProfile];
+const calcApaxGrams = (drops) => formatNum(drops * 0.0625 * apaxRatio);
+const apaxCards = [
+{ key: 't', name: 'TONIK [1]', color: c.red, text: c.redText, drops: currentApax.tD },
+{ key: 'j', name: 'JAMM [2]', color: c.yellow, text: c.yellowText, drops: currentApax.jD },
+{ key: 'l', name: 'LYLAC [3]', color: c.blue, text: c.blueText, drops: currentApax.lD }
+];
+return (
+<div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300 relative">
+<div className={`flex flex-col sm:flex-row p-1.5 rounded-2xl border ${c.border} ${c.inputBg} gap-1.5`}>
+<button onClick={() => setBrand('aquacode')} className={`flex-1 py-2.5 px-2 text-sm font-bold rounded-xl transition-all duration-300 ${brand === 'aquacode' ? `${c.card} shadow-sm ${c.textDark}` : `text-gray-400 hover:text-gray-500`}`}>Aquacode</button>
+<button onClick={() => setBrand('nairo')} className={`flex-1 py-2.5 px-2 text-sm font-bold rounded-xl transition-all duration-300 ${brand === 'nairo' ? `${c.card} shadow-sm ${c.blueText}` : `text-gray-400 hover:text-gray-500`}`}>NAIRO DROP</button>
+<button onClick={() => setBrand('apax')} className={`flex-1 py-2.5 px-2 text-sm font-bold rounded-xl transition-all duration-300 ${brand === 'apax' ? `${c.card} shadow-sm ${c.redText}` : `text-gray-400 hover:text-gray-500`}`}>APAX LAB</button>
+</div>
+{brand === 'aquacode' && (
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 sm:p-6 space-y-5 animate-in fade-in`}>
+<div className="flex gap-2">
+<button onClick={() => setMode('single')} className={`flex-1 py-3 font-bold rounded-xl transition-colors ${mode === 'single' ? `${c.primary} text-white` : `${c.inputBg} ${c.textDark} border ${c.border}`}`}>{l('單個TDS', 'Single Target', '単一目標TDS')}</button>
+<button onClick={() => setMode('multiple')} className={`flex-1 py-3 font-bold rounded-xl transition-colors ${mode === 'multiple' ? `${c.primary} text-white` : `${c.inputBg} ${c.textDark} border ${c.border}`}`}>{l('多個TDS', 'Multiple Targets', '複数TDSリスト')}</button>
+</div>
+<div className={`p-4 rounded-xl ${c.infoBg} border ${c.border}`}><p className={`text-sm ${c.textDark} leading-relaxed font-medium`}>{mode === 'single' ? l('計算濃縮液與純水比例。', 'Calculate concentrate and pure water ratio.', '濃縮液と純水の割合を計算。') : l('列出不同 TDS 目標對應的比例清單。', 'Generate a table of various target TDS ratios.', '異なるTDS目標に対応する比率リストを生成。')}</p></div>
+{mode === 'single' ? (
+<div className="space-y-4">
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('濃縮液 TDS', 'Concentrate TDS', '濃縮液 TDS')}</label><input type="number" value={tds} onChange={e => setTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('快速代入 (容量)', 'Auto-fill (Vol)', '自動入力')}</label><select onChange={(e) => setTds(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tds) ? tds : ""} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}><option value="" disabled>{l('選擇...', 'Select...', '選択...')}</option>{tdssizeOptions.map(opt => <option key={opt.label} value={opt.value}>{opt.label}</option>)}</select></div>
+</div>
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('目標 TDS', 'Target TDS', '目標 TDS')}</label><input type="number" value={targetTds} onChange={e => setTargetTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('沖煮水量', 'Total Water', '抽出水量')}</label><input type="number" value={water} onChange={e => setWater(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
+{singleError && <div className="mt-4 p-4 rounded-xl bg-red-500/10 text-red-600 text-sm font-bold text-center">{singleError}</div>}
+{singleResult && !singleError && (
+<div className={`mt-6 pt-5 border-t border-dashed ${c.border} flex flex-col gap-3`}>
+<div className={`flex justify-between items-center p-4 rounded-xl ${c.inputBg} border ${c.border}`}><span className={`font-bold ${c.textMuted}`}>{l('濃縮液', 'Concentrate', '濃縮液')}</span><span className={`text-xl font-black ${c.redText}`}>{formatNum(singleResult.tdsAmount)} g</span></div>
+<div className={`flex justify-between items-center p-4 rounded-xl ${c.inputBg} border ${c.border}`}><span className={`font-bold ${c.textMuted}`}>{l('純水', 'Pure Water', '純水')}</span><span className={`text-xl font-black ${c.blueText}`}>{formatNum(singleResult.waterAmount)} g</span></div>
+</div>
+)}
+</div>
+) : (
+<div className="space-y-4">
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('濃縮液 TDS', 'Concentrate TDS', '濃縮液 TDS')}</label><input type="number" value={tdsComp} onChange={e => setTdsComp(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
+<div>
+<label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('快速代入', 'Auto-fill', '自動入力')}</label>
+<select onChange={(e) => setTdsComp(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tdsComp) ? tdsComp : ""} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}>
+<option value="" disabled>{l('選擇...', 'Select...', '選択...')}</option>
+{tdssizeOptions.map(opt => <option key={opt.label} value={opt.value}>{opt.label}</option>)}
+</select>
+</div>
+</div>
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('需求水量', 'Required Water', '必要な水量')}</label><input type="number" value={waterReq} onChange={e => setWaterReq(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
+{multiResults.length > 0 && (
+<div className={`mt-6 overflow-hidden rounded-xl border ${c.border}`}>
+<table className="w-full text-center text-sm">
+<thead className={`${c.infoBg} ${c.textDark} font-bold`}><tr><th className={`py-3 border-b ${c.border}`}>TDS</th><th className={`py-3 border-b ${c.border}`}>{l('濃縮液', 'Concentrate', '濃縮液')}</th><th className={`py-3 border-b ${c.border}`}>{l('純水', 'Pure Water', '純水')}</th></tr></thead>
+<tbody className={`${c.card} ${c.textDark}`}>
+{multiResults.map((row, idx) => (
+<tr key={idx} className={`border-b last:border-b-0 ${c.border} ${idx % 2 === 0 ? '' : 'bg-black/5 dark:bg-white/5'}`}><td className="py-3 font-bold">{row.target}</td><td className={`py-3 font-black ${c.redText}`}>{formatNum(row.tdsAmount)}</td><td className={`py-3 font-black ${c.blueText}`}>{formatNum(row.waterAmount)}</td></tr>
+))}
+</tbody>
+</table>
+</div>
+)}
+</div>
+)}
+</div>
+)}
+{brand === 'nairo' && (
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 sm:p-6 space-y-5 animate-in fade-in`}>
+<div className={`p-4 rounded-xl ${c.blue} bg-opacity-10 border border-[#7A93A2]/20`}>
+<p className={`text-sm ${c.textDark} leading-relaxed font-bold`}>{l('NAIRO DROP 深層海洋礦物', 'NAIRO DROP', 'NAIRO DROP')}</p>
+<p className={`text-[13px] ${c.textMuted} leading-relaxed mt-1 font-medium`}>{l('依據總硬度 30萬 ppm 高鎂濃縮液計算，1 滴 ≈ 0.06g。', 'Calculated based on 300,000 ppm. 1 drop ≈ 0.06g.', '硬度30万ppm基準。1滴約0.06g。')}</p>
+</div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('目標 TDS', 'Target TDS', '目標TDS')}</label><input type="number" value={nairoTds} onChange={e => setNairoTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A93A2]`} /></div>
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('目標水量 (ml)', 'Target Vol (ml)', '抽出水総量 (ml)')}</label><input type="number" value={nairoVolume} onChange={e => setNairoVolume(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7A93A2]`} /></div>
+</div>
+{(parseFloat(nairoTds) > 0 && parseFloat(nairoVolume) > 0) && (
+<div className={`mt-6 pt-6 border-t border-dashed ${c.border}`}>
+<p className={`text-center text-[11px] font-bold ${c.textMuted} mb-3 uppercase tracking-widest`}>{l('所需添加量', 'Required Addition', '必要な追加量')}</p>
+<div className={`flex flex-col items-center justify-center p-8 rounded-2xl ${c.inputBg} border ${c.border} shadow-inner`}>
+<div className="flex items-baseline gap-2 mb-2"><span className={`text-6xl font-black ${c.blueText}`}>{formatNum(nairoDrops)}</span><span className={`text-xl font-bold ${c.textMuted}`}>{l('滴', 'Drops', '滴')}</span></div>
+<div className={`px-3 py-1 mt-2 rounded-full ${c.blue} bg-opacity-20 text-[#7A93A2] text-sm font-bold border border-[#7A93A2]/20`}>{l('約合', 'approx.', '約')} {formatNum(nairoGrams)} g</div>
+</div>
+</div>
+)}
+</div>
+)}
+{brand === 'apax' && (
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 sm:p-6 space-y-5 animate-in fade-in`}>
+<div className={`p-4 sm:p-5 rounded-xl ${c.red} bg-opacity-10 border border-[#C18F8F]/30`}>
+<div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-3">
+<p className={`text-sm sm:text-base ${c.textDark} leading-relaxed font-black flex items-center gap-2`}>APAX LAB {l('配方換算', 'Recipe Calc', 'レシピ計算')}</p>
+<a href="https://apaxlab.com/pages/water-recipe-calculator" target="_blank" rel="noreferrer" className={`text-[11px] font-bold ${c.redText} hover:opacity-80 underline flex items-center gap-1`}>{l('官方計算機', 'Official Source', '公式ソース')} ↗</a>
+</div>
+<p className={`text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed font-medium mb-4`}>{l('內建官方建議配方，1滴等於 0.0625g。', 'Built-in official profiles. 1 drop = 0.0625g.', '公式レシピ内蔵（1滴=0.0625g）。')}</p>
+<div className="flex flex-col gap-2 mt-4 pt-4 border-t border-[#C18F8F]/20">
+<p className={`text-[11px] sm:text-xs font-bold ${c.redText}`}>[1] TONIK (Mg)：{l('提升明亮酸值', 'Enhances vibrant acidity', '明るい酸味を引き立てる')}</p>
+<p className={`text-[11px] sm:text-xs font-bold ${c.yellowText}`}>[2] JAMM (Ca)：{l('放大醇厚度與甜感', 'Enhances richness & sweet', 'コクと甘みを増幅させる')}</p>
+<p className={`text-[11px] sm:text-xs font-bold ${c.blueText}`}>[3] LYLAC (Buffer)：{l('突顯細緻花香', 'Highlights delicate floral', '繊細なフローラルを際立たせる')}</p>
+</div>
+</div>
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('沖煮水量 (ml)', 'Target Vol (ml)', '抽出水量 (ml)')}</label><input type="number" value={apaxVolume} onChange={e => setApaxVolume(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C18F8F]`} /></div>
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('選擇配方', 'Select Profile', 'プロファイル選択')}</label><select value={apaxSelectedProfile} onChange={e => setApaxSelectedProfile(e.target.value)} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C18F8F]`}>{Object.entries(apaxProfiles).map(([key, data]) => (<option key={key} value={key}>{data.name}</option>))}</select></div>
+</div>
+{apaxSelectedProfile === 'custom' && (
+<div className={`p-4 rounded-xl ${c.inputBg} border ${c.border}`}>
+<label className={`block text-xs font-bold ${c.textDark} mb-3`}>{l('自定義基準滴數 (以 250ml 為基準)', 'Custom Drops (per 250ml)', 'カスタム滴数 (250ml基準)')}</label>
+<div className="grid grid-cols-3 gap-3">
+<div><label className={`block text-[10px] font-black ${c.redText} mb-1`}>TONIK</label><input type="number" min="0" value={apaxCustomDrops.t || ''} onChange={e => setApaxCustomDrops({...apaxCustomDrops, t: Number(e.target.value)})} placeholder="0" className={`w-full bg-white dark:bg-[#1C1F22] border ${c.border} ${c.textDark} font-bold py-2 px-2 rounded-lg text-center`} /></div>
+<div><label className={`block text-[10px] font-black ${c.yellowText} mb-1`}>JAMM</label><input type="number" min="0" value={apaxCustomDrops.j || ''} onChange={e => setApaxCustomDrops({...apaxCustomDrops, j: Number(e.target.value)})} placeholder="0" className={`w-full bg-white dark:bg-[#1C1F22] border ${c.border} ${c.textDark} font-bold py-2 px-2 rounded-lg text-center`} /></div>
+<div><label className={`block text-[10px] font-black ${c.blueText} mb-1`}>LYLAC</label><input type="number" min="0" value={apaxCustomDrops.l || ''} onChange={e => setApaxCustomDrops({...apaxCustomDrops, l: Number(e.target.value)})} placeholder="0" className={`w-full bg-white dark:bg-[#1C1F22] border ${c.border} ${c.textDark} font-bold py-2 px-2 rounded-lg text-center`} /></div>
+</div>
+</div>
+)}
+{parseFloat(apaxVolume) > 0 && (
+<div className={`mt-6 pt-6 border-t border-dashed ${c.border}`}>
+<p className={`text-center text-[11px] font-bold ${c.textMuted} mb-4 uppercase tracking-widest`}>{l('總水量所需添加量', 'Required Addition', '必要な追加量')}</p>
+<div className="grid grid-cols-3 gap-2 sm:gap-4">
+{apaxCards.map(item => (
+<div key={item.key} className={`flex flex-col items-center justify-center p-3 sm:p-5 rounded-2xl ${c.inputBg} border ${c.border} shadow-sm relative overflow-hidden`}>
+<div className={`absolute top-0 w-full h-1.5 ${item.color}`}></div>
+<div className={`text-[10px] font-black ${item.text} mb-2`}>{item.name}</div>
+<div className={`text-2xl sm:text-4xl font-black ${c.textDark} mb-1`}>{formatNum(item.drops * apaxRatio)}</div>
+<div className={`text-[10px] sm:text-xs font-bold ${c.textMuted}`}>{l('滴', 'Drops', '滴')}</div>
+<div className={`mt-2 text-[10px] sm:text-[11px] font-bold ${c.textMuted} bg-black/5 dark:bg-white/5 px-2 py-0.5 rounded`}>{calcApaxGrams(item.drops)} g</div>
+</div>
+))}
+</div>
+</div>
+)}
+</div>
+)}
+</div>
+);
+}
+// ==========================================
+// 6. BrewTool (沖煮參數查詢)
+// ==========================================
+function BrewTool({ lang, t, c }) {
+const { DRIPPER_CATEGORIES, RECIPE_DATABASE } = useDatabases(lang);
+const [selectedDripperId, setSelectedDripperId] = useState('');
+const [selectedRecipeId, setSelectedRecipeId] = useState(null);
+const [customWeight, setCustomWeight] = useState(15); 
+const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+const handleDripperChange = (id) => { setSelectedDripperId(id); setIsSelectorOpen(false); setSelectedRecipeId(null); };
+const handleSelectRecipe = (recipe) => { setSelectedRecipeId(recipe.id); setCustomWeight(recipe.baseCoffee); setIsSelectorOpen(false); };
+const filteredRecipes = selectedDripperId ? RECIPE_DATABASE.filter(r => r.dripper === selectedDripperId) : [];
+const selectedRecipe = RECIPE_DATABASE.find(r => r.id === selectedRecipeId);
+return (
+<div className="space-y-5 animate-in slide-in-from-bottom-4 duration-300 relative">
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-4`}>
+<label className={`flex items-center gap-2 text-sm font-bold ${c.textDark} mb-3`}><Filter size={16} className={c.primaryText} /> {t('select_dripper')}</label>
+<div className="relative">
+<select value={selectedDripperId} onChange={(e) => handleDripperChange(e.target.value)} className={`w-full ${c.inputBg} border ${selectedDripperId === '' ? 'text-gray-400' : c.textDark} ${c.border} font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#7E8D85] appearance-none transition-colors`}>
+<option value="" disabled>{t('select_dripper_placeholder')}</option>
+{Object.entries(DRIPPER_CATEGORIES).map(([category, drippers]) => (
+<optgroup key={category} label={category} className={`${c.textMuted} font-bold`}>{drippers.map(d => <option key={d.id} value={d.id} className={`${c.textDark} font-medium`}>{d.name}</option>)}</optgroup>
+))}
+</select>
+<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><ChevronDown size={20} /></div>
+</div>
+</div>
+{!selectedDripperId ? (
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Filter size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_dripper_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_dripper_desc')}</p></div>
+) : filteredRecipes.length > 0 ? (
+<div className="space-y-4 animate-in fade-in duration-300">
+<div className="relative z-20">
+<button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left ${c.card} border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : c.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between`}>
+{selectedRecipe ? (
+<div className="flex items-center gap-3"><div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? c.icedTag : c.hotTag}`}>{selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}</div><div><div className={`text-[11px] font-bold ${c.textMuted} mb-0.5`}>{t('current_recipe')}</div><div className={`font-bold text-lg ${c.textDark}`}>{selectedRecipe.name}</div></div></div>
+) : (<div className={`font-bold ${c.textMuted} text-lg`}>{t('select_recipe')}</div>)}
+<div className={`p-2 rounded-full ${c.infoBg} ${c.textMuted} transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}><ChevronDown size={20} /></div>
+</button>
+{isSelectorOpen && (
+<div className={`absolute top-full left-0 right-0 mt-2 ${c.card} border ${c.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto no-scrollbar`}>
+<div className={`p-2 ${c.inputBg} border-b ${c.border}`}><p className={`text-xs font-bold ${c.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
+{filteredRecipes.map(recipe => (
+<button key={recipe.id} onClick={() => handleSelectRecipe(recipe)} className={`w-full text-left p-4 border-b last:border-0 ${c.border} hover:bg-black/5 dark:hover:bg-white/5 transition-colors flex items-center justify-between ${selectedRecipe?.id === recipe.id ? c.infoBg : c.card}`}>
+<div className="flex items-center gap-3">{recipe.drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}<div><div className={`font-bold ${c.textDark}`}>{recipe.name}</div>{recipe.author && <div className={`text-xs ${c.textMuted} mt-0.5`}>by {recipe.author}</div>}</div></div>
+{selectedRecipe?.id === recipe.id && <CheckCircle2 size={20} className={c.primaryText} />}
+</button>
+))}
+</div>
+)}
+</div>
+{selectedRecipe ? (
+<div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><BrewRecipeDetail recipe={selectedRecipe} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} c={c} lang={lang} /></div>
+) : (
+<div className={`text-center py-10 animate-in fade-in duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><div className={`w-12 h-12 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-3 ${c.secondaryText}`}><Coffee size={24} /></div><p className={`text-sm font-bold ${c.textMuted}`}>{t('select_recipe_prompt')}</p></div>
+)}
+</div>
+) : (
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Coffee size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_recipe_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_recipe_desc')}</p></div>
+)}
+</div>
+);
+}
+function BrewRecipeDetail({ recipe, customWeight, setCustomWeight, t, c, lang }) {
+const ratio = (customWeight / recipe.baseCoffee) || 1;
+const isIced = recipe.drinkType === 'iced';
+const maxWater = Math.max(...recipe.steps.map(s => s.water || 0));
+const baseRatio = (maxWater / recipe.baseCoffee).toFixed(1).replace('.0', '');
+const renderDynamicText = (textObj) => typeof textObj === 'function' ? textObj(ratio) : textObj;
+const [elapsed, setElapsed] = useState(0);
+const [isRunning, setIsRunning] = useState(false);
+useEffect(() => {
+let interval;
+if (isRunning) interval = setInterval(() => setElapsed(e => e + 1), 1000);
+return () => clearInterval(interval);
+}, [isRunning]);
+useEffect(() => { setElapsed(0); setIsRunning(false); }, [recipe.id]);
+const formatTime = (secs) => {
+const m = Math.floor(secs / 60); const s = secs % 60;
+return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+};
+const stepStartTimes = useMemo(() => {
+const times = recipe.steps.map(s => {
+const m = s.time.match(/(\d+):(\d+)/);
+return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : -1;
+});
+for(let i = 1; i < times.length; i++) {
+if(times[i] === -1) times[i] = times[i-1] + 30; 
+}
+return times;
+}, [recipe]);
+const activeStepIndex = useMemo(() => {
+if (elapsed === 0 && !isRunning) return -1; 
+let idx = 0;
+for(let i = 0; i < stepStartTimes.length; i++) {
+if (elapsed >= stepStartTimes[i]) idx = i;
+}
+return idx;
+}, [elapsed, isRunning, stepStartTimes]);
+return (
+<div className="space-y-4">
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
+<div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
+<p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>
+{t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText}/>
+</p>
+<div className="flex items-center gap-6">
+<button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>-</button>
+<div className="relative flex items-baseline">
+<input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${c.textDark} bg-transparent focus:outline-none`} />
+<span className={`text-xl font-bold ${c.textMuted} ml-1`}>g</span>
+</div>
+<button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>+</button>
+</div>
+</div>
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} overflow-hidden`}>
+{recipe.description && (
+<div className={`p-5 text-[13px] sm:text-sm ${c.textDark} leading-relaxed ${c.infoBg} border-b ${c.border} whitespace-pre-wrap`}>{renderDynamicText(recipe.description)}</div>
+)}
+<div className={`p-4 grid grid-cols-3 gap-2 sm:gap-3 ${c.card}`}>
+<div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
+<div className={`p-1.5 rounded-full ${c.iconBg} ${c.redText} shadow-sm mb-1`}><Thermometer size={16} /></div>
+<p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_temp')}</p>
+<p className={`font-bold text-base ${c.textDark}`}>{recipe.temperature}°C</p>
+</div>
+<div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
+<div className={`p-1.5 rounded-full ${c.iconBg} ${c.yellowText} shadow-sm mb-1`}><ScaleIcon size={16} /></div>
+<p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_weight')}</p>
+<p className={`font-bold text-base ${c.textDark}`}>{recipe.baseCoffee}g</p>
+</div>
+<div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
+<div className={`p-1.5 rounded-full ${c.iconBg} ${c.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div>
+<p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('base_ratio')}</p>
+<p className={`font-bold text-base ${c.textDark}`}>1 : {baseRatio}</p>
+</div>
+</div>
+</div>
+<div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
+<div className={`${c.card} rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border ${c.border} p-4 flex items-center justify-between`}>
+<div className="flex items-center gap-3">
+<button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all`}>
+{isRunning ? <Pause size={24}/> : <Play size={24} className="ml-1"/>}
+</button>
+<button onClick={() => { setElapsed(0); setIsRunning(false); }} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all hover:bg-black/5 dark:hover:bg-white/5`}>
+<RotateCcw size={18}/>
+</button>
+</div>
+<div className="text-right">
+<div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div>
+<div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div>
+</div>
+</div>
+</div>
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 pb-6`}>
+<h3 className={`text-lg font-bold ${c.textDark} mb-6 flex items-center gap-2 pb-3 border-b ${c.border}`}>
+<Clock size={20} className={c.primaryText}/> {t('brew_steps')}
+{ratio !== 1 && <span className={`ml-auto text-xs font-bold text-white ${c.secondary} px-2 py-1 rounded-md`}>{t('converted_ratio')} {(ratio * 100).toFixed(0)}%</span>}
+</h3>
+<div className={`relative border-l-2 ${c.border} ml-4 space-y-8 pb-4 mt-4`}>
+{recipe.steps.map((step, index) => {
+const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
+const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; 
+const isActive = activeStepIndex === index;
+const isPast = activeStepIndex > index;
+const isUpcoming = activeStepIndex < index && activeStepIndex !== -1;
+return (
+<div key={step.id || index} className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
+<div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
+<div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02] transform-gpu` : 'py-2 border border-transparent'}`}>
+<div className="flex-1 pr-3">
+<div className="flex items-center flex-wrap gap-2 mb-1.5">
+<span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark} transition-colors`}>{step.time}</span>
+{step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}
+</div>
+<p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'} transition-colors`}>{renderDynamicText(step.note)}</p>
+</div>
+{scaledWater !== null && (
+<div className={`text-right shrink-0 px-4 py-2 rounded-xl border ${isActive ? `${c.card} border-transparent shadow-sm` : `${c.inputBg} ${c.border}`} min-w-[70px] transition-colors`}>
+<div className={`text-2xl font-black ${isIced ? c.blueText : c.yellowText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>
+{ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}
+</div>
+)}
+</div>
+</div>
+);
+})}
+</div>
+</div>
+</div>
+);
+}
+// ==========================================
+// 7. GrindTool (刻度轉換)
+// ==========================================
+function GrindTool({ lang, t, c }) {
+const { GRINDER_DATABASE } = useDatabases(lang);
+const [grinderA, setGrinderA] = useState('');
+const [grinderB, setGrinderB] = useState('');
+const [valA, setValA] = useState('');
+const groups = useMemo(() => {
+let grps = {};
+Object.entries(GRINDER_DATABASE).forEach(([key, g]) => {
+if (!grps[g.group]) grps[g.group] = [];
+grps[g.group].push({ key, name: g.name });
+});
+return grps;
+}, [GRINDER_DATABASE]);
+const handleSwap = () => {
+const temp = grinderA; setGrinderA(grinderB); setGrinderB(temp);
+if (result && result.valB && result.valB !== '-') setValA(result.valB.toString());
+};
+const result = useMemo(() => {
+const gA = GRINDER_DATABASE[grinderA]; const gB = GRINDER_DATABASE[grinderB]; const parsedA = parseFloat(valA);
+if (!gA || !gB || isNaN(parsedA)) return null;
+const rFirst = gA.ranges.find(r => r.min !== null);
+const rLast = [...gA.ranges].reverse().find(r => r.max !== null);
+if (parsedA < rFirst.min) return { error: `${t('err_low')} ${rFirst.min})`, catIdx: -1 };
+if (parsedA > rLast.max) return { error: `${t('err_high')} ${rLast.max})`, catIdx: -1 };
+let catIdx = -1; let ratio = 0;
+for (let i=0; i<gA.ranges.length; i++) {
+let r = gA.ranges[i];
+if (r.min !== null && r.max !== null && parsedA >= r.min && parsedA <= r.max) { catIdx = i; ratio = (parsedA - r.min) / (r.max - r.min); break; }
+}
+if (catIdx === -1) return { error: t('err_match'), catIdx: -1 };
+const rB = gB.ranges[catIdx];
+if (rB.min === null || rB.max === null) return { error: `${t('err_notsupport')} ${t('grind_cats_inline')[catIdx]}`, catIdx };
+let valB = rB.min + ratio * (rB.max - rB.min);
+if (gB.step === 1) { valB = Math.round(valB); } 
+else { let inv = 1.0 / gB.step; valB = Math.round(valB * inv) / inv; valB = parseFloat(valB.toFixed(2)); }
+return { valB, catIdx, catName: t('grind_cats_inline')[catIdx] };
+}, [grinderA, grinderB, valA, t, GRINDER_DATABASE]);
+const selectOptions = (
+<React.Fragment>
+<option value="" disabled>{t('select_grinder_placeholder')}</option>
+{Object.entries(groups).map(([gName, items]) => (
+<optgroup key={gName} label={gName} className={`${c.textMuted} font-bold`}>
+{items.map(item => <option key={item.key} value={item.key} className={`${c.textDark} font-medium`}>{item.name}</option>)}
+</optgroup>
+))}
+</React.Fragment>
+);
+return (
+<div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
+<div className="flex flex-col md:flex-row items-center gap-4 relative">
+<div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm ${c.blue} bg-opacity-5 dark:bg-opacity-10`}>
+<label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('from_grinder')}</label>
+<select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
+<label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('current_grind')}</label>
+<input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 ${c.inputBg} ${c.textDark} outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
+<div className={`text-center text-xs font-bold ${c.blueText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}</div>
+</div>
+<button onClick={handleSwap} className={`p-3 ${c.card} border-2 ${c.border} hover:opacity-80 ${c.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group`}>
+<ArrowRightLeft size={24} className="group-hover:rotate-180 transition-transform duration-300" />
+</button>
+<div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm ${c.secondary} bg-opacity-5 dark:bg-opacity-10`}>
+<label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('to_grinder')}</label>
+<select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
+<label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('target_grind')}</label>
+<div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : c.secondaryText} ${c.inputBg} rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>
+{result ? (result.error ? 'N/A' : result.valB) : '-'}
+</div>
+<div className={`text-center text-xs font-bold ${c.secondaryText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
+</div>
+</div>
+{grinderB && (
+<div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border} animate-in fade-in duration-300`}>
+{result && !result.error && (
+<div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 ${c.textDark}`}>
+{t('grind_result_msg')} <strong className={c.primaryText}>{result.catName}</strong>{t('mapped_linear')}
+</div>
+)}
+{result && result.error && (
+<div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 text-red-500`}>
+{result.error}
+</div>
+)}
+<div className="px-2">
+<div className={`text-xs font-bold ${c.textMuted} mb-3 flex items-center gap-2`}>
+<Settings2 size={16} /> 
+{GRINDER_DATABASE[grinderB].name} {t('grind_visual')}
+</div>
+<div className={`flex h-4 rounded-full overflow-hidden ${c.bg} shadow-inner border ${c.border}`}>
+{t('grind_cats').map((cat, idx) => (
+<div key={idx} className={`w-1/5 border-r border-black/5 dark:border-white/10 transition-colors duration-300 ${(result && result.catIdx === idx) ? c.bar[idx] : 'bg-transparent'}`}></div>
+))}
+</div>
+<div className={`flex text-[10px] sm:text-xs ${c.textMuted} mt-3 font-bold`}>
+{t('grind_cats').map((cat, idx) => {
+const range = GRINDER_DATABASE[grinderB].ranges[idx];
+const rangeText = range && range.min !== null ? `${range.min} - ${range.max}` : '-';
+const isHighlight = result && result.catIdx === idx;
+return (
+<div key={idx} className={`w-1/5 flex flex-col items-center gap-1.5 whitespace-pre-wrap ${isHighlight ? c.textDark : ''}`}>
+<span className="text-center leading-tight">{cat}</span>
+<span className={`px-1.5 py-0.5 rounded-md font-mono transition-all duration-300 ${isHighlight ? `${c.bar[idx]} text-white shadow-md scale-110` : `${c.inputBg} border ${c.border}`}`}>
+{rangeText}
+</span>
+</div>
+)
+})}
+</div>
+</div>
+{result && result.catIdx !== -1 && <GrindVisualizer catIdx={result.catIdx} c={c} lang={lang} />}
+</div>
+)}
+<div className={`p-5 ${c.infoBg} rounded-2xl border ${c.border} text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed`}>
+<strong className={`${c.textDark} block mb-2`}>{t('hint_title')}</strong>
+<ul className="list-disc pl-5 space-y-1.5">
+<li>{t('hint_1')}</li>
+<li>{t('hint_2')}</li>
+<li>{t('hint_3')}</li>
+<li>{t('hint_4')}</li>
+</ul>
+</div>
+</div>
+);
+}
+// ==========================================
+// 9. App 主程式與掛載點
+// ==========================================
+function App() {
+const [view, setView] = useState('home'); 
+const [lang, setLang] = useState('zh');
+const [isDark, setIsDark] = useState(false);
+const t = (key) => i18n[lang][key] || key;
+const c = getColors(isDark); 
+useEffect(() => {
+document.body.className = c.bg;
+}, [isDark, c.bg]);
+return (
+<div className={`min-h-screen ${c.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
+<button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full shadow-lg border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300`}>
+{isDark ? <Sun size={24} /> : <Moon size={24} />}
+</button>
+<div className={`${c.primary} text-white shadow-md sticky top-0 z-50 transition-colors duration-300`}>
+<div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
+<div className="flex items-center gap-3">
+{view !== 'home' && <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors"><ArrowLeft size={20} /></button>}
+<Coffee size={24} strokeWidth={2.5} />
+<h1 className="text-xl font-bold tracking-widest hidden sm:block">
+{view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : (view === 'water' ? t('tool_water_title') : t('tool_grind_title')))}
+</h1>
+</div>
+<div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm">
+<button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button>
+<button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button>
+<button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button>
+</div>
+</div>
+</div>
+<main className="max-w-3xl mx-auto px-4 py-8 relative">
+{view === 'home' && <HomeView setView={setView} t={t} c={c} />}
+{view === 'brew' && <BrewTool lang={lang} t={t} c={c} />}
+{view === 'grind' && <GrindTool lang={lang} t={t} c={c} />}
+{view === 'water' && <WaterTool lang={lang} c={c} />}
+</main>
+</div>
+);
+}
+function HomeView({ setView, t, c }) {
+const changelog = t('changelog');
+return (
+<div className="animate-in fade-in zoom-in-95 duration-300">
+<div className="text-center mb-8"><h2 className={`text-2xl md:text-3xl font-bold ${c.textDark} mb-2`}>{t('home_title')}</h2><p className={`${c.textMuted}`}>{t('home_subtitle')}</p></div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+<button onClick={() => setView('brew')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_brew_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p></button>
+<button onClick={() => setView('grind')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Wrench size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_grind_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p></button>
+<button onClick={() => setView('water')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#8AA192] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.primary} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Droplets size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_water_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_water_desc')}</p></button>
+</div>
+<div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+<div className="flex items-center justify-center gap-3 mb-6"><div className={`h-px ${c.border} flex-1`}></div><h3 className={`flex items-center gap-2 text-lg font-bold ${c.textDark} px-2`}><Clock size={18} className={c.primaryText} />{t('changelog_title')}</h3><div className={`h-px ${c.border} flex-1`}></div></div>
+<div className={`${c.card} p-6 sm:p-8 rounded-2xl shadow-sm border ${c.border}`}>
+<div className="space-y-8">
+{Array.isArray(changelog) && changelog.map((log, idx) => (
+<div key={idx} className={`relative pl-6 sm:pl-8 border-l-2 ${c.border}`}>
+<div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 ${c.card} ${idx === 0 ? c.primary : c.accent}`}></div>
+<div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-3"><span className={`text-lg font-black ${c.textDark}`}>{log.version}</span><span className={`text-xs font-bold ${c.textMuted}`}>{log.date}</span></div>
+<ul className={`list-disc pl-5 text-[13px] sm:text-sm ${c.textDark} space-y-1.5 leading-relaxed`}>{log.changes.map((change, i) => (<li key={i}>{change}</li>))}</ul>
+</div>
+))}
+</div>
+</div>
+</div>
+</div>
+);
+}
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
 </script>
+</body>
+</html>
