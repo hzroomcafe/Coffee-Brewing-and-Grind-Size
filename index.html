@@ -820,8 +820,8 @@ return (
 <div className="flex flex-col items-center gap-2 mb-6 w-full">
 <span className={`text-sm font-bold ${c.textDark}`}>🔬 {l('實體比例顯微鏡 (1:1)', 'Real Scale View (1:1)', '実寸顕微鏡')}</span>
 <div className={`mt-2 flex flex-col items-center p-3 rounded-xl ${c.inputBg} border ${c.border} w-full max-w-[320px]`}>
-<label className={`text-[11px] font-bold ${c.primaryText} mb-2 text-center`}>{l('📐 調整滑桿讓下方線段與實體 1cm 等長', '📐 Adjust slider to match 1cm ruler', '📐 定規で実際の1cmに調整')}</label>
-<div className="flex items-center gap-3 w-full px-2">
+<label className={`text-[11px] font-bold ${c.primaryText} mb-2 text-center leading-relaxed`}>{l('📐 螢幕校準：拿實體的尺比對，調整滑桿讓下方線段＝1cm', '📐 Calibration: Adjust slider to match a physical 1cm ruler', '📐 画面校準：実際の定規と比べ、下の線を1cmに合わせる')}</label>
+<div className="flex items-center gap-3 w-full px-2 mt-1">
 <button onClick={() => setScale(Math.max(0.5, scale - 0.05))} className={`w-7 h-7 rounded-full bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 shadow-sm font-medium outline-none`}>-</button>
 <input type="range" min="0.5" max="2.5" step="0.01" value={scale} onChange={(e) => setScale(Number(e.target.value))} className="flex-1" style={{ color: '#7E8D85' }} />
 <button onClick={() => setScale(Math.min(2.5, scale + 0.05))} className={`w-7 h-7 rounded-full bg-white dark:bg-[#2A2E32] border ${c.border} text-gray-500 shadow-sm font-medium outline-none`}>+</button>
@@ -835,7 +835,7 @@ return (
 </div>
 <div className="mt-5 flex flex-col items-center">
 <div className="flex items-end justify-between border-b-2 border-x-2 border-gray-800 dark:border-gray-500" style={{ width: `${10 * pxPerMm}px`, height: '8px' }}></div>
-<span className={`text-[11px] font-black font-mono mt-1.5 ${c.textDark}`}>10 mm (1 cm)</span>
+<span className={`text-[11px] font-black font-mono mt-1.5 ${c.textDark}`}>{l('📏 比例尺 10 mm (1 cm)', '📏 Ruler 10 mm (1 cm)', '📏 スケール 10 mm (1 cm)')}</span>
 </div>
 </div>
 <div className="text-center mt-6">
