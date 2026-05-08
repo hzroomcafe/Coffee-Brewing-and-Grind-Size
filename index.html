@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>村民咖啡工具箱 v2.2.2</title>
+<title>村民咖啡工具箱 - 專業優化版</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -110,9 +110,9 @@ dim_acid: '酸質', dim_sweet: '甜感', dim_bitter: '苦澀/雜感', dim_body: 
 tweak_reset: '重置',
 changelog_title: '版本更新紀錄',
 changelog: [
-{ version: 'v2.2.2', date: '2026.05', changes: ['介面修復與排序優化：修復配方詳情頁面的資料載入異常，並全面導入磨豆機「字母與數字優先」的智能排序系統，尋找設備更直覺！'] },
-{ version: 'v2.2.1', date: '2026.05', changes: ['研磨建議區塊優化：在收合狀態下直接顯示配方基準型號與刻度。'] },
-{ version: 'v2.2.0', date: '2026.05', changes: ['配方內嵌研磨建議：自動換算使用者擁有的磨豆機刻度，並新增小富士與泰摩栗子S3數據。', '配方細節與選單優化：惡魔手沖(改良版)注水精準修正為280g，選單支援變體群組化。', '風味羅盤文案去標籤化，採用純粹精品咖啡萃取科學進行客觀診斷。'] }
+{ version: 'v2.2.3', date: '2026.05', changes: ['致命錯誤修復：解決了切換配方時的頁面崩潰問題。', 'UX 細節強化：所有下拉選單未選擇時自動呈現淡灰色提示，並將基準研磨度直接預覽於按鈕上。'] },
+{ version: 'v2.2.0', date: '2026.05', changes: ['配方內嵌研磨建議：自動換算使用者擁有的磨豆機刻度，並新增小富士與泰摩栗子S3數據。', '配方細節與選單優化：惡魔手沖(改良版)注水精準修正為280g，選單支援變體群組化。', '風味羅盤文案去標籤化，採用純粹精品咖啡萃取科學進行客觀診斷。'] },
+{ version: 'v1.5.0', date: '2026.05', changes: ['新增「礦物水調配計算」，支援 Aquacode、NAIRO DROP、APAX LAB 配方公式。'] }
 ]
 },
 en: {
@@ -145,9 +145,9 @@ dim_acid: 'Acidity', dim_sweet: 'Sweetness', dim_bitter: 'Bitterness', dim_body:
 tweak_reset: 'Reset',
 changelog_title: 'Release Notes',
 changelog: [
-{ version: 'v2.2.2', date: 'May 2026', changes: ['Bug Fix & UI Update: Fixed recipe loading errors and introduced alphanumeric smart sorting for the grinder selection lists.'] },
-{ version: 'v2.2.1', date: 'May 2026', changes: ['UI Polish: Show base grinder & setting directly on the suggestion header.'] },
-{ version: 'v2.2.0', date: 'May 2026', changes: ['Embedded grind suggestions in recipes with real-time conversion.', 'Added Fuji Royal & Timemore S3 to grinder database.', 'Refined Troubleshooter with objective scientific extraction analysis.'] }
+{ version: 'v2.2.3', date: 'May 2026', changes: ['Fatal Bug Fix: Resolved white-screen crash on recipe switch.', 'UX Polish: Show base grinder directly on header and added light-grey placeholders to all selects.'] },
+{ version: 'v2.2.0', date: 'May 2026', changes: ['Embedded grind suggestions in recipes with real-time conversion.', 'Added Fuji Royal & Timemore S3 to grinder database.', 'Refined Troubleshooter with objective scientific extraction analysis.'] },
+{ version: 'v1.5.0', date: 'May 2026', changes: ['Added Mineral Water Calculator supporting Aquacode, NAIRO DROP, APAX LAB.'] }
 ]
 },
 ja: {
@@ -180,9 +180,9 @@ dim_acid: '酸味', dim_sweet: '甘み', dim_bitter: '苦味/渋み', dim_body: 
 tweak_reset: 'リセット',
 changelog_title: 'リリースノート',
 changelog: [
-{ version: 'v2.2.2', date: '2026年5月', changes: ['バグ修正と並べ替えの最適化：レシピ詳細の読み込みエラーを修正し、ミルのリストに英数字順のスマートソートを導入しました。'] },
-{ version: 'v2.2.1', date: '2026年5月', changes: ['UI改善：折りたたみボタンにベースのミル型番と設定値を直接表示するようにしました。'] },
-{ version: 'v2.2.0', date: '2026年5月', changes: ['レシピ内に推奨挽き目と自動変換機能を追加。Fuji RoyalとTimemore S3をデータベースに追加。', '風味コンパスの診断ロジックをより客観的な抽出科学に基づいて最適化。'] }
+{ version: 'v2.2.3', date: '2026年5月', changes: ['バグ修正とUI改善：レシピ切り替え時のクラッシュを修正し、未選択時のプレースホルダーテキストを薄い灰色に統一しました。'] },
+{ version: 'v2.2.0', date: '2026年5月', changes: ['レシピ内に推奨挽き目と自動変換機能を追加。Fuji RoyalとTimemore S3をデータベースに追加。', '風味コンパスの診断ロジックをより客観的な抽出科学に基づいて最適化。'] },
+{ version: 'v1.5.0', date: '2026年5月', changes: ['Aquacode、NAIRO DROP、APAX LABをサポートする「ミネラルウォーター計算」を追加。'] }
 ]
 }
 };
@@ -438,7 +438,7 @@ const getDiagnosis = () => {
         return {
             title: l("雷達處於預設狀態 (Default State)", "Default Radar", "デフォルト状態"),
             desc: l(
-                "請拉動數值描繪風味。系統將根據精品咖啡萃取理論，綜合各項參數變因為您提供大方向的風味校正與微調建議。", 
+                "請拉動數值描繪風味。系統將綜合咖啡萃取科學與參數變因，為您解析可溶性芳香物質的釋放階段，並提供大方向的專業微調建議。", 
                 "Adjust sliders to map your flavor. The system applies Extraction Theory to analyze soluble compound release and offer professional parameter corrections.", 
                 "数値をスライドして風味を描いてください。抽出理論に基づき、可溶性成分の放出を分析し、専門的なパラメータ補正を大枠で提案します。"
             )
@@ -721,7 +721,7 @@ return (
 <div className="space-y-4">
 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('濃縮液 TDS', 'Concentrate TDS', '濃縮液 TDS')}</label><input type="number" value={tds} onChange={e => setTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
-<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('快速代入 (容量)', 'Auto-fill (Vol)', '自動入力')}</label><select onChange={(e) => setTds(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tds) ? tds : ""} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}><option value="" disabled>{l('選擇...', 'Select...', '選択...')}</option>{tdssizeOptions.map(opt => <option key={opt.label} value={opt.value}>{opt.label}</option>)}</select></div>
+<div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('快速代入 (容量)', 'Auto-fill (Vol)', '自動入力')}</label><select onChange={(e) => setTds(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tds) ? tds : ""} className={`w-full ${c.inputBg} border ${c.border} ${tds === '' ? 'text-gray-400' : c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}><option value="" disabled>{l('選擇...', 'Select...', '選択...')}</option>{tdssizeOptions.map(opt => <option key={opt.label} value={opt.value}>{opt.label}</option>)}</select></div>
 </div>
 <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('目標 TDS', 'Target TDS', '目標 TDS')}</label><input type="number" value={targetTds} onChange={e => setTargetTds(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
 <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('沖煮水量', 'Total Water', '抽出水量')}</label><input type="number" value={water} onChange={e => setWater(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
@@ -739,7 +739,7 @@ return (
 <div><label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('濃縮液 TDS', 'Concentrate TDS', '濃縮液 TDS')}</label><input type="number" value={tdsComp} onChange={e => setTdsComp(e.target.value)} placeholder="0" className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`} /></div>
 <div>
 <label className={`block text-sm font-bold ${c.textDark} mb-1.5`}>{l('快速代入', 'Auto-fill', '自動入力')}</label>
-<select onChange={(e) => setTdsComp(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tdsComp) ? tdsComp : ""} className={`w-full ${c.inputBg} border ${c.border} ${c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}>
+<select onChange={(e) => setTdsComp(e.target.value)} value={tdssizeOptions.some(opt => opt.value == tdsComp) ? tdsComp : ""} className={`w-full ${c.inputBg} border ${c.border} ${tdsComp === '' ? 'text-gray-400' : c.textDark} font-bold py-3 px-4 rounded-xl focus:outline-none`}>
 <option value="" disabled>{l('選擇...', 'Select...', '選択...')}</option>
 {tdssizeOptions.map(opt => <option key={opt.label} value={opt.value}>{opt.label}</option>)}
 </select>
@@ -879,7 +879,7 @@ return (
 ) : filteredRecipes.length > 0 ? (
 <div className="space-y-4 animate-in fade-in duration-300">
 <div className="relative z-20">
-<button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left ${c.card} border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : c.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between`}>
+<button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left ${c.card} border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : c.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between outline-none`}>
 {selectedRecipe ? (
 <div className="flex items-center gap-3"><div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? c.icedTag : c.hotTag}`}>{selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}</div><div><div className={`text-[11px] font-bold ${c.textMuted} mb-0.5`}>{t('current_recipe')}</div><div className={`font-bold text-lg ${c.textDark}`}>{selectedRecipe.name}</div></div></div>
 ) : (<div className={`font-bold ${c.textMuted} text-lg`}>{t('select_recipe')}</div>)}
@@ -889,11 +889,41 @@ return (
 <div className={`absolute top-full left-0 right-0 mt-2 ${c.card} border ${c.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto no-scrollbar`}>
 <div className={`p-2 ${c.inputBg} border-b ${c.border}`}><p className={`text-xs font-bold ${c.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
 {groupedRecipes.map((group, idx) => (
-    <div key={idx} className={`p-4 border-b last:border-0 ${c.border} ${group.items.some(i => i.id === selectedRecipe?.id) ? c.infoBg : c.card}`}>
+    <div key={idx} className={`p-4 border-b last:border-0 ${c.border} ${group.items.some(i => i.id === selectedRecipe?.id) ? c.infoBg : c.card} transition-colors`}>
         {group.items.length === 1 ? (
-            <button onClick={() => handleSelectRecipe(group.items[0])} className="w-full text-left flex items-center justify-between group"><div className="flex items-center gap-3">{group.items[0].drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}<div><div className={`font-bold ${c.textDark}`}>{group.items[0].name}</div></div></div>{selectedRecipe?.id === group.items[0].id && <CheckCircle2 size={20} className={c.primaryText} />}</button>
+            <button onClick={() => handleSelectRecipe(group.items[0])} className="w-full text-left flex items-center justify-between group outline-none">
+                <div className="flex items-center gap-3">
+                    {group.items[0].drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}
+                    <div>
+                        <div className={`font-bold ${c.textDark} group-hover:${c.primaryText} transition-colors`}>{group.items[0].name}</div>
+                        {group.author && <div className={`text-xs ${c.textMuted} mt-0.5`}>by {group.author}</div>}
+                    </div>
+                </div>
+                {selectedRecipe?.id === group.items[0].id && <CheckCircle2 size={20} className={c.primaryText} />}
+            </button>
         ) : (
-            <div><div className="flex items-center gap-3 mb-3">{group.drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}<div className={`font-bold ${c.textDark}`}>{group.family}</div></div><div className="flex flex-wrap gap-2 pl-7">{group.items.map(item => (<button key={item.id} onClick={() => handleSelectRecipe(item)} className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${selectedRecipe?.id === item.id ? `${c.primary} text-white border-transparent shadow-sm` : `${c.inputBg} ${c.textDark} ${c.border} hover:border-[#7E8D85]`}`}>{item.variant}</button>))}</div></div>
+            <div className="w-full text-left">
+                <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                        {group.drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}
+                        <div>
+                            <div className={`font-bold ${c.textDark}`}>{group.family}</div>
+                            {group.author && <div className={`text-xs ${c.textMuted} mt-0.5`}>by {group.author}</div>}
+                        </div>
+                    </div>
+                </div>
+                <div className="flex flex-wrap gap-2 pl-7">
+                    {group.items.map(item => (
+                        <button 
+                            key={item.id} 
+                            onClick={() => handleSelectRecipe(item)}
+                            className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all active:scale-95 outline-none ${selectedRecipe?.id === item.id ? `${c.primary} text-white border-transparent shadow-sm` : `${c.inputBg} ${c.textDark} ${c.border} hover:border-[#7E8D85]`}`}
+                        >
+                            {item.variant}
+                        </button>
+                    ))}
+                </div>
+            </div>
         )}
     </div>
 ))}
@@ -966,19 +996,19 @@ return (
         <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
         <p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>{t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText}/></p>
         <div className="flex items-center gap-6">
-            <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium`}>-</button>
+            <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>-</button>
             <div className="relative flex items-baseline"><input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${c.textDark} bg-transparent focus:outline-none`} /><span className={`text-xl font-bold ${c.textMuted} ml-1`}>g</span></div>
-            <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium`}>+</button>
+            <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>+</button>
         </div>
     </div>
 
     {recipe.baseGrind && (
         <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} overflow-hidden`}>
-            <button onClick={() => setIsGrindOpen(!isGrindOpen)} className={`w-full flex items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/5 transition-colors`}>
+            <button onClick={() => setIsGrindOpen(!isGrindOpen)} className={`w-full flex items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/5 transition-colors outline-none`}>
                 <div className="flex items-center gap-3"><div className={`p-1.5 rounded-full ${c.infoBg} ${c.primaryText}`}><Settings2 size={16} /></div><span className={`text-sm font-bold ${c.textDark}`}>{t('suggest_grind_title')}</span></div>
                 <div className="flex items-center gap-2">
                     {!isGrindOpen && (
-                        <span className={`text-[11px] font-bold ${c.textMuted} bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md max-w-[150px] truncate`}>
+                        <span className={`text-[11px] font-bold ${c.textMuted} bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md max-w-[150px] truncate border ${c.border}`}>
                             {GRINDER_DATABASE[recipe.baseGrind.grinder].name}: <span className={c.primaryText}>{recipe.baseGrind.val}</span>
                         </span>
                     )}
@@ -993,9 +1023,9 @@ return (
                     </div>
                     <div className={`h-px w-full ${c.border} mb-4`}></div>
                     <div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-2`}>{t('my_grinder')}</div>
-                    <select value={userGrinder} onChange={(e) => setUserGrinder(e.target.value)} className={`w-full ${c.inputBg} border ${c.border} p-3 rounded-xl font-bold text-sm ${c.textDark} mb-4 outline-none appearance-none`}>
+                    <select value={userGrinder} onChange={(e) => setUserGrinder(e.target.value)} className={`w-full ${c.inputBg} border ${c.border} p-3 rounded-xl font-bold text-sm ${userGrinder === '' ? 'text-gray-400' : c.textDark} mb-4 outline-none focus:ring-2 focus:ring-[#7E8D85] appearance-none`}>
                         <option value="" disabled>{t('select_grinder_placeholder')}</option>
-                        {Object.entries(grindGroups).map(([gName, items]) => (<optgroup key={gName} label={gName} className={`${c.textMuted} font-bold`}>{items.map(item => (<option key={item.key} value={item.key}>{item.name}</option>))}</optgroup>))}
+                        {Object.entries(grindGroups).map(([gName, items]) => (<optgroup key={gName} label={gName} className={`${c.textMuted} font-bold`}>{items.map(item => (<option key={item.key} value={item.key} className={`${c.textDark} font-medium`}>{item.name}</option>))}</optgroup>))}
                     </select>
                     {userGrinder && (
                         <div className={`p-4 rounded-xl border ${c.border} ${c.card} flex items-center justify-between shadow-sm`}><span className={`text-sm font-bold ${c.textDark}`}>{t('converted_result')}</span>{convertedGrind?.error ? (<span className="text-red-500 font-bold text-sm">{convertedGrind.error}</span>) : (<div className="text-right"><span className={`text-2xl font-black ${c.secondaryText}`}>{convertedGrind?.valB}</span><span className={`text-xs font-bold ${c.textMuted} ml-1`}>{convertedGrind?.unit}</span></div>)}</div>
@@ -1015,7 +1045,7 @@ return (
     </div>
     <div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
         <div className={`${c.card} rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border ${c.border} p-4 flex items-center justify-between`}>
-            <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all`}>{isRunning ? <Pause size={24}/> : <Play size={24} className="ml-1"/>}</button><button onClick={() => { setElapsed(0); setIsRunning(false); }} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all hover:bg-black/5 dark:hover:bg-white/5`}><RotateCcw size={18}/></button></div>
+            <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all outline-none`}>{isRunning ? <Pause size={24}/> : <Play size={24} className="ml-1"/>}</button><button onClick={() => { setElapsed(0); setIsRunning(false); }} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all outline-none`}><RotateCcw size={18}/></button></div>
             <div className="text-right"><div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div><div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div></div>
         </div>
     </div>
@@ -1028,15 +1058,15 @@ return (
                 return (
                     <div key={step.id || index} className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
                         <div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
-                        <div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02]` : 'py-2 border border-transparent'}`}>
-                            <div className="flex-1 pr-3"><div className="flex items-center flex-wrap gap-2 mb-1.5"><span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark}`}>{step.time}</span>{step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold`}>{step.action}</span>}</div><p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'}`}>{renderDynamicText(step.note)}</p></div>
-                            {scaledWater !== null && (<div className={`text-right shrink-0 px-4 py-2 rounded-xl border ${isActive ? `${c.card} border-transparent shadow-sm` : `${c.inputBg} ${c.border}`} min-w-[70px]`}><div className={`text-2xl font-black ${isIced ? c.blueText : c.yellowText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>{ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}</div>)}
+                        <div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02] transform-gpu` : 'py-2 border border-transparent'}`}>
+                            <div className="flex-1 pr-3"><div className="flex items-center flex-wrap gap-2 mb-1.5"><span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark} transition-colors`}>{step.time}</span>{step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}</div><p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'} transition-colors`}>{renderDynamicText(step.note)}</p></div>
+                            {scaledWater !== null && (<div className={`text-right shrink-0 px-4 py-2 rounded-xl border ${isActive ? `${c.card} border-transparent shadow-sm` : `${c.inputBg} ${c.border}`} min-w-[70px] transition-colors`}><div className={`text-2xl font-black ${isIced ? c.blueText : c.yellowText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>{ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}</div>)}
                         </div>
                     </div>
                 );
             })}
         </div>
-        {!showTroubleshoot ? (<button onClick={() => setShowTroubleshoot(true)} className={`w-full mt-6 p-4 rounded-2xl border-2 border-dashed ${c.border} ${c.inputBg} flex flex-col items-center justify-center gap-2 hover:opacity-80 transition-all group`}><Compass size={24} className={`${c.textMuted} group-hover:${c.primaryText} transition-colors`} /><span className={`text-sm font-bold ${c.textMuted} group-hover:${c.primaryText} transition-colors`}>{t('tweak_btn')}</span></button>) : (<Troubleshooter recipe={recipe} c={c} t={t} lang={lang} onClose={() => setShowTroubleshoot(false)} />)}
+        {!showTroubleshoot ? (<button onClick={() => setShowTroubleshoot(true)} className={`w-full mt-6 p-4 rounded-2xl border-2 border-dashed ${c.border} ${c.inputBg} flex flex-col items-center justify-center gap-2 hover:opacity-80 transition-all group outline-none`}><Compass size={24} className={`${c.textMuted} group-hover:${c.primaryText} transition-colors`} /><span className={`text-sm font-bold ${c.textMuted} group-hover:${c.primaryText} transition-colors`}>{t('tweak_btn')}</span></button>) : (<Troubleshooter recipe={recipe} c={c} t={t} lang={lang} onClose={() => setShowTroubleshoot(false)} />)}
     </div>
 </div>
 );
@@ -1078,19 +1108,58 @@ return (
     <div className="flex flex-col md:flex-row items-center gap-4 relative">
         <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm ${c.blue} bg-opacity-5 dark:bg-opacity-10`}>
             <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('from_grinder')}</label>
-            <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 ${c.inputBg} mb-4 outline-none font-bold ${c.textDark}`}>{Object.entries(groups).map(([gn, itms]) => (<optgroup key={gn} label={gn} className={`${c.textMuted} font-bold`}>{itms.map(i => (<option key={i.key} value={i.key} className={`${c.textDark} font-medium`}>{i.name}</option>))}</optgroup>))}</select>
+            <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold ${grinderA === '' ? 'text-gray-400' : c.textDark} appearance-none`}>
+                <option value="" disabled>{t('select_grinder_placeholder')}</option>
+                {Object.entries(groups).map(([gn, itms]) => (<optgroup key={gn} label={gn} className={`${c.textMuted} font-bold`}>{itms.map(i => (<option key={i.key} value={i.key} className={`${c.textDark} font-medium`}>{i.name}</option>))}</optgroup>))}
+            </select>
             <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('current_grind')}</label>
             <input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 ${c.inputBg} ${c.textDark} outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
+            <div className={`text-center text-xs font-bold ${c.blueText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}</div>
         </div>
-        <button onClick={handleSwap} className={`p-3 ${c.card} border-2 ${c.border} hover:opacity-80 rounded-full shadow-sm transition-all z-10 active:scale-95 group`}><ArrowRightLeft size={24} className={`${c.primaryText} group-hover:rotate-180 transition-transform duration-300`} /></button>
+        <button onClick={handleSwap} className={`p-3 ${c.card} border-2 ${c.border} hover:opacity-80 ${c.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group outline-none`}><ArrowRightLeft size={24} className={`group-hover:rotate-180 transition-transform duration-300`} /></button>
         <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm ${c.secondary} bg-opacity-5 dark:bg-opacity-10`}>
             <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('to_grinder')}</label>
-            <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 ${c.inputBg} mb-4 outline-none font-bold ${c.textDark}`}>{Object.entries(groups).map(([gn, itms]) => (<optgroup key={gn} label={gn} className={`${c.textMuted} font-bold`}>{itms.map(i => (<option key={i.key} value={i.key} className={`${c.textDark} font-medium`}>{i.name}</option>))}</optgroup>))}</select>
+            <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold ${grinderB === '' ? 'text-gray-400' : c.textDark} appearance-none`}>
+                <option value="" disabled>{t('select_grinder_placeholder')}</option>
+                {Object.entries(groups).map(([gn, itms]) => (<optgroup key={gn} label={gn} className={`${c.textMuted} font-bold`}>{itms.map(i => (<option key={i.key} value={i.key} className={`${c.textDark} font-medium`}>{i.name}</option>))}</optgroup>))}
+            </select>
             <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('target_grind')}</label>
             <div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : c.secondaryText} ${c.inputBg} rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>{result ? (result.error ? 'N/A' : result.valB) : '-'}</div>
+            <div className={`text-center text-xs font-bold ${c.secondaryText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
         </div>
     </div>
-    {grinderB && result?.catIdx !== -1 && <div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border}`}><GrindVisualizer catIdx={result.catIdx} c={c} lang={lang} /></div>}
+    {grinderB && (
+        <div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border} animate-in fade-in duration-300`}>
+            {result && !result.error && (<div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 ${c.textDark}`}>{t('grind_result_msg')} <strong className={c.primaryText}>{result.catName}</strong>{t('mapped_linear')}</div>)}
+            {result && result.error && (<div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 text-red-500`}>{result.error}</div>)}
+            <div className="px-2">
+                <div className={`text-xs font-bold ${c.textMuted} mb-3 flex items-center gap-2`}><Settings2 size={16} /> {GRINDER_DATABASE[grinderB].name} {t('grind_visual')}</div>
+                <div className={`flex h-4 rounded-full overflow-hidden ${c.bg} shadow-inner border ${c.border}`}>
+                    {t('grind_cats').map((cat, idx) => (<div key={idx} className={`w-1/5 border-r border-black/5 dark:border-white/10 transition-colors duration-300 ${(result && result.catIdx === idx) ? c.bar[idx] : 'bg-transparent'}`}></div>))}
+                </div>
+                <div className={`flex text-[10px] sm:text-xs ${c.textMuted} mt-3 font-bold`}>
+                    {t('grind_cats').map((cat, idx) => {
+                        const range = GRINDER_DATABASE[grinderB].ranges[idx];
+                        const rangeText = range && range.min !== null ? `${range.min} - ${range.max}` : '-';
+                        const isHighlight = result && result.catIdx === idx;
+                        return (
+                            <div key={idx} className={`w-1/5 flex flex-col items-center gap-1.5 whitespace-pre-wrap ${isHighlight ? c.textDark : ''}`}>
+                                <span className="text-center leading-tight">{cat}</span>
+                                <span className={`px-1.5 py-0.5 rounded-md font-mono transition-all duration-300 ${isHighlight ? `${c.bar[idx]} text-white shadow-md scale-110` : `${c.inputBg} border ${c.border}`}`}>{rangeText}</span>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>
+            {result && result.catIdx !== -1 && <GrindVisualizer catIdx={result.catIdx} c={c} lang={lang} />}
+        </div>
+    )}
+    <div className={`p-5 ${c.infoBg} rounded-2xl border ${c.border} text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed`}>
+        <strong className={`${c.textDark} block mb-2`}>{t('hint_title')}</strong>
+        <ul className="list-disc pl-5 space-y-1.5">
+            <li>{t('hint_1')}</li><li>{t('hint_2')}</li><li>{t('hint_3')}</li><li>{t('hint_4')}</li>
+        </ul>
+    </div>
 </div>
 );
 }
@@ -1099,9 +1168,9 @@ function App() {
 const [view, setView] = useState('home'); const [lang, setLang] = useState('zh'); const [isDark, setIsDark] = useState(false); const t = (k) => i18n[lang][k] || k; const c = getColors(isDark); 
 useEffect(() => { document.body.className = c.bg; }, [isDark, c.bg]);
 return (
-<div className={`min-h-screen ${c.bg} font-sans text-gray-800 pb-20 transition-colors duration-300`}>
-    <button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full shadow-lg border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300`}>{isDark ? <Sun size={24} /> : <Moon size={24} />}</button>
-    <div className={`${c.primary} text-white shadow-md sticky top-0 z-50 transition-colors duration-300`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors"><ArrowLeft size={20} /></button>}<Coffee size={24} strokeWidth={2.5} /><h1 className="text-xl font-bold tracking-widest hidden sm:block">{view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : (view === 'water' ? t('tool_water_title') : t('tool_grind_title')))}</h1></div><div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm"><button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button></div></div></div>
+<div className={`min-h-screen ${c.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
+    <button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full shadow-lg border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300 outline-none`}>{isDark ? <Sun size={24} /> : <Moon size={24} />}</button>
+    <div className={`${c.primary} text-white shadow-md sticky top-0 z-50 transition-colors duration-300`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors outline-none"><ArrowLeft size={20} /></button>}<Coffee size={24} strokeWidth={2.5} /><h1 className="text-xl font-bold tracking-widest hidden sm:block">{view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : (view === 'water' ? t('tool_water_title') : t('tool_grind_title')))}</h1></div><div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm"><button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all outline-none ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all outline-none ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all outline-none ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button></div></div></div>
     <main className="max-w-3xl mx-auto px-4 py-8 relative">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : (view === 'brew' ? <BrewTool lang={lang} t={t} c={c} /> : (view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />))}</main>
 </div>
 );
@@ -1113,9 +1182,9 @@ return (
 <div className="animate-in fade-in zoom-in-95 duration-300">
     <div className="text-center mb-8"><h2 className={`text-2xl md:text-3xl font-bold ${c.textDark} mb-2`}>{t('home_title')}</h2><p className={`${c.textMuted}`}>{t('home_subtitle')}</p></div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-        <button onClick={() => setView('brew')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}><Thermometer size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_brew_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p></button>
-        <button onClick={() => setView('grind')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}><Wrench size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_grind_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p></button>
-        <button onClick={() => setView('water')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#8AA192] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.primary} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}><Droplets size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_water_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_water_desc')}</p></button>
+        <button onClick={() => setView('brew')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group outline-none`}><div className={`w-14 h-14 rounded-full ${c.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_brew_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p></button>
+        <button onClick={() => setView('grind')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group outline-none`}><div className={`w-14 h-14 rounded-full ${c.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Wrench size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_grind_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p></button>
+        <button onClick={() => setView('water')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#8AA192] hover:shadow-lg transition-all group outline-none`}><div className={`w-14 h-14 rounded-full ${c.primary} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Droplets size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_water_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_water_desc')}</p></button>
     </div>
     <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
         <div className="flex items-center justify-center gap-3 mb-6"><div className={`h-px ${c.border} flex-1`}></div><h3 className={`flex items-center gap-2 text-lg font-bold ${c.textDark} px-2`}><Clock size={18} className={c.primaryText} />{t('changelog_title')}</h3><div className={`h-px ${c.border} flex-1`}></div></div>
