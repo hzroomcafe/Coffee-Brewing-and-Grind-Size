@@ -153,7 +153,7 @@ dim_acid: 'Acidity', dim_sweet: 'Sweetness', dim_bitter: 'Bitterness', dim_body:
 tweak_reset: 'Reset',
 changelog_title: 'Release Notes',
 changelog: [
-{ version: 'v2.3.0', date: 'May 2026', changes: ['Added Stellar Dripper and Davinci Coffee in-shop recipe.'] },
+{ version: 'v2.3.0', date: 'May 2026', changes: ['Added Kadou M1 Dripper and Davinci Coffee in-shop recipe.'] },
 { version: 'v2.2.3', date: 'May 2026', changes: ['Fatal Bug Fix: Resolved white-screen crash on recipe switch.', 'UX Polish: Show base grinder directly on header and added light-grey placeholders to all selects.'] },
 { version: 'v2.2.0', date: 'May 2026', changes: ['Embedded grind suggestions in recipes with real-time conversion.', 'Added Fuji Royal & Timemore S3 to grinder database.', 'Refined Troubleshooter with objective scientific extraction analysis.'] },
 { version: 'v1.5.0', date: 'May 2026', changes: ['Added Mineral Water Calculator supporting Aquacode, NAIRO DROP, APAX LAB.'] }
@@ -208,7 +208,7 @@ const DRIPPER_CATEGORIES = {
 [l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
 { id:'Hario V60 01',name:'Hario V60 01'},{id:'Hario V60 02',name:'Hario V60 02'},
 { id:'Hario Switch 02',name:'Hario Switch 02'},
-{ id:'Stellar Dripper',name:l('星芒濾杯','Stellar Dripper','星芒ドリッパー')}, // 新增星芒濾杯
+{ id:'Kadou M1 Dripper',name:l('星芒濾杯','Kadou M1 Dripper','星芒ドリッパー')}, // 新增星芒濾杯
 { id:'Tri-Up Flow 01/02',name:'Tri-Up Flow 01/02'}
 ],
 [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
@@ -228,7 +228,7 @@ const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 const RECIPE_DATABASE = [
 // 新增：達文西咖啡店內沖煮
 { 
-    id:'davinci-shop', name:l('達文西咖啡店內沖煮','Davinci Coffee In-shop','ダヴィンチコーヒー店内レシピ'), author:'Davinci', dripper:'Stellar Dripper', drinkType:'hot', baseCoffee:15, temperature:92, 
+    id:'davinci-shop', name:l('達文西咖啡店內沖煮','Davinci Coffee In-shop','ダヴィンチコーヒー店内レシピ'), author:'Davinci', dripper:'Kadou M1 Dripper', drinkType:'hot', baseCoffee:15, temperature:92, 
     baseGrind: { grinder: 'm_c40', val: 22 }, 
     description: l('店內參數：1:15 (15g咖啡粉:230g水)。\n研磨粗細約小飛馬刻度3.5。\n\n變因影響：\n1. 粉水比：粉越多，咖啡越濃。\n2. 研磨粗細：顆粒越小，越容易萃取。\n3. 水溫：溫度越高，萃取增加。\n4. 萃取時間：時間越長，萃出物質越多。\n5. 擾動：適當，水流擾動越大，萃出物質越多。', 'In-shop parameters: 1:15 ratio (15g coffee to 230g water). Grind size ~Fuji Royal 3.5. Variables: Finer grind/higher temp/longer time/more agitation = more extraction.', '店内パラメータ：1:15（15gの粉:230gの湯）。挽き目は小富士3.5程度。要因：粉量、挽き目、湯温、抽出時間、撹拌により抽出効率が変化します。'), 
     steps:[
