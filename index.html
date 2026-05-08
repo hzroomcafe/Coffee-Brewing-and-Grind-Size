@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>村民咖啡工具箱V2.1.0</title>
+<title>村民咖啡工具箱 - 專業優化版</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -26,6 +26,7 @@ input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cur
 <div id="root"></div>
 <script type="text/babel">
 const { useState, useEffect, useMemo, useRef } = React;
+
 // --- SVGs ---
 const IconBase = ({ children, size=24, className="", strokeWidth=2 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>;
 const Coffee=p=><IconBase {...p}><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M9 2v2"/><path d="M15 2v2"/></IconBase>;
@@ -102,16 +103,16 @@ hint_1: '圈數標示：遇圈數+小格（如 1 圈又 5 小格），請輸入�
 hint_2: '數字標示：面板標示數字的機型，請直接輸入小數（如 6.5）。',
 hint_3: '總格數標示：轉圈式的手搖磨豆機，請換算為 總格數 輸入。',
 hint_4: '由於刀盤種類、磨損或歸零點設定不同，實際結果可能有微小偏差。',
+suggest_grind_title: '研磨度建議與轉換', base_grind: '配方基準研磨度', my_grinder: '換算至我的磨豆機', converted_result: '建議起始刻度',
 tweak_btn: '上一杯風味不理想？展開風味羅盤',
 tweak_title: '風味羅盤', tweak_desc: '滑動下方數值，描繪您上一杯喝到的真實風味分佈。系統將綜合咖啡萃取科學與參數變因，為您提供大方向的風味校正與微調建議。',
 dim_acid: '酸質', dim_sweet: '甜感', dim_bitter: '苦澀/雜感', dim_body: '醇厚度', dim_after: '餘韻',
 tweak_reset: '重置',
 changelog_title: '版本更新紀錄',
 changelog: [
-{ version: 'v2.1.0', date: '2026.05', changes: ['風味羅盤大升級：導入咖啡萃取科學五大維度分析，提供更深度且具科學依據的診斷報告，並修正了雷達圖斷點的顯示細節。', '配方選單優化：支援自動群組化多種變體配方（如惡魔手沖系列），並全面多語系化。'] },
-{ version: 'v1.5.0', date: '2026.05', changes: ['新增「礦物水調配計算」，支援 Aquacode、NAIRO DROP、APAX LAB 配方公式。'] },
-{ version: 'v1.4.0', date: '2026.05', changes: ['新增「科學精準版研磨顆粒模擬器」，具備實體比例校準器與真實 μm 數據計算。'] },
-{ version: 'v1.3.0', date: '2026.05', changes: ['新增「深色模式」日夜主題無縫切換', '新增「智慧沖煮計時器」，自動高亮引導當前步驟', '全面優化跨裝置響應式排版'] }
+{ version: 'v2.2.2', date: '2026.05', changes: ['介面修復與排序優化：修復配方詳情頁面的資料載入異常，並全面導入磨豆機「字母與數字優先」的智能排序系統，尋找設備更直覺！'] },
+{ version: 'v2.2.1', date: '2026.05', changes: ['研磨建議區塊優化：在收合狀態下直接顯示配方基準型號與刻度。'] },
+{ version: 'v2.2.0', date: '2026.05', changes: ['配方內嵌研磨建議：自動換算使用者擁有的磨豆機刻度，並新增小富士與泰摩栗子S3數據。', '配方細節與選單優化：惡魔手沖(改良版)注水精準修正為280g，選單支援變體群組化。', '風味羅盤文案去標籤化，採用純粹精品咖啡萃取科學進行客觀診斷。'] }
 ]
 },
 en: {
@@ -137,16 +138,16 @@ hint_1: 'Rotations: For rotations + clicks (e.g. 1 rot. 5 clicks), input 1.5.',
 hint_2: 'Dials: Input the exact decimal (e.g. 6.5).',
 hint_3: 'Total Clicks: Use absolute total clicks for manual grinders.',
 hint_4: 'Results may vary slightly due to burrs, wear, or zero-point calibration.',
+suggest_grind_title: 'Grind Suggestion', base_grind: 'Recipe Base Grind', my_grinder: 'Convert to My Grinder', converted_result: 'Suggested Setting',
 tweak_btn: 'Flavor not ideal? Open Flavor Compass',
 tweak_title: 'Flavor Compass', tweak_desc: 'Adjust the sliders to map your last brew\'s flavor profile. The system will provide macro-level corrections and fine-tuning directions based on coffee extraction science.',
 dim_acid: 'Acidity', dim_sweet: 'Sweetness', dim_bitter: 'Bitterness', dim_body: 'Body', dim_after: 'Aftertaste',
 tweak_reset: 'Reset',
 changelog_title: 'Release Notes',
 changelog: [
-{ version: 'v2.1.0', date: 'May 2026', changes: ['Upgraded UI: Recipe variants are now elegantly grouped via pill buttons.', 'Enhanced Troubleshooter with professional extraction science reports and fixed radar chart rendering.'] },
-{ version: 'v1.5.0', date: 'May 2026', changes: ['Added Mineral Water Calculator supporting Aquacode, NAIRO DROP, APAX LAB.'] },
-{ version: 'v1.4.0', date: 'May 2026', changes: ['Added Scientific Grind Visualizer with exact micron (μm) data and physical scale calibrator.'] },
-{ version: 'v1.3.0', date: 'May 2026', changes: ['Added Dark Mode toggle.', 'Added Smart Brew Timer with automatic step highlighting.'] }
+{ version: 'v2.2.2', date: 'May 2026', changes: ['Bug Fix & UI Update: Fixed recipe loading errors and introduced alphanumeric smart sorting for the grinder selection lists.'] },
+{ version: 'v2.2.1', date: 'May 2026', changes: ['UI Polish: Show base grinder & setting directly on the suggestion header.'] },
+{ version: 'v2.2.0', date: 'May 2026', changes: ['Embedded grind suggestions in recipes with real-time conversion.', 'Added Fuji Royal & Timemore S3 to grinder database.', 'Refined Troubleshooter with objective scientific extraction analysis.'] }
 ]
 },
 ja: {
@@ -172,16 +173,16 @@ hint_1: '回転数: 1回転5クリックの場合は「1.5」と入力。',
 hint_2: 'ダイヤル: そのまま小数で入力（例: 6.5）。',
 hint_3: '合計クリック: 手挽きミルの場合は「合計クリック数」を入力。',
 hint_4: '刃の種類、摩耗、ゼロ点設定により微小な誤差が生じる場合があります。',
+suggest_grind_title: '挽き目の推奨と変換', base_grind: 'ベースの挽き目', my_grinder: '自分のミルに変換', converted_result: '推奨設定',
 tweak_btn: '味が理想と違う？風味コンパスを開く',
-tweak_title: '風味コンパス', tweak_desc: 'スライダーを調整してフレーバーの輪郭を描いてください。コーヒー抽出の科学的根拠に基づき、風味の補正と微調整の方向性を提案します。',
+tweak_title: '風味コンパス', tweak_desc: 'スライダーを調整してフレーバーの輪郭を描いてください。コーヒー抽出の科学的根拠に基づき、パラメータの要因を総合的に分析して方向性を提案します。',
 dim_acid: '酸味', dim_sweet: '甘み', dim_bitter: '苦味/渋み', dim_body: 'ボディ', dim_after: '余韻',
 tweak_reset: 'リセット',
 changelog_title: 'リリースノート',
 changelog: [
-{ version: 'v2.1.0', date: '2026年5月', changes: ['レシピ選択メニューを最適化し、風味コンパスに専門的な抽出科学の診断レポートを追加。SVGレーダーの表示も修正しました。'] },
-{ version: 'v1.5.0', date: '2026年5月', changes: ['Aquacode、NAIRO DROP、APAX LABをサポートする「ミネラルウォーター計算」を追加。'] },
-{ version: 'v1.4.0', date: '2026年5月', changes: ['正確なミクロン（μm）データと実寸キャリブレーターを備えた科学的な挽き目ビジュアライザーを追加。'] },
-{ version: 'v1.3.0', date: '2026年5月', changes: ['ダークモード機能を追加。', '自動ステップハイライト機能付きのスマート抽出タイマーを追加。'] }
+{ version: 'v2.2.2', date: '2026年5月', changes: ['バグ修正と並べ替えの最適化：レシピ詳細の読み込みエラーを修正し、ミルのリストに英数字順のスマートソートを導入しました。'] },
+{ version: 'v2.2.1', date: '2026年5月', changes: ['UI改善：折りたたみボタンにベースのミル型番と設定値を直接表示するようにしました。'] },
+{ version: 'v2.2.0', date: '2026年5月', changes: ['レシピ内に推奨挽き目と自動変換機能を追加。Fuji RoyalとTimemore S3をデータベースに追加。', '風味コンパスの診断ロジックをより客観的な抽出科学に基づいて最適化。'] }
 ]
 }
 };
@@ -203,7 +204,7 @@ const DRIPPER_CATEGORIES = {
 ]
 };
 
-// 共通翻譯常數 (減少重複代碼)
+// 共通翻譯常數
 const pAct = l('注水', 'Pour', '注湯');
 const mAct = l('悶蒸', 'Bloom', '蒸らし');
 const dAct = l('完成', 'Done', '完了');
@@ -216,7 +217,8 @@ const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 const RECIPE_DATABASE = [
 { 
     id:'orea-iced-tilt', name:l('Tilt 冰手沖','Tilt Iced','Tilt アイス'), author:'Tilt', dripper:'Orea V3', drinkType:'iced', baseCoffee:20, temperature:90, 
-    description: r => l(`下壺冰塊：${Math.round(50*r)}g\n飲用杯：1 大顆冰球 (固定約 100g)`, `Server ice: ${Math.round(50*r)}g\nDrinking glass: 1 large ice sphere (fixed, ~100g)`, `サーバー氷: ${Math.round(50*r)}g\nグラス: 大きな丸氷1個 (固定・約100g)`), 
+    baseGrind: { grinder: 'm_c40', val: 18 },
+    description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：1 大顆冰球 (固定約 100g)`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: 1 large ice sphere (fixed, ~100g)`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 大きな丸氷1個 (固定・約100g)`), 
     steps:[
         rs('t1','0:00-0:07', pAct, r=>l(`注水至 ${Math.round(40*r)}g`, `Pour to ${Math.round(40*r)}g`, `${Math.round(40*r)}gまで注ぐ`), 40),
         rs('t2','0:40-0:47', pAct, r=>l(`注水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80),
@@ -227,6 +229,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'switch-iced-chacha', name:l('冰手沖(CHACHA)','Iced(CHACHA)','アイス(CHACHA)'), author:'CHACHA', dripper:'Hario Switch 02', drinkType:'iced', baseCoffee:20, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 18 },
     description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：一般冰塊 ${Math.round(100*r)}g`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: Normal ice ${Math.round(100*r)}g`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 通常の氷 ${Math.round(100*r)}g`), 
     steps:[
         rs('c1','0:00', bClose, l('關閉開關注水', 'Close switch & pour', 'スイッチを閉じて注ぐ'), 50),
@@ -238,6 +241,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'switch-devil-single', name:l('惡魔手沖(單人)','Devil(Single)','悪魔(1人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
     description:l('SOP化流程，新手友善。','Standardized procedure, beginner friendly.','SOP化された手順で初心者向け。'), 
     steps:[
         rs('s1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 30),
@@ -249,6 +253,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'switch-devil-double', name:l('惡魔手沖(雙人)','Devil(Double)','悪魔(2人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:24, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
     description:l('大份量版本。','Large batch version.','大容量バージョン。'), 
     steps:[
         rs('d1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 50),
@@ -260,6 +265,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'switch-devil-original', name:l('惡魔手沖(原始)','Devil(Original)','悪魔(オリジナル)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
     description:l('高溫滴濾與低溫浸泡。','High temp drip, low temp steep.','高温ドリップと低温浸漬。'), 
     steps:[
         rs('do1','0:00', bOpen, r=>l(`92°C 水注至 ${Math.round(60*r)}g`, `92°C water to ${Math.round(60*r)}g`, `92°Cのお湯で${Math.round(60*r)}gまで`), 60),
@@ -271,18 +277,20 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'switch-devil-improved', name:l('惡魔手沖(改良)','Devil(Improved)','悪魔(改良版)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
     description:l('浸泡-滴濾-低溫浸泡。','Steep-Drip-Low Temp Steep.','浸漬-ドリップ-低温浸漬。'), 
     steps:[
         rs('di1','0:00', bClose, r=>l(`92°C 水注至 ${Math.round(50*r)}g`, `92°C water to ${Math.round(50*r)}g`, `92°Cのお湯で${Math.round(50*r)}gまで`), 50),
         rs('di2','0:40', bOpen, r=>l(`打開開關並注水至 ${Math.round(120*r)}g`, `Open switch & pour to ${Math.round(120*r)}g`, `スイッチを開けて${Math.round(120*r)}gまで`), 120),
         rs('di3','1:30', pAct, r=>l(`注水至 ${Math.round(200*r)}g`, `Pour to ${Math.round(200*r)}g`, `${Math.round(200*r)}gまで注ぐ`), 200),
-        rs('di4','2:10', bClose, r=>l(`70°C 水注至 ${Math.round(300*r)}g`, `70°C water to ${Math.round(300*r)}g`, `70°Cのお湯で${Math.round(300*r)}gまで`), 300),
+        rs('di4','2:10', bClose, r=>l(`70°C 水注至 ${Math.round(280*r)}g`, `70°C water to ${Math.round(280*r)}g`, `70°Cのお湯で${Math.round(280*r)}gまで`), 280),
         rs('di5','2:45', l('打開', 'Open', '開く'), l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null),
         rs('di6', l('滴完', 'Finish', '完了'), dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
     ] 
 },
 { 
     id:'beandy-silk', name:'Lonich Coffee', author:'Tatsumi', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:15, temperature:90, 
+    baseGrind: { grinder: '1z_kultra', val: 7.5 },
     description:l('穩定流速。','Stable flow rate.','安定した流速。'), 
     steps:[
         rs('b1','0:00', mAct, mAct, 40),
@@ -294,6 +302,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'v60-01-jh', name:l('終極V60(2022)','Ultimate V60(2022)','究極V60(2022)'), author:'Hoffmann', dripper:'Hario V60 01', drinkType:'hot', baseCoffee:15, temperature:100, 
+    baseGrind: { grinder: 'm_c40', val: 18 },
     description:l('多次小水量注水。','Multiple small pours.','複数回に分けて注ぐ。'), 
     steps:[
         rs('j1','0:00-0:10', mAct, r=>l(`注水 ${Math.round(50*r)}g`, `Pour ${Math.round(50*r)}g`, `${Math.round(50*r)}g注ぐ`), 50),
@@ -308,6 +317,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'v60-02-jh', name:l('終極V60(2022)','Ultimate V60(2022)','究極V60(2022)'), author:'Hoffmann', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:15, temperature:100, 
+    baseGrind: { grinder: 'm_c40', val: 18 },
     description:l('多次小水量注水。','Multiple small pours.','複数回に分けて注ぐ。'), 
     steps:[
         rs('j1','0:00-0:10', mAct, r=>l(`注水 ${Math.round(50*r)}g`, `Pour ${Math.round(50*r)}g`, `${Math.round(50*r)}g注ぐ`), 50),
@@ -322,6 +332,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'v60-46', name:'4:6 Method', author:'粕谷哲', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:20, temperature:90, 
+    baseGrind: { grinder: 'm_c40', val: 30 },
     description: l('4:6沖煮法的4跟6指的是，將沖煮咖啡的總熱水量分40%與60%沖泡。\n前40%的水分兩次注入，這40%決定了咖啡的酸甜基調；剩下60%的水平均分成三次注入，用來調整咖啡的濃度。', 'The 4:6 method divides the total water into 40% and 60%.\nThe first 40% (poured in 2 stages) shapes the acidity and sweetness baseline; the remaining 60% (poured in 3 stages) adjusts the brew strength.', '4:6メソッドは総湯量を40%と60%に分けます。\n最初の40%で酸味と甘みのベースを決定し、残りの60%でコーヒーの濃度を調整します。'), 
     steps:[
         rs('v1','0:00', pAct, l('第一段 (前40%)', '1st pour (First 40%)', '第1投 (最初の40%)'), 60),
@@ -334,6 +345,7 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'tri-up', name:l('濾杯設計者配方','Designer Recipe','ドリッパー設計者レシピ'), author:'Eric', dripper:'Tri-Up Flow 01/02', drinkType:'hot', baseCoffee:15, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 24 },
     description:l('每段約 7 秒快速注水。','Fast 7-second pours per stage.','各段階約7秒の高速注湯。'), 
     steps:[
         rs('t1','0:00', l('快注', 'Fast Pour', '高速注湯'), r=>l(`注水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80),
@@ -343,11 +355,13 @@ const RECIPE_DATABASE = [
     ] 
 }
 ];
+
 const g1 = l("⚡ 電動", "Electric", "電動"); const g2 = l("🖐️ 手搖", "Manual", "手挽き");
 const uN=l("數字","Dial","ダイヤル"); const uM=l("大數字","Macro","マクロ"); const uS=l("無段","Stepless","無段階");
 const uC=l("格數","Clicks","クリック"); const uR=l("圈數","Rots","回転");
 const mg = (gr, name, unit, step, r) => ({ group: gr, name, unit, step, ranges: r.map(x => ({ min: x[0], max: x[1] })) });
 const GRINDER_DATABASE = {
+"e_fuji": mg(g1, "Fuji Royal R-220 (小富士)", uN, 0.5, [[null,null],[1,2.5],[2.5,3.5],[3.5,5.5],[5.5,8.5]]),
 "e_enc": mg(g1, "Baratza Encore", uN, 1, [[1,5],[5,10],[10,15],[15,25],[25,30]]),
 "e_270": mg(g1, "Baratza Sette 270", uM, 1, [[1,3],[3,9],[9,15],[15,25],[25,31]]),
 "e_sgp": mg(g1, "Breville SGP", uN, 1, [[1,5],[5,15],[15,30],[30,45],[45,60]]),
@@ -368,6 +382,7 @@ const GRINDER_DATABASE = {
 "e_vs3": mg(g1, "Varia VS3", uN, 0.1, [[0,1],[1,3],[3,5],[5,8],[8,10]]),
 "e_eg1": mg(g1, "Weber EG-1", uN, 0.1, [[0,0.5],[0.5,1.5],[1.5,4],[4,7],[7,9]]),
 "e_600n": mg(g1, "Feima 600N", uN, 0.5, [[0.5,1],[1,2.5],[2.5,3.5],[3.5,5.5],[5.5,8]]),
+"m_s3": mg(g2, "Timemore Chestnut S3", uN, 0.1, [[0.5,1],[1,2.5],[2.5,4],[4,7],[7,9]]),
 "1z_q2": mg("🎯 1Zpresso", "Q2 / Q Air", uC, 1, [[15,25],[25,35],[35,45],[45,60],[60,75]]),
 "1z_jx": mg("🎯 1Zpresso", "JX", uC, 1, [[20,30],[30,40],[40,60],[60,90],[90,120]]),
 "1z_jxpro": mg("🎯 1Zpresso", "JX-Pro", uC, 1, [[30,50],[50,70],[70,100],[100,140],[140,160]]),
@@ -404,7 +419,6 @@ const dimLabels = {
     af: { icon: <Wind size={16}/>, label: t('dim_after'), color: 'text-[#7E8D85]', hex: '#7E8D85' }  
 };
 
-// 繪製雷達圖的多邊形座標 (去除 CSS Transition 以防止 SVG 破圖)
 const polygonPoints = useMemo(() => {
     const keys = ['a', 's', 'b', 'bd', 'af'];
     return keys.map((key, i) => {
@@ -417,35 +431,31 @@ const polygonPoints = useMemo(() => {
     }).join(' ');
 }, [scores]);
 
-// 專業診斷邏輯 (依據咖啡科學與參數變因)
 const getDiagnosis = () => {
     const { a, s, b, bd, af } = scores;
     
-    // 初始狀態
     if (a===3 && s===3 && b===3 && bd===3 && af===3) {
         return {
             title: l("雷達處於預設狀態 (Default State)", "Default Radar", "デフォルト状態"),
             desc: l(
-                "請拉動數值描繪風味。系統將綜合咖啡萃取科學與參數變因，為您解析可溶性芳香物質的釋放階段，並提供大方向的專業微調建議。", 
+                "請拉動數值描繪風味。系統將根據精品咖啡萃取理論，綜合各項參數變因為您提供大方向的風味校正與微調建議。", 
                 "Adjust sliders to map your flavor. The system applies Extraction Theory to analyze soluble compound release and offer professional parameter corrections.", 
                 "数値をスライドして風味を描いてください。抽出理論に基づき、可溶性成分の放出を分析し、専門的なパラメータ補正を大枠で提案します。"
             )
         };
     }
 
-    // 理想萃取 (Golden Cup)
     if (s >= 4 && af >= 4 && b <= 2) {
         return {
             title: l("理想萃取 / 貼近甜蜜點 (Ideal Extraction)", "Ideal Extraction", "理想的な抽出"),
             desc: l(
-                "【科學成因】\n甜感飽滿且餘韻綿長，表示萃取率 (EY) 完美落在 18%-22% 的理想區間。咖啡中的優質芳香物質與梅納反應產生的中大分子糖分已充分釋放，且成功避開了沖煮尾段的乾餾物（Dry Distillates）與重度苦味物質。\n\n【調整建議】\n這是一次極高水準的沖煮！請鎖定目前的「水粉比、水溫、研磨度」鐵三角，依此為基準點微調即可。", 
-                "[Science]\nHigh sweetness and long aftertaste indicate an Extraction Yield (EY) hitting the 18-22% sweet spot. Maillard reaction sugars are fully dissolved, successfully avoiding late-stage dry distillates and heavy bitter compounds.\n\n[Action]\nOutstanding brew! Lock in your current brew ratio, temperature, and grind size as your golden baseline.", 
-                "【科学的要因】\n豊かな甘みと長い余韻は、収率(EY)が18-22%の理想的な範囲にあることを示します。メイラード反応による糖分が十分に溶け出し、終盤の乾留物や強い苦味成分をうまく避けています。\n\n【調整の提案】\n非常に素晴らしい抽出です！現在の粉量、湯温、挽き目をベースラインとして固定してください。"
+                "【科學成因】\n甜感飽滿且餘韻綿長，表示萃取率 (EY) 完美落在理想區間。優質芳香物質與梅納反應產生的中大分子糖分已充分釋放，且成功避開了沖煮尾段的重度苦味物質。\n\n【調整建議】\n這是一次極高水準的沖煮！請鎖定目前的「水粉比、水溫、研磨度」鐵三角，依此為基準點微調即可。", 
+                "[Science]\nHigh sweetness and long aftertaste indicate an Extraction Yield (EY) hitting the sweet spot. Maillard reaction sugars are fully dissolved, avoiding late-stage bitter compounds.\n\n[Action]\nOutstanding brew! Lock in your current brew ratio, temperature, and grind size as your golden baseline.", 
+                "【科学的要因】\n豊かな甘みと長い余韻は、収率(EY)が理想的な範囲にあることを示します。メイラード反応による糖分が十分に溶け出し、終盤の強い苦味成分をうまく避けています。\n\n【調整の提案】\n非常に素晴らしい抽出です！現在の粉量、湯温、挽き目をベースラインとして固定してください。"
             )
         };
     }
 
-    // 通道效應 (High Acid + High Bitter)
     if (a >= 4 && b >= 4) {
         return {
             title: l("極端不均萃取 / 通道效應 (Uneven Extraction & Channeling)", "Uneven Extraction (Channeling)", "不均一な抽出 / チャネリング"),
@@ -457,47 +467,43 @@ const getDiagnosis = () => {
         };
     }
 
-    // 過度萃取 (High Bitter)
     if (b >= 4) {
         return {
             title: l("萃取過度 / 乾餾物質釋出 (Over-Extraction)", "Over-Extraction", "過抽出 (オーバーエクストラクション)"),
             desc: l(
-                "【科學成因】\n咖啡風味的溶出順序為：酸 ➔ 甜 ➔ 苦。當苦澀感與咬喉感佔據主導，意味著萃取進入了尾段，將大分子的多酚類與乾餾物質強制溶出。這通常肇因於：粉與水接觸時間過長、水溫過高，或過度的擾動（Agitation）。\n\n【調整建議】\n1. 研磨度調粗 1-2 格（減少總表面積）。\n2. 沖煮水溫降低 2-3°C（降低溶劑動能）。\n3. 減少斷水次數，採用中心小水流平穩注入。", 
+                "【科學成因】\n咖啡風味的溶出順序為：酸 ➔ 甜 ➔ 苦。當苦澀感佔據主導，意味著萃取進入尾段，將大分子的多酚類與乾餾物質強制溶出。這通常肇因於：粉與水接觸時間過長、水溫過高，或過度擾動（Agitation）。\n\n【調整建議】\n1. 研磨度調粗 1-2 格（減少總表面積）。\n2. 沖煮水溫降低 2-3°C（降低溶劑動能）。\n3. 減少斷水次數，採用中心小水流平穩注入。", 
                 "[Science]\nExtraction order is: Acids ➔ Sugars ➔ Bitters. Dominant harshness means late-stage high-molecular-weight polyphenols and dry distillates were forced out. Causes: prolonged contact time, excess heat, or over-agitation.\n\n[Action]\n1. Grind 1-2 clicks coarser (reduce surface area).\n2. Lower temp by 2-3°C (reduce solvent kinetic energy).\n3. Reduce pouring stages and minimize agitation.", 
                 "【科学的要因】\n抽出順序は「酸→甘み→苦味」です。渋みやエグみが強い場合、終盤の高分子ポリフェノールや乾留物が強制的に溶け出しています。原因は接触時間の長さ、高温、または過度な撹拌です。\n\n【調整の提案】\n1. 挽き目を1-2段階粗くする。\n2. 湯温を2-3℃下げる。\n3. 注湯の回数を減らし、穏やかに注ぐ。"
             )
         };
     }
 
-    // 萃取不足 (High Acid, Low Sweet)
     if (a >= 4 && s <= 2) {
         return {
             title: l("萃取不足 / 有機酸失衡 (Under-Extraction)", "Under-Extraction", "未抽出 (アンダーエクストラクション)"),
             desc: l(
-                "【科學成因】\n咖啡中分子量最小的綠原酸、檸檬酸等水果酸最先被溶出。若在此階段後萃取動能不足，無法帶出中段的焦糖與寡糖來提供「包覆感」，就會呈現單薄且刺鼻的尖酸。主因通常是：粉粒過粗、水溫偏低，或悶蒸未完全排氣。\n\n【調整建議】\n1. 研磨度調細 1-2 格（增加萃取接觸面積）。\n2. 提高水溫 2°C（增加萃取效能）。\n3. 延長前段悶蒸時間 10 秒，確保粉層完全濕潤排氣。", 
-                "[Science]\nLow-weight organic acids (citric, malic) extract first. Without mid-stage complex sugars to envelop them, the acidity tastes sharp and sour. Causes: grind too coarse, water too cool, or insufficient blooming.\n\n[Action]\n1. Grind 1-2 clicks finer (increase extraction area).\n2. Raise temp by 2°C (increase kinetic energy).\n3. Extend bloom time by 10s for full saturation.", 
+                "【科學成因】\n咖啡中分子量最小的水果酸最先被溶出。若在此階段後萃取動能不足，無法帶出中段的焦糖與寡糖來提供「包覆感」，就會呈現單薄且刺鼻的尖酸。主因通常是：粉粒過粗、水溫偏低，或悶蒸未完全排氣。\n\n【調整建議】\n1. 研磨度調細 1-2 格（增加萃取接觸面積）。\n2. 提高水溫 2°C（增加萃取效能）。\n3. 延長前段悶蒸時間 10 秒，確保粉層完全濕潤排氣。", 
+                "[Science]\nLow-weight organic acids extract first. Without mid-stage complex sugars to envelop them, the acidity tastes sharp and sour. Causes: grind too coarse, water too cool, or insufficient blooming.\n\n[Action]\n1. Grind 1-2 clicks finer (increase extraction area).\n2. Raise temp by 2°C (increase kinetic energy).\n3. Extend bloom time by 10s for full saturation.", 
                 "【科学的要因】\n分子量の小さい有機酸が最初に溶け出します。中盤の糖分が不足すると、バランスが崩れて鋭い酸味になります。原因は粗すぎる挽き目、低い湯温、または蒸らし不足です。\n\n【調整の提案】\n1. 挽き目を1-2段階細かくする。\n2. 湯温を2℃上げる。\n3. 蒸らし時間を10秒長くし、完全にガスを抜く。"
             )
         };
     }
 
-    // 濃度不足 (Low Body, Low Bitter)
     if (bd <= 2 && b <= 3) {
         return {
             title: l("濃度偏低 / 總溶解固體量不足 (Low TDS & Body)", "Low TDS (Watery)", "濃度不足 (Low TDS)"),
             desc: l(
-                "【科學成因】\n觸感單薄、缺乏醇厚度（Body），反映出咖啡液的「總溶解固體量 (TDS)」未達理想的 1.15%-1.35% 標準。這可能來自兩種情況：一是「水粉比 (Brew Ratio)」拉得太大，二是水流過快產生了 Bypass（旁流），水未經有效萃取即流下。\n\n【調整建議】\n1. 最直接作法：增加 1-2g 的總粉量，維持總水量不變。\n2. 技巧修正：放慢注水流速，或將一次大水流拆分為兩次注水，強制拉長水與粉層的浸潤接觸時間。", 
-                "[Science]\nThin mouthfeel and lack of body indicate Total Dissolved Solids (TDS) fell below the ideal 1.15-1.35%. This stems from either too wide a brew ratio or excessive water bypass (water escaping without extracting).\n\n[Action]\n1. Increase coffee dose by 1-2g keeping water volume constant.\n2. Pour slower or split a single large pour into two to force a longer contact time.", 
-                "【科学的要因】\n口当たりが薄くボディがないのは、TDS（総溶解固形分）が理想的な1.15-1.35%に達していないためです。粉に対する湯量が多すぎるか、お湯が早すぎてバイパス（通り抜け）が発生しています。\n\n【調整の提案】\n1. 水量を変えずに粉量を1-2g増やす。\n2. 注ぐ速度を遅くするか、注湯回数を増やして接触時間を長くする。"
+                "【科學成因】\n觸感單薄、缺乏醇厚度（Body），反映出咖啡液的「總溶解固體量 (TDS)」未達理想標準。這可能來自兩種情況：一是「水粉比」拉得太大，二是水流過快產生了 Bypass（旁流），水未經有效萃取即流下。\n\n【調整建議】\n1. 最直接作法：增加 1-2g 的總粉量，維持總水量不變。\n2. 技巧修正：放慢注水流速，或將一次大水流拆分為兩次注水，強制拉長水與粉層的浸潤接觸時間。", 
+                "[Science]\nThin mouthfeel and lack of body indicate Total Dissolved Solids (TDS) fell below the ideal standard. This stems from either too wide a brew ratio or excessive water bypass (water escaping without extracting).\n\n[Action]\n1. Increase coffee dose by 1-2g keeping water volume constant.\n2. Pour slower or split a single large pour into two to force a longer contact time.", 
+                "【科学的要因】\n口当たりが薄くボディがないのは、TDS（総溶解固形分）が理想の基準に達していないためです。粉に対する湯量が多すぎるか、お湯が早すぎてバイパス（通り抜け）が発生しています。\n\n【調整の提案】\n1. 水量を変えずに粉量を1-2g増やす。\n2. 注ぐ速度を遅くするか、注湯回数を増やして接触時間を長くする。"
             )
         };
     }
 
-    // Generic
     return {
         title: l("結構完整，具微調潛力 (Balanced Profile)", "Balanced Profile", "バランスの取れた風味"),
         desc: l(
-            "【科學成因】\n當前的五維數據沒有明顯極端值，表示您已將萃取率 (EY) 控制在合理範圍內，避開了嚴重的萃取缺陷。接下來的目標是尋找這支豆子的「甜蜜點 (Sweet Spot)」。\n\n【調整建議】\n若想提升香氣與酸質層次，可嘗試將水溫提高 1°C；若想增加醇厚度與甜感，可嘗試在第二/三段注水時放低壺嘴，減緩水流衝擊以增加浸泡感。", 
+            "【科學成因】\n當前的五維數據沒有明顯極端值，表示您已將萃取率 (EY) 控制在合理範圍內，避開了嚴重的缺陷。接下來的目標是尋找這支豆子的「甜蜜點 (Sweet Spot)」。\n\n【調整建議】\n若想提升香氣與酸質層次，可嘗試將水溫提高 1°C；若想增加醇厚度與甜感，可嘗試在第二/三段注水時放低壺嘴，減緩水流衝擊以增加浸泡感。", 
             "[Science]\nA well-distributed radar indicates extraction is within a reasonable range without major defects. The next step is hitting the specific coffee bean's optimal 'Sweet Spot'.\n\n[Action]\nTo boost aroma and bright acidity, raise water temp by 1°C. To enhance body and sweetness, lower your kettle height during mid-pours to reduce agitation and increase steeping effect.", 
             "【科学的要因】\n極端な値がなく、抽出収率が妥当な範囲にあり、重大な欠陥を避けています。次の目標は、その豆の「スイートスポット」を見つけることです。\n\n【調整の提案】\n香りと酸味の層を引き立てたい場合は湯温を1℃上げてください。ボディと甘みを増やしたい場合は、中盤の注湯でケトルを下げ、撹拌を減らして浸漬効果を高めてください。"
         )
@@ -518,21 +524,17 @@ return (
     <p className={`text-[11px] sm:text-xs ${c.textMuted} mb-6 font-bold leading-relaxed`}>{t('tweak_desc')}</p>
 
     <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
-        {/* 雷達圖繪製區 */}
         <div className={`w-32 h-32 sm:w-40 sm:h-40 shrink-0 relative flex items-center justify-center rounded-full ${c.inputBg} border ${c.border} shadow-inner`}>
-            {/* 五邊形底網 */}
             <svg viewBox="0 0 100 100" className="absolute w-[80%] h-[80%] opacity-20">
                 {[10, 20, 30, 40].map((r, idx) => (
                     <polygon key={idx} fill="none" stroke="currentColor" strokeWidth="0.5" className={c.textMuted}
                         points={[0,1,2,3,4].map(i => `${50 + r * Math.cos(Math.PI*2*i/5 - Math.PI/2)},${50 + r * Math.sin(Math.PI*2*i/5 - Math.PI/2)}`).join(' ')} 
                     />
                 ))}
-                {/* 軸線 */}
                 {[0,1,2,3,4].map(i => (
                     <line key={i} x1="50" y1="50" x2={50 + 40 * Math.cos(Math.PI*2*i/5 - Math.PI/2)} y2={50 + 40 * Math.sin(Math.PI*2*i/5 - Math.PI/2)} stroke="currentColor" strokeWidth="0.5" className={c.textMuted} />
                 ))}
             </svg>
-            {/* 動態數值區塊 - 設定 strokeLinejoin="round" 讓尖角平滑 */}
             <svg viewBox="0 0 100 100" className="absolute w-[80%] h-[80%] overflow-visible">
                 <polygon points={polygonPoints} fill={dimLabels.af.hex} fillOpacity="0.25" stroke={dimLabels.af.hex} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
                 {[0,1,2,3,4].map(i => {
@@ -544,8 +546,6 @@ return (
                 })}
             </svg>
         </div>
-
-        {/* 滑桿區 */}
         <div className="flex-1 w-full space-y-3">
             {Object.keys(scores).map(key => {
                 const dim = dimLabels[key];
@@ -562,8 +562,6 @@ return (
             })}
         </div>
     </div>
-
-    {/* 診斷結果區 */}
     <div className={`mt-6 p-4 sm:p-5 rounded-2xl ${c.infoBg} border-l-4 ${c.primary} animate-in fade-in duration-300`}>
         <div className={`text-[10px] font-black ${c.primaryText} mb-1 uppercase tracking-widest`}>Diagnosis</div>
         <div className={`text-[13px] sm:text-sm font-bold ${c.textDark} mb-3`}>{diagnosis.title}</div>
@@ -605,11 +603,7 @@ points.push(`${50 + r * Math.cos(angle)}% ${50 + r * Math.sin(angle)}%`);
 }
 const rDist = Math.random() * 40; 
 const theta = Math.random() * 2 * Math.PI;
-return {
-id: i, sizeMm: sizeMm, color: colors[Math.floor(Math.random() * colors.length)],
-clipPath: `polygon(${points.join(', ')})`, rot: Math.random() * 360, left: `${50 + rDist * Math.cos(theta)}%`, top: `${50 + rDist * Math.sin(theta)}%`,
-opacity: isFine ? 0.75 : 0.95
-};
+return { id: i, sizeMm, color: colors[Math.floor(Math.random() * colors.length)], clipPath: `polygon(${points.join(', ')})`, rot: Math.random() * 360, left: `${50 + rDist * Math.cos(theta)}%`, top: `${50 + rDist * Math.sin(theta)}%`, opacity: isFine ? 0.75 : 0.95 };
 });
 }, [catIdx, current]);
 return (
@@ -843,7 +837,7 @@ return (
 // 7. BrewTool (沖煮參數查詢 & 風味羅盤)
 // ==========================================
 function BrewTool({ lang, t, c }) {
-const { DRIPPER_CATEGORIES, RECIPE_DATABASE } = useDatabases(lang);
+const { DRIPPER_CATEGORIES, RECIPE_DATABASE, GRINDER_DATABASE } = useDatabases(lang);
 const [selectedDripperId, setSelectedDripperId] = useState('');
 const [selectedRecipeId, setSelectedRecipeId] = useState(null);
 const [customWeight, setCustomWeight] = useState(15); 
@@ -853,22 +847,14 @@ const handleSelectRecipe = (recipe) => { setSelectedRecipeId(recipe.id); setCust
 const filteredRecipes = selectedDripperId ? RECIPE_DATABASE.filter(r => r.dripper === selectedDripperId) : [];
 const selectedRecipe = RECIPE_DATABASE.find(r => r.id === selectedRecipeId);
 
-// 將同家族的變體群組化 (Regex 自動解析小括號)
 const groupedRecipes = useMemo(() => {
     const groups = [];
     filteredRecipes.forEach(r => {
-        let family = r.name;
-        let variant = '';
+        let family = r.name; let variant = '';
         const match = r.name.match(/^(.*?)(?:\((.*?)\))?$/);
-        if (match && match[2]) {
-            family = match[1].trim();
-            variant = match[2].trim();
-        }
+        if (match && match[2]) { family = match[1].trim(); variant = match[2].trim(); }
         let existingGroup = groups.find(g => g.family === family);
-        if (!existingGroup) {
-            existingGroup = { family, author: r.author, drinkType: r.drinkType, items: [] };
-            groups.push(existingGroup);
-        }
+        if (!existingGroup) { existingGroup = { family, author: r.author, drinkType: r.drinkType, items: [] }; groups.push(existingGroup); }
         existingGroup.items.push({ ...r, variant });
     });
     return groups;
@@ -903,41 +889,11 @@ return (
 <div className={`absolute top-full left-0 right-0 mt-2 ${c.card} border ${c.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto no-scrollbar`}>
 <div className={`p-2 ${c.inputBg} border-b ${c.border}`}><p className={`text-xs font-bold ${c.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
 {groupedRecipes.map((group, idx) => (
-    <div key={idx} className={`p-4 border-b last:border-0 ${c.border} ${group.items.some(i => i.id === selectedRecipe?.id) ? c.infoBg : c.card} transition-colors`}>
+    <div key={idx} className={`p-4 border-b last:border-0 ${c.border} ${group.items.some(i => i.id === selectedRecipe?.id) ? c.infoBg : c.card}`}>
         {group.items.length === 1 ? (
-            <button onClick={() => handleSelectRecipe(group.items[0])} className="w-full text-left flex items-center justify-between group">
-                <div className="flex items-center gap-3">
-                    {group.items[0].drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}
-                    <div>
-                        <div className={`font-bold ${c.textDark} group-hover:${c.primaryText} transition-colors`}>{group.items[0].name}</div>
-                        {group.author && <div className={`text-xs ${c.textMuted} mt-0.5`}>by {group.author}</div>}
-                    </div>
-                </div>
-                {selectedRecipe?.id === group.items[0].id && <CheckCircle2 size={20} className={c.primaryText} />}
-            </button>
+            <button onClick={() => handleSelectRecipe(group.items[0])} className="w-full text-left flex items-center justify-between group"><div className="flex items-center gap-3">{group.items[0].drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}<div><div className={`font-bold ${c.textDark}`}>{group.items[0].name}</div></div></div>{selectedRecipe?.id === group.items[0].id && <CheckCircle2 size={20} className={c.primaryText} />}</button>
         ) : (
-            <div className="w-full text-left">
-                <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                        {group.drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}
-                        <div>
-                            <div className={`font-bold ${c.textDark}`}>{group.family}</div>
-                            {group.author && <div className={`text-xs ${c.textMuted} mt-0.5`}>by {group.author}</div>}
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-wrap gap-2 pl-7">
-                    {group.items.map(item => (
-                        <button 
-                            key={item.id} 
-                            onClick={() => handleSelectRecipe(item)}
-                            className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all active:scale-95 ${selectedRecipe?.id === item.id ? `${c.primary} text-white border-transparent shadow-sm` : `${c.inputBg} ${c.textDark} ${c.border} hover:border-[#7E8D85]`}`}
-                        >
-                            {item.variant}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            <div><div className="flex items-center gap-3 mb-3">{group.drinkType === 'iced' ? <Snowflake size={18} className={c.icedIcon} /> : <Flame size={18} className={c.hotIcon} />}<div className={`font-bold ${c.textDark}`}>{group.family}</div></div><div className="flex flex-wrap gap-2 pl-7">{group.items.map(item => (<button key={item.id} onClick={() => handleSelectRecipe(item)} className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${selectedRecipe?.id === item.id ? `${c.primary} text-white border-transparent shadow-sm` : `${c.inputBg} ${c.textDark} ${c.border} hover:border-[#7E8D85]`}`}>{item.variant}</button>))}</div></div>
         )}
     </div>
 ))}
@@ -945,19 +901,19 @@ return (
 )}
 </div>
 {selectedRecipe ? (
-<div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><BrewRecipeDetail recipe={selectedRecipe} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} c={c} lang={lang} /></div>
+<div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><BrewRecipeDetail recipe={selectedRecipe} GRINDER_DATABASE={GRINDER_DATABASE} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} c={c} lang={lang} /></div>
 ) : (
 <div className={`text-center py-10 animate-in fade-in duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><div className={`w-12 h-12 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-3 ${c.secondaryText}`}><Coffee size={24} /></div><p className={`text-sm font-bold ${c.textMuted}`}>{t('select_recipe_prompt')}</p></div>
 )}
 </div>
 ) : (
-<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Coffee size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_recipe_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_recipe_desc')}</p></div>
+<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Filter size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_recipe_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_recipe_desc')}</p></div>
 )}
 </div>
 );
 }
 
-function BrewRecipeDetail({ recipe, customWeight, setCustomWeight, t, c, lang }) {
+function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWeight, t, c, lang }) {
 const ratio = (customWeight / recipe.baseCoffee) || 1;
 const isIced = recipe.drinkType === 'iced';
 const maxWater = Math.max(...recipe.steps.map(s => s.water || 0));
@@ -966,305 +922,187 @@ const renderDynamicText = (textObj) => typeof textObj === 'function' ? textObj(r
 const [elapsed, setElapsed] = useState(0);
 const [isRunning, setIsRunning] = useState(false);
 const [showTroubleshoot, setShowTroubleshoot] = useState(false);
+const [isGrindOpen, setIsGrindOpen] = useState(false);
+const [userGrinder, setUserGrinder] = useState('');
 
-useEffect(() => {
-let interval;
-if (isRunning) interval = setInterval(() => setElapsed(e => e + 1), 1000);
-return () => clearInterval(interval);
-}, [isRunning]);
-useEffect(() => { setElapsed(0); setIsRunning(false); setShowTroubleshoot(false); }, [recipe.id]);
-const formatTime = (secs) => {
-const m = Math.floor(secs / 60); const s = secs % 60;
-return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-};
+useEffect(() => { let interval; if (isRunning) interval = setInterval(() => setElapsed(e => e + 1), 1000); return () => clearInterval(interval); }, [isRunning]);
+useEffect(() => { setElapsed(0); setIsRunning(false); setShowTroubleshoot(false); setIsGrindOpen(false); }, [recipe.id]);
+
+const formatTime = (secs) => { const m = Math.floor(secs / 60); const s = secs % 60; return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`; };
 const stepStartTimes = useMemo(() => {
-const times = recipe.steps.map(s => {
-const m = s.time.match(/(\d+):(\d+)/);
-return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : -1;
-});
-for(let i = 1; i < times.length; i++) {
-if(times[i] === -1) times[i] = times[i-1] + 30; 
-}
-return times;
+    const times = recipe.steps.map(s => { const m = s.time.match(/(\d+):(\d+)/); return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : -1; });
+    for(let i = 1; i < times.length; i++) { if(times[i] === -1) times[i] = times[i-1] + 30; } return times;
 }, [recipe]);
-const activeStepIndex = useMemo(() => {
-if (elapsed === 0 && !isRunning) return -1; 
-let idx = 0;
-for(let i = 0; i < stepStartTimes.length; i++) {
-if (elapsed >= stepStartTimes[i]) idx = i;
-}
-return idx;
-}, [elapsed, isRunning, stepStartTimes]);
+const activeStepIndex = useMemo(() => { if (elapsed === 0 && !isRunning) return -1; let idx = 0; for(let i = 0; i < stepStartTimes.length; i++) { if (elapsed >= stepStartTimes[i]) idx = i; } return idx; }, [elapsed, isRunning, stepStartTimes]);
+
+const grindGroups = useMemo(() => { 
+    let grps = {}; 
+    Object.entries(GRINDER_DATABASE).forEach(([key, g]) => { 
+        if (!grps[g.group]) grps[g.group] = []; 
+        grps[g.group].push({ key, name: g.name }); 
+    }); 
+    Object.keys(grps).forEach(k => {
+        grps[k].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+    });
+    return grps; 
+}, [GRINDER_DATABASE]);
+
+const convertedGrind = useMemo(() => {
+    if (!userGrinder || !recipe.baseGrind) return null;
+    const gA = GRINDER_DATABASE[recipe.baseGrind.grinder]; const gB = GRINDER_DATABASE[userGrinder]; const parsedA = parseFloat(recipe.baseGrind.val);
+    if (!gA || !gB || isNaN(parsedA)) return null;
+    let catIdx = -1; let r_ratio = 0;
+    for (let i=0; i<gA.ranges.length; i++) { let r = gA.ranges[i]; if (r.min !== null && r.max !== null && parsedA >= r.min && parsedA <= r.max) { catIdx = i; r_ratio = (parsedA - r.min) / (r.max - r.min); break; } }
+    if (catIdx === -1) return { error: t('err_match') };
+    const rB = gB.ranges[catIdx]; if (rB.min === null || rB.max === null) return { error: t('err_notsupport') };
+    let valB = rB.min + r_ratio * (rB.max - rB.min);
+    if (gB.step === 1) valB = Math.round(valB); else { let inv = 1.0 / gB.step; valB = Math.round(valB * inv) / inv; valB = parseFloat(valB.toFixed(2)); }
+    return { valB, unit: gB.unit };
+}, [userGrinder, recipe, GRINDER_DATABASE, t]);
+
 return (
 <div className="space-y-4">
-<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
-<div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
-<p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>
-{t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText}/>
-</p>
-<div className="flex items-center gap-6">
-<button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>-</button>
-<div className="relative flex items-baseline">
-<input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${c.textDark} bg-transparent focus:outline-none`} />
-<span className={`text-xl font-bold ${c.textMuted} ml-1`}>g</span>
-</div>
-<button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium transition-all`}>+</button>
-</div>
-</div>
-<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} overflow-hidden`}>
-{recipe.description && (
-<div className={`p-5 text-[13px] sm:text-sm ${c.textDark} leading-relaxed ${c.infoBg} border-b ${c.border} whitespace-pre-wrap`}>{renderDynamicText(recipe.description)}</div>
-)}
-<div className={`p-4 grid grid-cols-3 gap-2 sm:gap-3 ${c.card}`}>
-<div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
-<div className={`p-1.5 rounded-full ${c.iconBg} ${c.redText} shadow-sm mb-1`}><Thermometer size={16} /></div>
-<p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_temp')}</p>
-<p className={`font-bold text-base ${c.textDark}`}>{recipe.temperature}°C</p>
-</div>
-<div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
-<div className={`p-1.5 rounded-full ${c.iconBg} ${c.yellowText} shadow-sm mb-1`}><ScaleIcon size={16} /></div>
-<p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_weight')}</p>
-<p className={`font-bold text-base ${c.textDark}`}>{recipe.baseCoffee}g</p>
-</div>
-<div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}>
-<div className={`p-1.5 rounded-full ${c.iconBg} ${c.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div>
-<p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('base_ratio')}</p>
-<p className={`font-bold text-base ${c.textDark}`}>1 : {baseRatio}</p>
-</div>
-</div>
-</div>
-<div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
-<div className={`${c.card} rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border ${c.border} p-4 flex items-center justify-between`}>
-<div className="flex items-center gap-3">
-<button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all`}>
-{isRunning ? <Pause size={24}/> : <Play size={24} className="ml-1"/>}
-</button>
-<button onClick={() => { setElapsed(0); setIsRunning(false); }} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all hover:bg-black/5 dark:hover:bg-white/5`}>
-<RotateCcw size={18}/>
-</button>
-</div>
-<div className="text-right">
-<div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div>
-<div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div>
-</div>
-</div>
-</div>
-<div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 pb-6`}>
-<h3 className={`text-lg font-bold ${c.textDark} mb-6 flex items-center gap-2 pb-3 border-b ${c.border}`}>
-<Clock size={20} className={c.primaryText}/> {t('brew_steps')}
-{ratio !== 1 && <span className={`ml-auto text-xs font-bold text-white ${c.secondary} px-2 py-1 rounded-md`}>{t('converted_ratio')} {(ratio * 100).toFixed(0)}%</span>}
-</h3>
-<div className={`relative border-l-2 ${c.border} ml-4 space-y-8 pb-4 mt-4`}>
-{recipe.steps.map((step, index) => {
-const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
-const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; 
-const isActive = activeStepIndex === index;
-const isPast = activeStepIndex > index;
-const isUpcoming = activeStepIndex < index && activeStepIndex !== -1;
-return (
-<div key={step.id || index} className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
-<div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
-<div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02] transform-gpu` : 'py-2 border border-transparent'}`}>
-<div className="flex-1 pr-3">
-<div className="flex items-center flex-wrap gap-2 mb-1.5">
-<span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark} transition-colors`}>{step.time}</span>
-{step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}
-</div>
-<p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'} transition-colors`}>{renderDynamicText(step.note)}</p>
-</div>
-{scaledWater !== null && (
-<div className={`text-right shrink-0 px-4 py-2 rounded-xl border ${isActive ? `${c.card} border-transparent shadow-sm` : `${c.inputBg} ${c.border}`} min-w-[70px] transition-colors`}>
-<div className={`text-2xl font-black ${isIced ? c.blueText : c.yellowText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>
-{ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}
-</div>
-)}
-</div>
-</div>
-);
-})}
-</div>
+    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
+        <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
+        <p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>{t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText}/></p>
+        <div className="flex items-center gap-6">
+            <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium`}>-</button>
+            <div className="relative flex items-baseline"><input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${c.textDark} bg-transparent focus:outline-none`} /><span className={`text-xl font-bold ${c.textMuted} ml-1`}>g</span></div>
+            <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium`}>+</button>
+        </div>
+    </div>
 
-{/* 風味羅盤入口與組件 */}
-{!showTroubleshoot ? (
-<button onClick={() => setShowTroubleshoot(true)} className={`w-full mt-6 p-4 rounded-2xl border-2 border-dashed ${c.border} ${c.inputBg} flex flex-col items-center justify-center gap-2 hover:opacity-80 transition-all group`}>
-<Compass size={24} className={`${c.textMuted} group-hover:${c.primaryText} transition-colors`} />
-<span className={`text-sm font-bold ${c.textMuted} group-hover:${c.primaryText} transition-colors`}>{t('tweak_btn')}</span>
-</button>
-) : (
-<Troubleshooter recipe={recipe} c={c} t={t} lang={lang} onClose={() => setShowTroubleshoot(false)} />
-)}
+    {recipe.baseGrind && (
+        <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} overflow-hidden`}>
+            <button onClick={() => setIsGrindOpen(!isGrindOpen)} className={`w-full flex items-center justify-between p-4 hover:bg-black/5 dark:hover:bg-white/5 transition-colors`}>
+                <div className="flex items-center gap-3"><div className={`p-1.5 rounded-full ${c.infoBg} ${c.primaryText}`}><Settings2 size={16} /></div><span className={`text-sm font-bold ${c.textDark}`}>{t('suggest_grind_title')}</span></div>
+                <div className="flex items-center gap-2">
+                    {!isGrindOpen && (
+                        <span className={`text-[11px] font-bold ${c.textMuted} bg-black/5 dark:bg-white/5 px-2 py-1 rounded-md max-w-[150px] truncate`}>
+                            {GRINDER_DATABASE[recipe.baseGrind.grinder].name}: <span className={c.primaryText}>{recipe.baseGrind.val}</span>
+                        </span>
+                    )}
+                    <ChevronDown size={18} className={`${c.textMuted} transition-transform ${isGrindOpen ? 'rotate-180' : ''}`}/>
+                </div>
+            </button>
+            {isGrindOpen && (
+                <div className={`p-5 border-t ${c.border} ${c.bg}`}>
+                    <div className="flex items-end justify-between mb-4">
+                        <div><div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-1`}>{t('base_grind')}</div><div className={`text-base font-black ${c.textDark}`}>{GRINDER_DATABASE[recipe.baseGrind.grinder].name}</div></div>
+                        <div className={`text-2xl font-black ${c.primaryText}`}>{recipe.baseGrind.val}</div>
+                    </div>
+                    <div className={`h-px w-full ${c.border} mb-4`}></div>
+                    <div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-2`}>{t('my_grinder')}</div>
+                    <select value={userGrinder} onChange={(e) => setUserGrinder(e.target.value)} className={`w-full ${c.inputBg} border ${c.border} p-3 rounded-xl font-bold text-sm ${c.textDark} mb-4 outline-none appearance-none`}>
+                        <option value="" disabled>{t('select_grinder_placeholder')}</option>
+                        {Object.entries(grindGroups).map(([gName, items]) => (<optgroup key={gName} label={gName} className={`${c.textMuted} font-bold`}>{items.map(item => (<option key={item.key} value={item.key}>{item.name}</option>))}</optgroup>))}
+                    </select>
+                    {userGrinder && (
+                        <div className={`p-4 rounded-xl border ${c.border} ${c.card} flex items-center justify-between shadow-sm`}><span className={`text-sm font-bold ${c.textDark}`}>{t('converted_result')}</span>{convertedGrind?.error ? (<span className="text-red-500 font-bold text-sm">{convertedGrind.error}</span>) : (<div className="text-right"><span className={`text-2xl font-black ${c.secondaryText}`}>{convertedGrind?.valB}</span><span className={`text-xs font-bold ${c.textMuted} ml-1`}>{convertedGrind?.unit}</span></div>)}</div>
+                    )}
+                </div>
+            )}
+        </div>
+    )}
 
-</div>
+    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} overflow-hidden`}>
+        {recipe.description && (<div className={`p-5 text-[13px] sm:text-sm ${c.textDark} leading-relaxed ${c.infoBg} border-b ${c.border} whitespace-pre-wrap`}>{renderDynamicText(recipe.description)}</div>)}
+        <div className={`p-4 grid grid-cols-3 gap-2 sm:gap-3 ${c.card}`}>
+            <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}><div className={`p-1.5 rounded-full ${c.iconBg} ${c.redText} shadow-sm mb-1`}><Thermometer size={16} /></div><p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_temp')}</p><p className={`font-bold text-base ${c.textDark}`}>{recipe.temperature}°C</p></div>
+            <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}><div className={`p-1.5 rounded-full ${c.iconBg} ${c.yellowText} shadow-sm mb-1`}><ScaleIcon size={16} /></div><p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('suggest_weight')}</p><p className={`font-bold text-base ${c.textDark}`}>{recipe.baseCoffee}g</p></div>
+            <div className={`flex flex-col items-center justify-center gap-1.5 ${c.infoBg} p-3 rounded-xl border border-transparent`}><div className={`p-1.5 rounded-full ${c.iconBg} ${c.blueText} shadow-sm mb-1`}><Settings2 size={16} /></div><p className={`text-[10px] uppercase font-bold tracking-wider ${c.textMuted}`}>{t('base_ratio')}</p><p className={`font-bold text-base ${c.textDark}`}>1 : {baseRatio}</p></div>
+        </div>
+    </div>
+    <div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
+        <div className={`${c.card} rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border ${c.border} p-4 flex items-center justify-between`}>
+            <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all`}>{isRunning ? <Pause size={24}/> : <Play size={24} className="ml-1"/>}</button><button onClick={() => { setElapsed(0); setIsRunning(false); }} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all hover:bg-black/5 dark:hover:bg-white/5`}><RotateCcw size={18}/></button></div>
+            <div className="text-right"><div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div><div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div></div>
+        </div>
+    </div>
+    <div className={`${c.card} rounded-2xl shadow-sm border ${c.border} p-5 pb-6`}>
+        <h3 className={`text-lg font-bold ${c.textDark} mb-6 flex items-center gap-2 pb-3 border-b ${c.border}`}><Clock size={20} className={c.primaryText}/> {t('brew_steps')}{ratio !== 1 && <span className={`ml-auto text-xs font-bold text-white ${c.secondary} px-2 py-1 rounded-md`}>{t('converted_ratio')} {(ratio * 100).toFixed(0)}%</span>}</h3>
+        <div className={`relative border-l-2 ${c.border} ml-4 space-y-8 pb-4 mt-4`}>
+            {recipe.steps.map((step, index) => {
+                const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
+                const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; const isActive = activeStepIndex === index; const isPast = activeStepIndex > index; const isUpcoming = activeStepIndex < index && activeStepIndex !== -1;
+                return (
+                    <div key={step.id || index} className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
+                        <div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
+                        <div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02]` : 'py-2 border border-transparent'}`}>
+                            <div className="flex-1 pr-3"><div className="flex items-center flex-wrap gap-2 mb-1.5"><span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark}`}>{step.time}</span>{step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold`}>{step.action}</span>}</div><p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'}`}>{renderDynamicText(step.note)}</p></div>
+                            {scaledWater !== null && (<div className={`text-right shrink-0 px-4 py-2 rounded-xl border ${isActive ? `${c.card} border-transparent shadow-sm` : `${c.inputBg} ${c.border}`} min-w-[70px]`}><div className={`text-2xl font-black ${isIced ? c.blueText : c.yellowText} leading-none`}>{scaledWater}<span className="text-sm font-bold ml-0.5 text-gray-500">g</span></div>{ratio !== 1 && <div className={`text-[10px] text-gray-400 mt-1 font-bold`}>({t('original_water')} {step.water}g)</div>}</div>)}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+        {!showTroubleshoot ? (<button onClick={() => setShowTroubleshoot(true)} className={`w-full mt-6 p-4 rounded-2xl border-2 border-dashed ${c.border} ${c.inputBg} flex flex-col items-center justify-center gap-2 hover:opacity-80 transition-all group`}><Compass size={24} className={`${c.textMuted} group-hover:${c.primaryText} transition-colors`} /><span className={`text-sm font-bold ${c.textMuted} group-hover:${c.primaryText} transition-colors`}>{t('tweak_btn')}</span></button>) : (<Troubleshooter recipe={recipe} c={c} t={t} lang={lang} onClose={() => setShowTroubleshoot(false)} />)}
+    </div>
 </div>
 );
 }
 
-// ==========================================
-// 8. GrindTool (刻度轉換)
-// ==========================================
 function GrindTool({ lang, t, c }) {
 const { GRINDER_DATABASE } = useDatabases(lang);
-const [grinderA, setGrinderA] = useState('');
-const [grinderB, setGrinderB] = useState('');
-const [valA, setValA] = useState('');
-const groups = useMemo(() => {
-let grps = {};
-Object.entries(GRINDER_DATABASE).forEach(([key, g]) => {
-if (!grps[g.group]) grps[g.group] = [];
-grps[g.group].push({ key, name: g.name });
-});
-return grps;
+const [grinderA, setGrinderA] = useState(''); const [grinderB, setGrinderB] = useState(''); const [valA, setValA] = useState('');
+const groups = useMemo(() => { 
+    let grps = {}; 
+    Object.entries(GRINDER_DATABASE).forEach(([key, g]) => { 
+        if (!grps[g.group]) grps[g.group] = []; 
+        grps[g.group].push({ key, name: g.name }); 
+    }); 
+    Object.keys(grps).forEach(k => {
+        grps[k].sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+    });
+    return grps; 
 }, [GRINDER_DATABASE]);
-const handleSwap = () => {
-const temp = grinderA; setGrinderA(grinderB); setGrinderB(temp);
-if (result && result.valB && result.valB !== '-') setValA(result.valB.toString());
-};
+
+const handleSwap = () => { const temp = grinderA; setGrinderA(grinderB); setGrinderB(temp); if (result && result.valB && result.valB !== '-') setValA(result.valB.toString()); };
 const result = useMemo(() => {
-const gA = GRINDER_DATABASE[grinderA]; const gB = GRINDER_DATABASE[grinderB]; const parsedA = parseFloat(valA);
-if (!gA || !gB || isNaN(parsedA)) return null;
-const rFirst = gA.ranges.find(r => r.min !== null);
-const rLast = [...gA.ranges].reverse().find(r => r.max !== null);
-if (parsedA < rFirst.min) return { error: `${t('err_low')} ${rFirst.min})`, catIdx: -1 };
-if (parsedA > rLast.max) return { error: `${t('err_high')} ${rLast.max})`, catIdx: -1 };
-let catIdx = -1; let ratio = 0;
-for (let i=0; i<gA.ranges.length; i++) {
-let r = gA.ranges[i];
-if (r.min !== null && r.max !== null && parsedA >= r.min && parsedA <= r.max) { catIdx = i; ratio = (parsedA - r.min) / (r.max - r.min); break; }
-}
-if (catIdx === -1) return { error: t('err_match'), catIdx: -1 };
-const rB = gB.ranges[catIdx];
-if (rB.min === null || rB.max === null) return { error: `${t('err_notsupport')} ${t('grind_cats_inline')[catIdx]}`, catIdx };
-let valB = rB.min + ratio * (rB.max - rB.min);
-if (gB.step === 1) { valB = Math.round(valB); } 
-else { let inv = 1.0 / gB.step; valB = Math.round(valB * inv) / inv; valB = parseFloat(valB.toFixed(2)); }
-return { valB, catIdx, catName: t('grind_cats_inline')[catIdx] };
+    const gA = GRINDER_DATABASE[grinderA]; const gB = GRINDER_DATABASE[grinderB]; const parsedA = parseFloat(valA);
+    if (!gA || !gB || isNaN(parsedA)) return null;
+    const rFirst = gA.ranges.find(r => r.min !== null); const rLast = [...gA.ranges].reverse().find(r => r.max !== null);
+    if (parsedA < rFirst.min) return { error: `${t('err_low')} ${rFirst.min})`, catIdx: -1 };
+    if (parsedA > rLast.max) return { error: `${t('err_high')} ${rLast.max})`, catIdx: -1 };
+    let catIdx = -1; let ratio = 0;
+    for (let i=0; i<gA.ranges.length; i++) { let r = gA.ranges[i]; if (r.min !== null && r.max !== null && parsedA >= r.min && parsedA <= r.max) { catIdx = i; ratio = (parsedA - r.min) / (r.max - r.min); break; } }
+    if (catIdx === -1) return { error: t('err_match'), catIdx: -1 };
+    const rB = gB.ranges[catIdx]; if (rB.min === null || rB.max === null) return { error: `${t('err_notsupport')} ${t('grind_cats_inline')[catIdx]}`, catIdx };
+    let valB = rB.min + ratio * (rB.max - rB.min);
+    if (gB.step === 1) valB = Math.round(valB); else { let inv = 1.0 / gB.step; valB = Math.round(valB * inv) / inv; valB = parseFloat(valB.toFixed(2)); }
+    return { valB, catIdx, catName: t('grind_cats_inline')[catIdx] };
 }, [grinderA, grinderB, valA, t, GRINDER_DATABASE]);
-const selectOptions = (
-<React.Fragment>
-<option value="" disabled>{t('select_grinder_placeholder')}</option>
-{Object.entries(groups).map(([gName, items]) => (
-<optgroup key={gName} label={gName} className={`${c.textMuted} font-bold`}>
-{items.map(item => <option key={item.key} value={item.key} className={`${c.textDark} font-medium`}>{item.name}</option>)}
-</optgroup>
-))}
-</React.Fragment>
-);
+
 return (
 <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-300">
-<div className="flex flex-col md:flex-row items-center gap-4 relative">
-<div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm ${c.blue} bg-opacity-5 dark:bg-opacity-10`}>
-<label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('from_grinder')}</label>
-<select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#7A93A2] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
-<label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('current_grind')}</label>
-<input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 ${c.inputBg} ${c.textDark} outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
-<div className={`text-center text-xs font-bold ${c.blueText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderA ? GRINDER_DATABASE[grinderA].unit : t('unit')}</div>
-</div>
-<button onClick={handleSwap} className={`p-3 ${c.card} border-2 ${c.border} hover:opacity-80 ${c.primaryText} rounded-full shadow-sm transition-all z-10 active:scale-95 group`}>
-<ArrowRightLeft size={24} className="group-hover:rotate-180 transition-transform duration-300" />
-</button>
-<div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm ${c.secondary} bg-opacity-5 dark:bg-opacity-10`}>
-<label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('to_grinder')}</label>
-<select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 ${c.inputBg} mb-4 outline-none focus:ring-2 focus:ring-[#B3A394] text-sm font-bold ${c.textDark}`}>{selectOptions}</select>
-<label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('target_grind')}</label>
-<div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : c.secondaryText} ${c.inputBg} rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>
-{result ? (result.error ? 'N/A' : result.valB) : '-'}
-</div>
-<div className={`text-center text-xs font-bold ${c.secondaryText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
-</div>
-</div>
-{grinderB && (
-<div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border} animate-in fade-in duration-300`}>
-{result && !result.error && (
-<div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 ${c.textDark}`}>
-{t('grind_result_msg')} <strong className={c.primaryText}>{result.catName}</strong>{t('mapped_linear')}
-</div>
-)}
-{result && result.error && (
-<div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 text-red-500`}>
-{result.error}
-</div>
-)}
-<div className="px-2">
-<div className={`text-xs font-bold ${c.textMuted} mb-3 flex items-center gap-2`}>
-<Settings2 size={16} /> 
-{GRINDER_DATABASE[grinderB].name} {t('grind_visual')}
-</div>
-<div className={`flex h-4 rounded-full overflow-hidden ${c.bg} shadow-inner border ${c.border}`}>
-{t('grind_cats').map((cat, idx) => (
-<div key={idx} className={`w-1/5 border-r border-black/5 dark:border-white/10 transition-colors duration-300 ${(result && result.catIdx === idx) ? c.bar[idx] : 'bg-transparent'}`}></div>
-))}
-</div>
-<div className={`flex text-[10px] sm:text-xs ${c.textMuted} mt-3 font-bold`}>
-{t('grind_cats').map((cat, idx) => {
-const range = GRINDER_DATABASE[grinderB].ranges[idx];
-const rangeText = range && range.min !== null ? `${range.min} - ${range.max}` : '-';
-const isHighlight = result && result.catIdx === idx;
-return (
-<div key={idx} className={`w-1/5 flex flex-col items-center gap-1.5 whitespace-pre-wrap ${isHighlight ? c.textDark : ''}`}>
-<span className="text-center leading-tight">{cat}</span>
-<span className={`px-1.5 py-0.5 rounded-md font-mono transition-all duration-300 ${isHighlight ? `${c.bar[idx]} text-white shadow-md scale-110` : `${c.inputBg} border ${c.border}`}`}>
-{rangeText}
-</span>
-</div>
-)
-})}
-</div>
-</div>
-{result && result.catIdx !== -1 && <GrindVisualizer catIdx={result.catIdx} c={c} lang={lang} />}
-</div>
-)}
-<div className={`p-5 ${c.infoBg} rounded-2xl border ${c.border} text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed`}>
-<strong className={`${c.textDark} block mb-2`}>{t('hint_title')}</strong>
-<ul className="list-disc pl-5 space-y-1.5">
-<li>{t('hint_1')}</li>
-<li>{t('hint_2')}</li>
-<li>{t('hint_3')}</li>
-<li>{t('hint_4')}</li>
-</ul>
-</div>
+    <div className="flex flex-col md:flex-row items-center gap-4 relative">
+        <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#7A93A2]/30 shadow-sm ${c.blue} bg-opacity-5 dark:bg-opacity-10`}>
+            <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('from_grinder')}</label>
+            <select value={grinderA} onChange={e => setGrinderA(e.target.value)} className={`w-full p-3 rounded-xl border border-[#7A93A2]/40 ${c.inputBg} mb-4 outline-none font-bold ${c.textDark}`}>{Object.entries(groups).map(([gn, itms]) => (<optgroup key={gn} label={gn} className={`${c.textMuted} font-bold`}>{itms.map(i => (<option key={i.key} value={i.key} className={`${c.textDark} font-medium`}>{i.name}</option>))}</optgroup>))}</select>
+            <label className={`block text-sm font-bold ${c.blueText} mb-2`}>{t('current_grind')}</label>
+            <input type="number" value={valA} onChange={e => setValA(e.target.value)} placeholder={t('input_placeholder')} className={`w-full p-3 text-2xl font-black text-center rounded-xl border border-[#7A93A2]/40 ${c.inputBg} ${c.textDark} outline-none focus:ring-2 focus:ring-[#7A93A2]`} />
+        </div>
+        <button onClick={handleSwap} className={`p-3 ${c.card} border-2 ${c.border} hover:opacity-80 rounded-full shadow-sm transition-all z-10 active:scale-95 group`}><ArrowRightLeft size={24} className={`${c.primaryText} group-hover:rotate-180 transition-transform duration-300`} /></button>
+        <div className={`flex-1 w-full ${c.card} p-5 rounded-2xl border border-[#B3A394]/30 shadow-sm ${c.secondary} bg-opacity-5 dark:bg-opacity-10`}>
+            <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('to_grinder')}</label>
+            <select value={grinderB} onChange={e => setGrinderB(e.target.value)} className={`w-full p-3 rounded-xl border border-[#B3A394]/40 ${c.inputBg} mb-4 outline-none font-bold ${c.textDark}`}>{Object.entries(groups).map(([gn, itms]) => (<optgroup key={gn} label={gn} className={`${c.textMuted} font-bold`}>{itms.map(i => (<option key={i.key} value={i.key} className={`${c.textDark} font-medium`}>{i.name}</option>))}</optgroup>))}</select>
+            <label className={`block text-sm font-bold ${c.secondaryText} mb-2`}>{t('target_grind')}</label>
+            <div className={`w-full p-3 text-3xl font-black text-center ${result?.error ? 'text-red-500' : c.secondaryText} ${c.inputBg} rounded-xl border border-[#B3A394]/40 h-[62px] flex items-center justify-center shadow-inner`}>{result ? (result.error ? 'N/A' : result.valB) : '-'}</div>
+        </div>
+    </div>
+    {grinderB && result?.catIdx !== -1 && <div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border}`}><GrindVisualizer catIdx={result.catIdx} c={c} lang={lang} /></div>}
 </div>
 );
 }
 
-// ==========================================
-// 9. App 主程式與掛載點
-// ==========================================
 function App() {
-const [view, setView] = useState('home'); 
-const [lang, setLang] = useState('zh');
-const [isDark, setIsDark] = useState(false);
-const t = (key) => i18n[lang][key] || key;
-const c = getColors(isDark); 
-useEffect(() => {
-document.body.className = c.bg;
-}, [isDark, c.bg]);
+const [view, setView] = useState('home'); const [lang, setLang] = useState('zh'); const [isDark, setIsDark] = useState(false); const t = (k) => i18n[lang][k] || k; const c = getColors(isDark); 
+useEffect(() => { document.body.className = c.bg; }, [isDark, c.bg]);
 return (
-<div className={`min-h-screen ${c.bg} font-sans text-gray-800 pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
-<button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full shadow-lg border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300`}>
-{isDark ? <Sun size={24} /> : <Moon size={24} />}
-</button>
-<div className={`${c.primary} text-white shadow-md sticky top-0 z-50 transition-colors duration-300`}>
-<div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between">
-<div className="flex items-center gap-3">
-{view !== 'home' && <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors"><ArrowLeft size={20} /></button>}
-<Coffee size={24} strokeWidth={2.5} />
-<h1 className="text-xl font-bold tracking-widest hidden sm:block">
-{view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : (view === 'water' ? t('tool_water_title') : t('tool_grind_title')))}
-</h1>
-</div>
-<div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm">
-<button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button>
-<button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button>
-<button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button>
-</div>
-</div>
-</div>
-<main className="max-w-3xl mx-auto px-4 py-8 relative">
-{view === 'home' && <HomeView setView={setView} t={t} c={c} />}
-{view === 'brew' && <BrewTool lang={lang} t={t} c={c} />}
-{view === 'grind' && <GrindTool lang={lang} t={t} c={c} />}
-{view === 'water' && <WaterTool lang={lang} c={c} />}
-</main>
+<div className={`min-h-screen ${c.bg} font-sans text-gray-800 pb-20 transition-colors duration-300`}>
+    <button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full shadow-lg border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300`}>{isDark ? <Sun size={24} /> : <Moon size={24} />}</button>
+    <div className={`${c.primary} text-white shadow-md sticky top-0 z-50 transition-colors duration-300`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className="p-2 -ml-2 rounded-full hover:bg-white/20 transition-colors"><ArrowLeft size={20} /></button>}<Coffee size={24} strokeWidth={2.5} /><h1 className="text-xl font-bold tracking-widest hidden sm:block">{view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : (view === 'water' ? t('tool_water_title') : t('tool_grind_title')))}</h1></div><div className="flex items-center bg-white/20 p-1 rounded-lg backdrop-blur-sm"><button onClick={() => setLang('zh')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'zh' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'ja' ? 'bg-white text-[#7E8D85] shadow-sm' : 'text-white hover:bg-white/20'}`}>JA</button></div></div></div>
+    <main className="max-w-3xl mx-auto px-4 py-8 relative">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : (view === 'brew' ? <BrewTool lang={lang} t={t} c={c} /> : (view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />))}</main>
 </div>
 );
 }
@@ -1273,29 +1111,30 @@ function HomeView({ setView, t, c }) {
 const changelog = t('changelog');
 return (
 <div className="animate-in fade-in zoom-in-95 duration-300">
-<div className="text-center mb-8"><h2 className={`text-2xl md:text-3xl font-bold ${c.textDark} mb-2`}>{t('home_title')}</h2><p className={`${c.textMuted}`}>{t('home_subtitle')}</p></div>
-<div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
-<button onClick={() => setView('brew')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Thermometer size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_brew_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p></button>
-<button onClick={() => setView('grind')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Wrench size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_grind_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p></button>
-<button onClick={() => setView('water')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#8AA192] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.primary} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-sm`}><Droplets size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_water_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_water_desc')}</p></button>
-</div>
-<div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-<div className="flex items-center justify-center gap-3 mb-6"><div className={`h-px ${c.border} flex-1`}></div><h3 className={`flex items-center gap-2 text-lg font-bold ${c.textDark} px-2`}><Clock size={18} className={c.primaryText} />{t('changelog_title')}</h3><div className={`h-px ${c.border} flex-1`}></div></div>
-<div className={`${c.card} p-6 sm:p-8 rounded-2xl shadow-sm border ${c.border}`}>
-<div className="space-y-8">
-{Array.isArray(changelog) && changelog.map((log, idx) => (
-<div key={idx} className={`relative pl-6 sm:pl-8 border-l-2 ${c.border}`}>
-<div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 ${c.card} ${idx === 0 ? c.primary : c.accent}`}></div>
-<div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-3"><span className={`text-lg font-black ${c.textDark}`}>{log.version}</span><span className={`text-xs font-bold ${c.textMuted}`}>{log.date}</span></div>
-<ul className={`list-disc pl-5 text-[13px] sm:text-sm ${c.textDark} space-y-1.5 leading-relaxed`}>{log.changes.map((change, i) => (<li key={i}>{change}</li>))}</ul>
-</div>
-))}
-</div>
-</div>
-</div>
+    <div className="text-center mb-8"><h2 className={`text-2xl md:text-3xl font-bold ${c.textDark} mb-2`}>{t('home_title')}</h2><p className={`${c.textMuted}`}>{t('home_subtitle')}</p></div>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10">
+        <button onClick={() => setView('brew')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#C9B793] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.yellow} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}><Thermometer size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_brew_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_brew_desc')}</p></button>
+        <button onClick={() => setView('grind')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#7A93A2] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.blue} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}><Wrench size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_grind_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_grind_desc')}</p></button>
+        <button onClick={() => setView('water')} className={`${c.card} border-2 ${c.border} rounded-2xl p-6 text-left hover:border-[#8AA192] hover:shadow-lg transition-all group`}><div className={`w-14 h-14 rounded-full ${c.primary} text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}><Droplets size={28} /></div><h3 className={`text-xl font-bold ${c.textDark} mb-2`}>{t('tool_water_title')}</h3><p className={`text-sm ${c.textMuted} leading-relaxed`}>{t('tool_water_desc')}</p></button>
+    </div>
+    <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
+        <div className="flex items-center justify-center gap-3 mb-6"><div className={`h-px ${c.border} flex-1`}></div><h3 className={`flex items-center gap-2 text-lg font-bold ${c.textDark} px-2`}><Clock size={18} className={c.primaryText} />{t('changelog_title')}</h3><div className={`h-px ${c.border} flex-1`}></div></div>
+        <div className={`${c.card} p-6 sm:p-8 rounded-2xl shadow-sm border ${c.border}`}>
+            <div className="space-y-8">
+                {Array.isArray(changelog) && changelog.map((log, idx) => (
+                    <div key={idx} className={`relative pl-6 sm:pl-8 border-l-2 ${c.border}`}>
+                        <div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 ${c.card} ${idx === 0 ? c.primary : c.accent}`}></div>
+                        <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-3"><span className={`text-lg font-black ${c.textDark}`}>{log.version}</span><span className={`text-xs font-bold ${c.textMuted}`}>{log.date}</span></div>
+                        <ul className={`list-disc pl-5 text-[13px] sm:text-sm ${c.textDark} space-y-1.5 leading-relaxed`}>{log.changes.map((change, i) => (<li key={i}>{change}</li>))}</ul>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
 </div>
 );
 }
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
