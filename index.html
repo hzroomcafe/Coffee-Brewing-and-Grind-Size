@@ -1343,111 +1343,15 @@ return (
 function App() {
 const [view, setView] = useState('home'); const [lang, setLang] = useState('zh'); const [isDark, setIsDark] = useState(false); const t = (k) => i18n[lang][k] || k; const c = getColors(isDark); 
 useEffect(() => { document.body.className = c.bg; }, [isDark, c.bg]);
+
+// 新增：只要切換頁面 (view 改變)，就自動將畫面捲動回最上方，解決手機版停留在底部的問題
+useEffect(() => { window.scrollTo(0, 0); }, [view]);
+
 return (
 <div className={`min-h-screen ${c.bg} font-sans ${c.textDark} pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
     <button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full paper-card border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300 outline-none`}>{isDark ? <Sun size={22} /> : <Moon size={22} />}</button>
     <div className={`${c.card} ${c.textDark} border-b ${c.border} sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md bg-opacity-90`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className={`p-2 -ml-2 rounded-full hover:${c.inputBg} transition-colors outline-none ${c.textMuted}`}><ArrowLeft size={20} /></button>}<div className={`p-2 rounded-full ${c.primary} text-white`}><Coffee size={18} strokeWidth={2.2} /></div><h1 className={`text-base sm:text-lg font-bold tracking-wide ${c.textDark} hidden sm:block`}>{view === 'home' ? t('app_title') : (view === 'brew' ? t('tool_brew_title') : (view === 'water' ? t('tool_water_title') : t('tool_grind_title')))}</h1></div><div className={`flex items-center ${c.inputBg} p-1 rounded-full border ${c.border}`}><button onClick={() => setLang('zh')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'zh' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'en' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'ja' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>JA</button></div></div></div>
     <main className="max-w-3xl mx-auto px-4 py-8 sm:py-10 relative">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : (view === 'brew' ? <BrewTool lang={lang} t={t} c={c} /> : (view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />))}</main>
-</div>
-);
-}
-
-function HomeView({ setView, t, c }) {
-const changelog = t('changelog');
-const [showLog, setShowLog] = useState(false);
-const [greeting, setGreeting] = useState('');
-
-useEffect(() => {
-    const h = new Date().getHours();
-    const key = h < 6 ? 'greet_dawn' : h < 11 ? 'greet_morning' : h < 14 ? 'greet_noon' : h < 18 ? 'greet_afternoon' : 'greet_evening';
-    setGreeting(t(key));
-}, [t]);
-
-const open = (k) => setView(k);
-
-const toolMeta = {
-    brew:  { icon: Thermometer, accent: '#C9B793', label: t('tool_brew_title'),  hint: t('tool_brew_desc') },
-    grind: { icon: Wrench,      accent: '#7A93A2', label: t('tool_grind_title'), hint: t('tool_grind_desc') },
-    water: { icon: Droplets,    accent: '#8AA192', label: t('tool_water_title'), hint: t('tool_water_desc') }
-};
-
-return (
-<div className="animate-in fade-in zoom-in-95 duration-300">
-    {/* Hero — question-led */}
-    <div className="mb-10 sm:mb-14 mt-2 sm:mt-6">
-        <div className={`text-[11px] tracking-[0.3em] uppercase font-bold ${c.textMuted} mb-3`}>{greeting} · Coffee Toolkit</div>
-        <h2 className={`text-[28px] sm:text-[40px] leading-[1.15] font-black ${c.textDark} mb-3 tracking-tight`}>
-            <span className="handline">{t('home_question_pre')}</span>
-            <span className={c.primaryText}>{t('home_question_main')}</span>
-        </h2>
-        <p className={`${c.textMuted} text-sm sm:text-[15px] font-medium max-w-lg leading-relaxed`}>
-            {t('home_subtitle')}
-        </p>
-    </div>
-
-    {/* Last-used recall removed — will return when actual memory linkage is built */}
-
-    {/* Primary tool — Brew (大卡) */}
-    <button onClick={() => open('brew')} className={`w-full ${c.card} paper-card border ${c.border} rounded-3xl p-6 sm:p-8 text-left hover:-translate-y-1 transition-all duration-300 group outline-none relative overflow-hidden mb-4`}>
-        <div className={`absolute top-5 right-6 font-mono text-[10px] tracking-[0.25em] ${c.textMuted} opacity-60`}>01 / BREW</div>
-        <div className="flex items-start gap-5">
-            <div className="w-14 h-14 rounded-2xl text-white flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:rotate-[-4deg] transition-transform duration-300" style={{backgroundColor: '#C9B793'}}>
-                <Thermometer size={26} strokeWidth={2}/>
-            </div>
-            <div className="flex-1 min-w-0">
-                <h3 className={`text-lg sm:text-2xl font-black ${c.textDark} mb-1.5 leading-tight`}>{t('tool_brew_title')}</h3>
-                <p className={`text-[13px] sm:text-sm ${c.textMuted} leading-relaxed font-medium max-w-md`}>{t('tool_brew_desc')}</p>
-                <div className={`mt-5 pt-4 border-t border-dashed ${c.border} flex items-center gap-2`}>
-                    <span className={`text-[10px] tracking-[0.2em] font-bold uppercase ${c.primaryText}`}>開始沖煮</span>
-                    <span className={`${c.textMuted} group-hover:translate-x-1 transition-transform`}>&rarr;</span>
-                </div>
-            </div>
-        </div>
-    </button>
-
-    {/* Secondary tools — Grind / Water */}
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
-        {['grind','water'].map((key, i) => {
-            const m = toolMeta[key]; const Icon = m.icon;
-            return (
-                <button key={key} onClick={() => open(key)} className={`${c.card} paper-card border ${c.border} rounded-2xl p-5 sm:p-6 text-left hover:-translate-y-0.5 transition-all duration-300 group outline-none relative overflow-hidden`}>
-                    <div className={`absolute top-4 right-5 font-mono text-[10px] tracking-[0.25em] ${c.textMuted} opacity-60`}>0{i+2}</div>
-                    <div className="w-11 h-11 rounded-xl text-white flex items-center justify-center mb-4 group-hover:scale-105 group-hover:rotate-[-4deg] transition-transform duration-300" style={{backgroundColor: m.accent}}>
-                        <Icon size={20} strokeWidth={2}/>
-                    </div>
-                    <h3 className={`text-[15px] sm:text-base font-black ${c.textDark} mb-1 leading-snug`}>{m.label}</h3>
-                    <p className={`text-[12px] ${c.textMuted} leading-relaxed font-medium`}>{m.hint}</p>
-                </button>
-            );
-        })}
-    </div>
-
-    {/* Changelog — collapsed by default */}
-    <div className="mt-8">
-        <button onClick={() => setShowLog(!showLog)} className={`w-full flex items-center justify-center gap-3 py-3 ${c.textMuted} hover:${c.textDark} transition-colors outline-none`}>
-            <div className={`h-px dotted-divider flex-1 opacity-60 max-w-[80px]`}></div>
-            <Clock size={12} strokeWidth={2} />
-            <span className="text-[10px] tracking-[0.25em] font-bold uppercase">{t('changelog_title')} {showLog ? '−' : '+'}</span>
-            <div className={`h-px dotted-divider flex-1 opacity-60 max-w-[80px]`}></div>
-        </button>
-        {showLog && (
-            <div className={`${c.card} paper-card p-6 sm:p-7 rounded-3xl border ${c.border} mt-4 animate-in fade-in slide-in-from-top-2 duration-300`}>
-                <div className="space-y-6">
-                    {Array.isArray(changelog) && changelog.map((log, idx) => (
-                        <div key={idx} className={`relative pl-6 sm:pl-7 border-l ${c.border}`}>
-                            <div className={`absolute -left-[5px] top-1.5 w-2.5 h-2.5 rounded-full ${idx === 0 ? c.primary : c.accent}`} style={idx === 0 ? { boxShadow: '0 0 0 4px rgba(126,141,133,0.15)' } : {}}></div>
-                            <div className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 mb-2">
-                                <span className={`font-mono text-sm font-black ${c.textDark} tracking-tight`}>{log.version}</span>
-                                <span className={`text-[11px] font-medium ${c.textMuted} tracking-wider`}>{log.date}</span>
-                                {idx === 0 && <span className={`text-[9px] font-bold tracking-widest uppercase ${c.primaryText} ${c.inputBg} border ${c.border} px-2 py-0.5 rounded-full ml-auto self-start sm:self-auto`}>Latest</span>}
-                            </div>
-                            <ul className={`text-[12px] ${c.textDark} space-y-1.5 leading-relaxed font-medium`}>{log.changes.map((change, i) => (<li key={i} className="flex gap-2"><span className={`mt-1.5 w-1 h-1 rounded-full ${c.accent} shrink-0`}></span><span>{change}</span></li>))}</ul>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        )}
-    </div>
 </div>
 );
 }
