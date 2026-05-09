@@ -815,6 +815,20 @@ return { id: i, sizeMm, color: colors[Math.floor(Math.random() * colors.length)]
 }, [catIdx, current]);
 return (
 <div className={`mt-6 pt-5 border-t border-dashed ${c.border} flex flex-col items-center animate-in fade-in duration-500`}>
+
+{/* --- 新增：醒目的研磨度參考警告框 --- */}
+<div className="w-full mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 text-red-600 dark:text-red-400 shadow-sm flex items-start gap-3">
+    <div className="text-lg mt-0.5">⚠️</div>
+    <div className="text-xs sm:text-[13px] font-bold leading-relaxed">
+        {l(
+            "由於每台磨豆機的校正情況與粗細落差不同，數字建議僅供參考！請務必參考下圖的「實體比例」來微調您的磨豆機。",
+            "Due to calibration differences and size variations between grinders, the suggested numbers are for reference only! Please refer to the real scale below to fine-tune your grinder.",
+            "各ミルの校正状況や粒度のばらつきが異なるため、数値はあくまで参考です！必ず下の「実寸スケール」を参考に、ご自身のミルを微調整してください。"
+        )}
+    </div>
+</div>
+{/* --------------------------------- */}
+
 <div className="flex flex-col items-center gap-2 mb-6 w-full">
 <span className={`text-sm font-bold ${c.textDark}`}>🔬 {l('實體比例顯微鏡 (1:1)', 'Real Scale View (1:1)', '実寸顕微鏡')}</span>
 <div className={`mt-2 flex flex-col items-center p-3 rounded-xl ${c.inputBg} border ${c.border} w-full max-w-[320px]`}>
