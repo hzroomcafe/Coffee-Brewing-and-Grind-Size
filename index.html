@@ -198,7 +198,7 @@ changelog: [
 };
 
 /* ==========================================
-   3. 動態資料庫 (Data) - 新增星芒濾杯 & 達文西配方
+   3. 動態資料庫 (Data) - CHACHA與濾杯優化版
    ========================================== */
 function useDatabases(lang) {
 return useMemo(() => {
@@ -207,8 +207,8 @@ const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
 const DRIPPER_CATEGORIES = {
 [l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
 { id:'Hario V60 01',name:'Hario V60 01'},{id:'Hario V60 02',name:'Hario V60 02'},
-{ id:'Hario Switch 02',name:'Hario Switch 02'},
-{ id:'Kadou M1 Dripper',name:l('星芒濾杯','Kadou M1 Dripper','星芒ドリッパー')}, // 新增星芒濾杯
+{ id:'Hario Switch 02',name:l('Hario Switch 02 / 阿爾法濾杯','Hario Switch 02 / Alpha Dripper','Hario Switch 02 / アルファドリッパー')},
+{ id:'Stellar Dripper',name:l('星芒濾杯','Stellar Dripper','星芒ドリッパー')},
 { id:'Tri-Up Flow 01/02',name:'Tri-Up Flow 01/02'}
 ],
 [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
@@ -226,9 +226,8 @@ const swirl = l('搖晃', 'Swirl', '揺らす');
 const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 
 const RECIPE_DATABASE = [
-// 新增：達文西咖啡店內沖煮
 { 
-    id:'davinci-shop', name:l('達文西咖啡店內沖煮','Davinci Coffee In-shop','ダヴィンチコーヒー店内レシピ'), author:'Davinci', dripper:'Kadou M1 Dripper', drinkType:'hot', baseCoffee:15, temperature:92, 
+    id:'davinci-shop', name:l('達文西咖啡店內沖煮','Davinci Coffee In-shop','ダヴィンチコーヒー店内レシピ'), author:'Davinci', dripper:'Stellar Dripper', drinkType:'hot', baseCoffee:15, temperature:92, 
     baseGrind: { grinder: 'm_c40', val: 22 }, 
     description: l('店內參數：1:15 (15g咖啡粉:230g水)。\n研磨粗細約小飛馬刻度3.5。\n\n變因影響：\n1. 粉水比：粉越多，咖啡越濃。\n2. 研磨粗細：顆粒越小，越容易萃取。\n3. 水溫：溫度越高，萃取增加。\n4. 萃取時間：時間越長，萃出物質越多。\n5. 擾動：適當，水流擾動越大，萃出物質越多。', 'In-shop parameters: 1:15 ratio (15g coffee to 230g water). Grind size ~Fuji Royal 3.5. Variables: Finer grind/higher temp/longer time/more agitation = more extraction.', '店内パラメータ：1:15（15gの粉:230gの湯）。挽き目は小富士3.5程度。要因：粉量、挽き目、湯温、抽出時間、撹拌により抽出効率が変化します。'), 
     steps:[
@@ -255,8 +254,8 @@ const RECIPE_DATABASE = [
 },
 { 
     id:'switch-iced-chacha', name:l('冰手沖(CHACHA)','Iced(CHACHA)','アイス(CHACHA)'), author:'CHACHA', dripper:'Hario Switch 02', drinkType:'iced', baseCoffee:20, temperature:92, 
-    baseGrind: { grinder: 'm_c40', val: 18 },
-    description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：一般冰塊 ${Math.round(100*r)}g`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: Normal ice ${Math.round(100*r)}g`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 通常の氷 ${Math.round(100*r)}g`), 
+    baseGrind: { grinder: 'm_c40', val: 25 },
+    description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：一般冰塊 ${Math.round(100*r)}g\n\n💡 沖煮備註：\n1. 研磨度建議 C40 24-26。若使用阿爾法濾杯，因萃取濃度較高，可適度調粗以避免雜味。\n2. 節奏彈性：悶蒸後，待每段水位流乾即立刻注入下一段，請依實際濾杯流速彈性調整。\n3. 注水手法：建議以「細水流、快速多繞圈」的方式進行，以獲取更飽滿的咖啡液體。`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: Normal ice ${Math.round(100*r)}g\n\n💡 Notes:\n1. Grind: C40 24-26. If using an Alpha Dripper, adjust coarser to avoid harshness as it yields a higher concentration.\n2. Pace: Pour the next stage immediately after the previous drawdown. Adjust timing flexibly based on your dripper's flow rate.\n3. Pouring: Use a fine, fast, multi-circle pour to extract a full-bodied brew.`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 通常の氷 ${Math.round(100*r)}g\n\n💡 抽出メモ:\n1. 挽き目: C40 24-26。アルファドリッパーを使用する場合は濃度が高くなるため、少し粗めに調整して雑味を防いでください。\n2. リズム: 蒸らし後、各段階のお湯が落ちきったらすぐに次を注ぎます。ドリッパーの流速に合わせて柔軟に調整してください。\n3. 注湯: 細いお湯で素早く多めに円を描くように注ぐと、より豊かなボディが得られます。`), 
     steps:[
         rs('c1','0:00', bClose, l('關閉開關注水', 'Close switch & pour', 'スイッチを閉じて注ぐ'), 50),
         rs('c2','0:40', pAct, l('打開開關注水至', 'Open switch & pour to', '開けて注ぐ'), 90),
