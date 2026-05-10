@@ -172,8 +172,6 @@ dim_acid: '酸質', dim_sweet: '甜感', dim_bitter: '苦澀/雜感', dim_body: 
 tweak_reset: '重置',
 changelog_title: '版本更新紀錄',
 changelog: [
-{ version: 'v3.1.0', date: '2026.05', changes: ['新增配方：OREA Z1 濾杯與設計者 Rikuto Tanaka（田中 陸人）四段斷水法。', '優化體驗：所有配方說明文字修飾，並確保跨語言翻譯的專業度。'] },
-{ version: 'v3.0.0', date: '2026.05', changes: ['全新首頁：「今天，沖什麼？」Hero 標題與時段問候語。', '視覺重構：紙質紋理底圖與線稿圖示全面替換。'] }
 { version: 'v3.0.0', date: '2026.05', changes: ['全新首頁：「今天，沖什麼？」問題式 Hero 搭配時段問候，沖煮工具升為主要入口。', '視覺系統強化：紙質紋理、線稿圖示取代 emoji、莫蘭迪色系微調。', '研磨度警告框配色強化，提升閱讀對比。', '版本紀錄收摺至首頁底部，釋出首屏空間。'] },
 { version: 'v2.3.0', date: '2026.05', changes: ['新增配方：星芒濾杯與專屬『達文西咖啡店內沖煮』。', '體驗優化：研磨建議面板完美內嵌 1:1 實體顯微鏡圖表。'] },
 { version: 'v2.2.3', date: '2026.05', changes: ['致命錯誤修復：解決了切換配方時的頁面崩潰問題。', 'UX 細節強化：所有下拉選單未選擇時自動呈現淡灰色提示，並將基準研磨度直接預覽於按鈕上。'] },
@@ -262,12 +260,13 @@ changelog: [
 };
 
 /* ==========================================
-   3. 動態資料庫 (Data) - 新增 OREA Z1 濾杯
+   3. 動態資料庫 (Data) - 冰手沖 CHACHA 開關備註
    ========================================== */
 function useDatabases(lang) {
 return useMemo(() => {
 const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
 
+// 排序原則：所有名稱統一以「品牌 + 型號」(英文) 起首，分類內依字母排序；中／日文版以「· 在地俗稱」做副標。
 const DRIPPER_CATEGORIES = {
 [l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
 { id:'Hario Switch 02', name: l('Hario Switch 02 / 阿爾法濾杯', 'Hario Switch 02 / Alpha Dripper', 'Hario Switch 02 / アルファドリッパー') },
@@ -278,7 +277,6 @@ const DRIPPER_CATEGORIES = {
 ],
 [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
 { id:'BEANDY SILK', name: l('BEANDY SILK 絲綢濾杯', 'BEANDY SILK', 'BEANDY SILK') },
-{ id:'OREA Z1',     name: 'OREA Z1' }, // 新增 OREA Z1
 { id:'Orea V3',     name: 'Orea V3' }
 ]
 };
@@ -293,19 +291,6 @@ const swirl = l('搖晃', 'Swirl', '揺らす');
 const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 
 const RECIPE_DATABASE = [
-// 新增：OREA Z1 田中陸人設計者配方
-{ 
-    id:'orea-z1-rikuto', name:l('Z1 設計者配方','Z1 Designer Recipe','Z1 設計者レシピ'), author:'Rikuto Tanaka', dripper:'OREA Z1', drinkType:'hot', baseCoffee:13, temperature:90, 
-    baseGrind: { grinder: 'm_c40', val: 22 }, 
-    description: l('由 OREA Z1 設計者 Rikuto Tanaka 親自研發。此配方採用 1:15.4 的比例，透過精確的四段斷水法引導穩定的萃取路徑。特色在於能完美展現淺焙咖啡的高甜感與純淨度，口感層次分明且乾淨。', 'Developed by OREA Z1 designer Rikuto Tanaka. This 1:15.4 ratio recipe utilizes a 4-stage pour method to ensure a stable extraction path. Designed to maximize sweetness and clarity of light roasts with a crystal-clean finish.', 'OREA Z1の設計者、田中陸人氏による公式レシピ。1:15.4の比率と4段階に分けた注湯により、安定した抽出を実現します。浅煎り豆が持つ高い甘みとクリーンな口当たりを最大限に引き出します。'), 
-    steps:[
-        rs('z1','0:00-0:07', mAct, r=>l(`悶蒸注水至 ${Math.round(30*r)}g`, `Bloom with ${Math.round(30*r)}g`, `蒸らし注湯 ${Math.round(30*r)}gまで`), 30), 
-        rs('z2','0:40-0:47', pAct, r=>l(`補水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80), 
-        rs('z3','1:20-1:27', pAct, r=>l(`補水至 ${Math.round(130*r)}g`, `Pour to ${Math.round(130*r)}g`, `${Math.round(130*r)}gまで注ぐ`), 130), 
-        rs('z4','1:45-1:55', pAct, r=>l(`補水至 ${Math.round(200*r)}g`, `Pour to ${Math.round(200*r)}g`, `${Math.round(200*r)}gまで注ぐ`), 200), 
-        rs('z5','2:40', dAct, dAct, null)
-    ] 
-},
 { 
     id:'davinci-shop', name:l('達文西咖啡店內沖煮','Davinci Coffee In-shop','ダヴィンチコーヒー店内レシピ'), author:'Davinci', dripper:'Stellar Dripper', drinkType:'hot', baseCoffee:15, temperature:92, 
     baseGrind: { grinder: 'm_c40', val: 22 }, 
@@ -321,7 +306,17 @@ const RECIPE_DATABASE = [
     ] 
 },
 { 
-    id:'orea-iced-tilt', name:l('Tilt 冰手沖','Tilt Iced','Tilt アイス'), author:'Tilt', dripper:'Orea V3', drinkType:'iced', baseCoffee:20, temperature:90, baseGrind: { grinder: 'm_c40', val: 18 }, description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：1 大顆冰球 (固定約 100g)`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: 1 large ice sphere (fixed, ~100g)`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 大きな丸氷1個 (固定・約100g)`), steps:[rs('t1','0:00-0:07', pAct, r=>l(`注水至 ${Math.round(40*r)}g`, `Pour to ${Math.round(40*r)}g`, `${Math.round(40*r)}gまで注ぐ`), 40), rs('t2','0:40-0:47', pAct, r=>l(`注水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80), rs('t3','1:20-1:37', pAct, r=>l(`注水至 ${Math.round(120*r)}g`, `Pour to ${Math.round(120*r)}g`, `${Math.round(120*r)}gまで注ぐ`), 120), rs('t4','2:00-2:07', pAct, r=>l(`注水至 ${Math.round(160*r)}g`, `Pour to ${Math.round(160*r)}g`, `${Math.round(160*r)}gまで注ぐ`), 160), rs('t5','3:00', dAct, l('搖晃後倒出', 'Swirl and serve', '揺らして注ぐ'), null)] },
+    id:'orea-iced-Rikuto', name:l('Rikuto 冰手沖','Rikito Iced','Rikuto アイス'), author:'Rikuto', dripper:'Orea V3', drinkType:'iced', baseCoffee:20, temperature:90, 
+    baseGrind: { grinder: 'm_c40', val: 18 },
+    description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：1 大顆冰球 (固定約 100g)`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: 1 large ice sphere (fixed, ~100g)`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 大きな丸氷1個 (固定・約100g)`), 
+    steps:[
+        rs('t1','0:00-0:07', pAct, r=>l(`注水至 ${Math.round(40*r)}g`, `Pour to ${Math.round(40*r)}g`, `${Math.round(40*r)}gまで注ぐ`), 40),
+        rs('t2','0:40-0:47', pAct, r=>l(`注水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80),
+        rs('t3','1:20-1:37', pAct, r=>l(`注水至 ${Math.round(120*r)}g`, `Pour to ${Math.round(120*r)}g`, `${Math.round(120*r)}gまで注ぐ`), 120),
+        rs('t4','2:00-2:07', pAct, r=>l(`注水至 ${Math.round(160*r)}g`, `Pour to ${Math.round(160*r)}g`, `${Math.round(160*r)}gまで注ぐ`), 160),
+        rs('t5','3:00', dAct, l('搖晃後倒出', 'Swirl and serve', '揺らして注ぐ'), null)
+    ] 
+},
 { 
     id:'switch-iced-chacha', name:l('冰手沖(CHACHA)','Iced(CHACHA)','アイス(CHACHA)'), author:'CHACHA', dripper:'Hario Switch 02', drinkType:'iced', baseCoffee:20, temperature:92, 
     baseGrind: { grinder: 'm_c40', val: 25 },
@@ -334,15 +329,121 @@ const RECIPE_DATABASE = [
         rs('c5', dAct, l('倒出', 'Serve', '注ぐ'), l('搖晃後倒出', 'Swirl and serve', '揺らして注ぐ'), null)
     ] 
 },
-{ id:'switch-devil-single', name:l('惡魔手沖(單人)','Devil(Single)','悪魔(1人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:92, baseGrind: { grinder: 'm_c40', val: 28 }, description:l('SOP化流程，新手友善。','Standardized procedure, beginner friendly.','SOP化された手順で初心者向け。'), steps:[rs('s1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 30), rs('s2','0:40', '', l('保持滴濾注水至', 'Keep open & pour to', '開けたまま注ぐ'), 90), rs('s3','1:20', bClose, l('關閉開關注水至目標水量', 'Close switch & pour to target', '閉じて目標量まで注ぐ'), 225), rs('s4','1:50', '', l('打開開關', 'Open switch', 'スイッチを開く'), null), rs('s5','2:20', '', l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
-{ id:'switch-devil-double', name:l('惡魔手沖(雙人)','Devil(Double)','悪魔(2人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:24, temperature:92, baseGrind: { grinder: 'm_c40', val: 28 }, description:l('大份量版本。','Large batch version.','大容量バージョン。'), steps:[rs('d1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 50), rs('d2','0:40', '', l('保持滴濾注水至', 'Keep open & pour to', '開けたまま注ぐ'), 150), rs('d3','1:20', bClose, l('關閉開關注水至目標水量', 'Close switch & pour to target', '閉じて目標量まで注ぐ'), 360), rs('d4','2:00', '', l('打開開關', 'Open switch', 'スイッチを開く'), null), rs('d5','3:00', '', l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
-{ id:'switch-devil-original', name:l('惡魔手沖(原始)','Devil(Original)','悪魔(オリジナル)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, baseGrind: { grinder: 'm_c40', val: 28 }, description:l('高溫滴濾與低溫浸泡。','High temp drip, low temp steep.','高温ドリップと低温浸漬。'), steps:[rs('do1','0:00', bOpen, r=>l(`92°C 水注至 ${Math.round(60*r)}g`, `92°C water to ${Math.round(60*r)}g`, `92°Cのお湯で${Math.round(60*r)}gまで`), 60), rs('do2','0:30', pAct, r=>l(`注至 ${Math.round(120*r)}g 等待至 1:10`, `Pour to ${Math.round(120*r)}g, wait till 1:10`, `${Math.round(120*r)}gまで注ぎ、1:10まで待機`), 120), rs('do3','1:10', bClose, r=>l(`70°C 水注至 ${Math.round(280*r)}g`, `70°C water to ${Math.round(280*r)}g`, `70°Cのお湯で${Math.round(280*r)}gまで`), 280), rs('do4','1:45', l('打開', 'Open', '開く'), l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null), rs('do5','3:00', dAct, l('時間到即移開濾杯', 'Remove dripper at 3:00', '3:00でドリッパーを外す'), null)] },
-{ id:'switch-devil-improved', name:l('惡魔手沖(改良)','Devil(Improved)','悪魔(改良版)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, baseGrind: { grinder: 'm_c40', val: 28 }, description:l('浸泡-滴濾-低溫浸泡。','Steep-Drip-Low Temp Steep.','浸漬-ドリップ-低温浸漬。'), steps:[rs('di1','0:00', bClose, r=>l(`92°C 水注至 ${Math.round(50*r)}g`, `92°C water to ${Math.round(50*r)}g`, `92°Cのお湯で${Math.round(50*r)}gまで`), 50), rs('di2','0:40', bOpen, r=>l(`打開開關並注水至 ${Math.round(120*r)}g`, `Open switch & pour to ${Math.round(120*r)}g`, `スイッチを開けて${Math.round(120*r)}gまで`), 120), rs('di3','1:30', pAct, r=>l(`注水至 ${Math.round(200*r)}g`, `Pour to ${Math.round(200*r)}g`, `${Math.round(200*r)}gまで注ぐ`), 200), rs('di4','2:10', bClose, r=>l(`70°C 水注至 ${Math.round(280*r)}g`, `70°C water to ${Math.round(280*r)}g`, `70°Cのお湯で${Math.round(280*r)}gまで`), 280), rs('di5','2:45', l('打開', 'Open', '開く'), l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null), rs('di6', l('滴完', 'Finish', '完了'), dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
-{ id:'beandy-silk', name:'Lonich Coffee', author:'Tatsumi', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:15, temperature:90, baseGrind: { grinder: '1z_kultra', val: 7.5 }, description:l('穩定流速。','Stable flow rate.','安定した流速。'), steps:[rs('b1','0:00', mAct, mAct, 40), rs('b2','0:35', pAct, pAct, 80), rs('b3','1:10', pAct, pAct, 160), rs('b4','1:45', pAct, l('最後注水', 'Final pour', '最後の注湯'), 230), rs('b5','2:15', dAct, l('撤走濾杯', 'Remove dripper', 'ドリッパーを外す'), null)] },
-{ id:'v60-01-jh', name:l('終極V60(2022)','Ultimate V60(2022)','究極V60(2022)'), author:'Hoffmann', dripper:'Hario V60 01', drinkType:'hot', baseCoffee:15, temperature:100, baseGrind: { grinder: 'm_c40', val: 18 }, description:l('多次小水量注水。','Multiple small pours.','複数回に分けて注ぐ。'), steps:[rs('j1','0:00-0:10', mAct, r=>l(`注水 ${Math.round(50*r)}g`, `Pour ${Math.round(50*r)}g`, `${Math.round(50*r)}g注ぐ`), 50), rs('j2','0:10-0:15', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null), rs('j3','0:45-1:00', pAct, r=>l(`注水至 ${Math.round(100*r)}g (40%)`, `Pour to ${Math.round(100*r)}g (40%)`, `${Math.round(100*r)}gまで注ぐ (40%)`), 100), rs('j4','1:10-1:20', pAct, r=>l(`注水至 ${Math.round(150*r)}g (60%)`, `Pour to ${Math.round(150*r)}g (60%)`, `${Math.round(150*r)}gまで注ぐ (60%)`), 150), rs('j5','1:30-1:40', pAct, r=>l(`注水至 ${Math.round(200*r)}g (80%)`, `Pour to ${Math.round(200*r)}g (80%)`, `${Math.round(200*r)}gまで注ぐ (80%)`), 200), rs('j6','1:50-2:00', pAct, r=>l(`注水至 ${Math.round(250*r)}g (100%)`, `Pour to ${Math.round(250*r)}g (100%)`, `${Math.round(250*r)}gまで注ぐ (100%)`), 250), rs('j7','2:00-2:05', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null), rs('j8','3:00', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
-{ id:'v60-02-jh', name:l('終極V60(2022)','Ultimate V60(2022)','究極V60(2022)'), author:'Hoffmann', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:15, temperature:100, baseGrind: { grinder: 'm_c40', val: 18 }, description:l('多次小水量注水。','Multiple small pours.','複数回に分けて注ぐ。'), steps:[rs('j1','0:00-0:10', mAct, r=>l(`注水 ${Math.round(50*r)}g`, `Pour ${Math.round(50*r)}g`, `${Math.round(50*r)}g注ぐ`), 50), rs('j2','0:10-0:15', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null), rs('j3','0:45-1:00', pAct, r=>l(`注水至 ${Math.round(100*r)}g (40%)`, `Pour to ${Math.round(100*r)}g (40%)`, `${Math.round(100*r)}gまで注ぐ (40%)`), 100), rs('j4','1:10-1:20', pAct, r=>l(`注水至 ${Math.round(150*r)}g (60%)`, `Pour to ${Math.round(150*r)}g (60%)`, `${Math.round(150*r)}gまで注ぐ (60%)`), 150), rs('j5','1:30-1:40', pAct, r=>l(`注水至 ${Math.round(200*r)}g (80%)`, `Pour to ${Math.round(200*r)}g (80%)`, `${Math.round(200*r)}gまで注ぐ (80%)`), 200), rs('j6','1:50-2:00', pAct, r=>l(`注水至 ${Math.round(250*r)}g (100%)`, `Pour to ${Math.round(250*r)}g (100%)`, `${Math.round(250*r)}gまで注ぐ (100%)`), 250), rs('j7','2:00-2:05', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null), rs('j8','3:00', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
-{ id:'v60-46', name:'4:6 Method', author:'粕谷哲', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:20, temperature:90, baseGrind: { grinder: 'm_c40', val: 30 }, description: l('4:6沖煮法的4跟6指的是，將沖煮咖啡的總熱水量分40%與60%沖泡。\n前40%的水分兩次注入，這40%決定了咖啡的酸甜基調；剩下60%的水平均分成三次注入，用來調整咖啡的濃度。', 'The 4:6 method divides the total water into 40% and 60%.\nThe first 40% (poured in 2 stages) shapes the acidity and sweetness baseline; the remaining 60% (poured in 3 stages) adjusts the brew strength.', '4:6メソッドは総湯量を40%と60%に分けます。\n最初の40%で酸味と甘みのベースを決定し、残りの60%でコーヒーの濃度を調整します。'), steps:[rs('v1','0:00', pAct, l('第一段 (前40%)', '1st pour (First 40%)', '第1投 (最初の40%)'), 60), rs('v2','0:45', pAct, l('第二段 (前40%)', '2nd pour (First 40%)', '第2投 (最初の40%)'), 120), rs('v3','1:30', pAct, l('第三段 (後60%)', '3rd pour (Last 60%)', '第3投 (残りの60%)'), 180), rs('v4','2:15', pAct, l('第四段 (後60%)', '4th pour (Last 60%)', '第4投 (残りの60%)'), 240), rs('v5','2:45', pAct, l('第五段 (後60%)', '5th pour (Last 60%)', '第5投 (残りの60%)'), 300), rs('v6','3:30', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
-{ id:'tri-up', name:l('濾杯設計者配方','Designer Recipe','ドリッパー設計者レシピ'), author:'Eric', dripper:'Tri-Up Flow 01/02', drinkType:'hot', baseCoffee:15, temperature:92, baseGrind: { grinder: 'm_c40', val: 24 }, description:l('每段約 7 秒快速注水。','Fast 7-second pours per stage.','各段階約7秒の高速注湯。'), steps:[rs('t1','0:00', l('快注', 'Fast Pour', '高速注湯'), r=>l(`注水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80), rs('t2','0:25', l('快注', 'Fast Pour', '高速注湯'), r=>l(`注水至 ${Math.round(180*r)}g`, `Pour to ${Math.round(180*r)}g`, `${Math.round(180*r)}gまで注ぐ`), 180), rs('t3','1:00', l('快注', 'Fast Pour', '高速注湯'), r=>l(`注水至 ${Math.round(260*r)}g`, `Pour to ${Math.round(260*r)}g`, `${Math.round(260*r)}gまで注ぐ`), 260), rs('t4','1:50', dAct, l('時間內流乾', 'Drawdown within 2:30', '2:30以内に落ちきり'), null)] }
+{ 
+    id:'switch-devil-single', name:l('惡魔手沖(單人)','Devil(Single)','悪魔(1人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
+    description:l('SOP化流程，新手友善。','Standardized procedure, beginner friendly.','SOP化された手順で初心者向け。'), 
+    steps:[
+        rs('s1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 30),
+        rs('s2','0:40', '', l('保持滴濾注水至', 'Keep open & pour to', '開けたまま注ぐ'), 90),
+        rs('s3','1:20', bClose, l('關閉開關注水至目標水量', 'Close switch & pour to target', '閉じて目標量まで注ぐ'), 225),
+        rs('s4','1:50', '', l('打開開關', 'Open switch', 'スイッチを開く'), null),
+        rs('s5','2:20', '', l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
+    ] 
+},
+{ 
+    id:'switch-devil-double', name:l('惡魔手沖(雙人)','Devil(Double)','悪魔(2人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:24, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
+    description:l('大份量版本。','Large batch version.','大容量バージョン。'), 
+    steps:[
+        rs('d1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 50),
+        rs('d2','0:40', '', l('保持滴濾注水至', 'Keep open & pour to', '開けたまま注ぐ'), 150),
+        rs('d3','1:20', bClose, l('關閉開關注水至目標水量', 'Close switch & pour to target', '閉じて目標量まで注ぐ'), 360),
+        rs('d4','2:00', '', l('打開開關', 'Open switch', 'スイッチを開く'), null),
+        rs('d5','3:00', '', l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
+    ] 
+},
+{ 
+    id:'switch-devil-original', name:l('惡魔手沖(原始)','Devil(Original)','悪魔(オリジナル)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
+    description:l('高溫滴濾與低溫浸泡。','High temp drip, low temp steep.','高温ドリップと低温浸漬。'), 
+    steps:[
+        rs('do1','0:00', bOpen, r=>l(`92°C 水注至 ${Math.round(60*r)}g`, `92°C water to ${Math.round(60*r)}g`, `92°Cのお湯で${Math.round(60*r)}gまで`), 60),
+        rs('do2','0:30', pAct, r=>l(`注至 ${Math.round(120*r)}g 等待至 1:10`, `Pour to ${Math.round(120*r)}g, wait till 1:10`, `${Math.round(120*r)}gまで注ぎ、1:10まで待機`), 120),
+        rs('do3','1:10', bClose, r=>l(`70°C 水注至 ${Math.round(280*r)}g`, `70°C water to ${Math.round(280*r)}g`, `70°Cのお湯で${Math.round(280*r)}gまで`), 280),
+        rs('do4','1:45', l('打開', 'Open', '開く'), l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null),
+        rs('do5','3:00', dAct, l('時間到即移開濾杯', 'Remove dripper at 3:00', '3:00でドリッパーを外す'), null)
+    ] 
+},
+{ 
+    id:'switch-devil-improved', name:l('惡魔手沖(改良)','Devil(Improved)','悪魔(改良版)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 28 },
+    description:l('浸泡-滴濾-低溫浸泡。','Steep-Drip-Low Temp Steep.','浸漬-ドリップ-低温浸漬。'), 
+    steps:[
+        rs('di1','0:00', bClose, r=>l(`92°C 水注至 ${Math.round(50*r)}g`, `92°C water to ${Math.round(50*r)}g`, `92°Cのお湯で${Math.round(50*r)}gまで`), 50),
+        rs('di2','0:40', bOpen, r=>l(`打開開關並注水至 ${Math.round(120*r)}g`, `Open switch & pour to ${Math.round(120*r)}g`, `スイッチを開けて${Math.round(120*r)}gまで`), 120),
+        rs('di3','1:30', pAct, r=>l(`注水至 ${Math.round(200*r)}g`, `Pour to ${Math.round(200*r)}g`, `${Math.round(200*r)}gまで注ぐ`), 200),
+        rs('di4','2:10', bClose, r=>l(`70°C 水注至 ${Math.round(280*r)}g`, `70°C water to ${Math.round(280*r)}g`, `70°Cのお湯で${Math.round(280*r)}gまで`), 280),
+        rs('di5','2:45', l('打開', 'Open', '開く'), l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null),
+        rs('di6', l('滴完', 'Finish', '完了'), dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
+    ] 
+},
+{ 
+    id:'beandy-silk', name:'Lonich Coffee', author:'Tatsumi', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:15, temperature:90, 
+    baseGrind: { grinder: '1z_kultra', val: 7.5 },
+    description:l('穩定流速。','Stable flow rate.','安定した流速。'), 
+    steps:[
+        rs('b1','0:00', mAct, mAct, 40),
+        rs('b2','0:35', pAct, pAct, 80),
+        rs('b3','1:10', pAct, pAct, 160),
+        rs('b4','1:45', pAct, l('最後注水', 'Final pour', '最後の注湯'), 230),
+        rs('b5','2:15', dAct, l('撤走濾杯', 'Remove dripper', 'ドリッパーを外す'), null)
+    ] 
+},
+{ 
+    id:'v60-01-jh', name:l('終極V60(2022)','Ultimate V60(2022)','究極V60(2022)'), author:'Hoffmann', dripper:'Hario V60 01', drinkType:'hot', baseCoffee:15, temperature:100, 
+    baseGrind: { grinder: 'm_c40', val: 18 },
+    description:l('多次小水量注水。','Multiple small pours.','複数回に分けて注ぐ。'), 
+    steps:[
+        rs('j1','0:00-0:10', mAct, r=>l(`注水 ${Math.round(50*r)}g`, `Pour ${Math.round(50*r)}g`, `${Math.round(50*r)}g注ぐ`), 50),
+        rs('j2','0:10-0:15', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null),
+        rs('j3','0:45-1:00', pAct, r=>l(`注水至 ${Math.round(100*r)}g (40%)`, `Pour to ${Math.round(100*r)}g (40%)`, `${Math.round(100*r)}gまで注ぐ (40%)`), 100),
+        rs('j4','1:10-1:20', pAct, r=>l(`注水至 ${Math.round(150*r)}g (60%)`, `Pour to ${Math.round(150*r)}g (60%)`, `${Math.round(150*r)}gまで注ぐ (60%)`), 150),
+        rs('j5','1:30-1:40', pAct, r=>l(`注水至 ${Math.round(200*r)}g (80%)`, `Pour to ${Math.round(200*r)}g (80%)`, `${Math.round(200*r)}gまで注ぐ (80%)`), 200),
+        rs('j6','1:50-2:00', pAct, r=>l(`注水至 ${Math.round(250*r)}g (100%)`, `Pour to ${Math.round(250*r)}g (100%)`, `${Math.round(250*r)}gまで注ぐ (100%)`), 250),
+        rs('j7','2:00-2:05', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null),
+        rs('j8','3:00', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
+    ] 
+},
+{ 
+    id:'v60-02-jh', name:l('終極V60(2022)','Ultimate V60(2022)','究極V60(2022)'), author:'Hoffmann', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:15, temperature:100, 
+    baseGrind: { grinder: 'm_c40', val: 18 },
+    description:l('多次小水量注水。','Multiple small pours.','複数回に分けて注ぐ。'), 
+    steps:[
+        rs('j1','0:00-0:10', mAct, r=>l(`注水 ${Math.round(50*r)}g`, `Pour ${Math.round(50*r)}g`, `${Math.round(50*r)}g注ぐ`), 50),
+        rs('j2','0:10-0:15', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null),
+        rs('j3','0:45-1:00', pAct, r=>l(`注水至 ${Math.round(100*r)}g (40%)`, `Pour to ${Math.round(100*r)}g (40%)`, `${Math.round(100*r)}gまで注ぐ (40%)`), 100),
+        rs('j4','1:10-1:20', pAct, r=>l(`注水至 ${Math.round(150*r)}g (60%)`, `Pour to ${Math.round(150*r)}g (60%)`, `${Math.round(150*r)}gまで注ぐ (60%)`), 150),
+        rs('j5','1:30-1:40', pAct, r=>l(`注水至 ${Math.round(200*r)}g (80%)`, `Pour to ${Math.round(200*r)}g (80%)`, `${Math.round(200*r)}gまで注ぐ (80%)`), 200),
+        rs('j6','1:50-2:00', pAct, r=>l(`注水至 ${Math.round(250*r)}g (100%)`, `Pour to ${Math.round(250*r)}g (100%)`, `${Math.round(250*r)}gまで注ぐ (100%)`), 250),
+        rs('j7','2:00-2:05', swirl, l('輕輕搖晃濾杯', 'Swirl dripper gently', 'ドリッパーを軽く揺らす'), null),
+        rs('j8','3:00', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
+    ] 
+},
+{ 
+    id:'v60-46', name:'4:6 Method', author:'粕谷哲', dripper:'Hario V60 02', drinkType:'hot', baseCoffee:20, temperature:90, 
+    baseGrind: { grinder: 'm_c40', val: 30 },
+    description: l('4:6沖煮法的4跟6指的是，將沖煮咖啡的總熱水量分40%與60%沖泡。\n前40%的水分兩次注入，這40%決定了咖啡的酸甜基調；剩下60%的水平均分成三次注入，用來調整咖啡的濃度。', 'The 4:6 method divides the total water into 40% and 60%.\nThe first 40% (poured in 2 stages) shapes the acidity and sweetness baseline; the remaining 60% (poured in 3 stages) adjusts the brew strength.', '4:6メソッドは総湯量を40%と60%に分けます。\n最初の40%で酸味と甘みのベースを決定し、残りの60%でコーヒーの濃度を調整します。'), 
+    steps:[
+        rs('v1','0:00', pAct, l('第一段 (前40%)', '1st pour (First 40%)', '第1投 (最初の40%)'), 60),
+        rs('v2','0:45', pAct, l('第二段 (前40%)', '2nd pour (First 40%)', '第2投 (最初の40%)'), 120),
+        rs('v3','1:30', pAct, l('第三段 (後60%)', '3rd pour (Last 60%)', '第3投 (残りの60%)'), 180),
+        rs('v4','2:15', pAct, l('第四段 (後60%)', '4th pour (Last 60%)', '第4投 (残りの60%)'), 240),
+        rs('v5','2:45', pAct, l('第五段 (後60%)', '5th pour (Last 60%)', '第5投 (残りの60%)'), 300),
+        rs('v6','3:30', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
+    ] 
+},
+{ 
+    id:'tri-up', name:l('濾杯設計者配方','Designer Recipe','ドリッパー設計者レシピ'), author:'Eric', dripper:'Tri-Up Flow 01/02', drinkType:'hot', baseCoffee:15, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 24 },
+    description:l('每段約 7 秒快速注水。','Fast 7-second pours per stage.','各段階約7秒の高速注湯。'), 
+    steps:[
+        rs('t1','0:00', l('快注', 'Fast Pour', '高速注湯'), r=>l(`注水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80),
+        rs('t2','0:25', l('快注', 'Fast Pour', '高速注湯'), r=>l(`注水至 ${Math.round(180*r)}g`, `Pour to ${Math.round(180*r)}g`, `${Math.round(180*r)}gまで注ぐ`), 180),
+        rs('t3','1:00', l('快注', 'Fast Pour', '高速注湯'), r=>l(`注水至 ${Math.round(260*r)}g`, `Pour to ${Math.round(260*r)}g`, `${Math.round(260*r)}gまで注ぐ`), 260),
+        rs('t4','1:50', dAct, l('時間內流乾', 'Drawdown within 2:30', '2:30以内に落ちきり'), null)
+    ] 
+}
 ];
 
 const g1 = l("電動磨豆機", "Electric", "電動"); const g2 = l("手搖磨豆機", "Manual", "手挽き");
