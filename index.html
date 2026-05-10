@@ -260,7 +260,7 @@ changelog: [
 };
 
 /* ==========================================
-   3. 動態資料庫 (Data) - 冰手沖 CHACHA 開關備註
+   3. 動態資料庫 (Data) 
    ========================================== */
 function useDatabases(lang) {
 return useMemo(() => {
@@ -277,6 +277,7 @@ const DRIPPER_CATEGORIES = {
 ],
 [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
 { id:'BEANDY SILK', name: l('BEANDY SILK 絲綢濾杯', 'BEANDY SILK', 'BEANDY SILK') },
+{ id:'OREA Z1',     name: 'OREA Z1' },
 { id:'Orea V3',     name: 'Orea V3' }
 ]
 };
@@ -306,7 +307,19 @@ const RECIPE_DATABASE = [
     ] 
 },
 { 
-    id:'orea-iced-Rikuto', name:l('Rikuto 冰手沖','Rikito Iced','Rikuto アイス'), author:'Rikuto', dripper:'Orea V3', drinkType:'iced', baseCoffee:20, temperature:90, 
+    id:'orea-z1-rikuto', name:l('Z1 設計者配方','Z1 Designer Recipe','Z1 設計者レシピ'), author:'Rikuto Tanaka', dripper:'OREA Z1', drinkType:'hot', baseCoffee:13, temperature:90, 
+    baseGrind: { grinder: 'm_c40', val: 22 }, 
+    description: l('由 OREA Z1 設計者 Rikuto Tanaka 親自研發。此配方採用 1:15.4 的比例，透過精確的四段斷水法引導穩定的萃取路徑。特色在於能完美展現淺焙咖啡的高甜感與純淨度，口感層次分明且乾淨。', 'Developed by OREA Z1 designer Rikuto Tanaka. This 1:15.4 ratio recipe utilizes a 4-stage pour method to ensure a stable extraction path. Designed to maximize sweetness and clarity of light roasts with a crystal-clean finish.', 'OREA Z1の設計者、田中陸人氏による公式レシピ。1:15.4の比率と4段階に分けた注湯により、安定した抽出を実現します。浅煎り豆が持つ高い甘みとクリーンな口当たりを最大限に引き出します。'), 
+    steps:[
+        rs('z1','0:00-0:07', mAct, r=>l(`悶蒸注水至 ${Math.round(30*r)}g`, `Bloom with ${Math.round(30*r)}g`, `蒸らし注湯 ${Math.round(30*r)}gまで`), 30), 
+        rs('z2','0:40-0:47', pAct, r=>l(`補水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80), 
+        rs('z3','1:20-1:27', pAct, r=>l(`補水至 ${Math.round(130*r)}g`, `Pour to ${Math.round(130*r)}g`, `${Math.round(130*r)}gまで注ぐ`), 130), 
+        rs('z4','1:45-1:55', pAct, r=>l(`補水至 ${Math.round(200*r)}g`, `Pour to ${Math.round(200*r)}g`, `${Math.round(200*r)}gまで注ぐ`), 200), 
+        rs('z5','2:40', dAct, dAct, null)
+    ] 
+},
+{ 
+    id:'orea-iced-tilt', name:l('Tilt 冰手沖','Tilt Iced','Tilt アイス'), author:'Tilt', dripper:'Orea V3', drinkType:'iced', baseCoffee:20, temperature:90, 
     baseGrind: { grinder: 'm_c40', val: 18 },
     description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：1 大顆冰球 (固定約 100g)`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: 1 large ice sphere (fixed, ~100g)`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 大きな丸氷1個 (固定・約100g)`), 
     steps:[
@@ -320,9 +333,9 @@ const RECIPE_DATABASE = [
 { 
     id:'switch-iced-chacha', name:l('冰手沖(CHACHA)','Iced(CHACHA)','アイス(CHACHA)'), author:'CHACHA', dripper:'Hario Switch 02', drinkType:'iced', baseCoffee:20, temperature:92, 
     baseGrind: { grinder: 'm_c40', val: 25 },
-    description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：一般冰塊 ${Math.round(100*r)}g\n\n💡 沖煮備註：\n1. 研磨度建議 C40 24-26。若使用阿爾法濾杯因濃度較高，可適度調粗避免雜味。\n2. 節奏彈性：悶蒸後，待每段流乾即立刻注入下一段，請依實際流速彈性調整。\n3. 注水手法：建議以「細水流、快速多繞圈」獲取更飽滿的咖啡液體。\n4. 首段開關差異：第一注水若「關閉開關」，風味較甜感且飽滿；若「打開開關」，酸值會更明亮清爽（作者個人更偏好打開的風味！）。`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: Normal ice ${Math.round(100*r)}g\n\n💡 Notes:\n1. Grind: C40 24-26. If using an Alpha Dripper, adjust coarser to avoid harshness.\n2. Pace: Pour the next stage immediately after the previous drawdown.\n3. Pouring: Use a fine, fast, multi-circle pour for a full-bodied brew.\n4. 1st Pour Switch: "Closed" yields higher sweetness and a full body. "Open" highlights a brighter, crisp acidity (the author personally prefers keeping it open!).`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 通常の氷 ${Math.round(100*r)}g\n\n💡 抽出メモ:\n1. 挽き目: C40 24-26。アルファドリッパーの場合は少し粗めに調整して雑味を防ぎます。\n2. リズム: 各段階のお湯が落ちきったらすぐに次を注ぎます。\n3. 注湯: 細いお湯で素早く多めに円を描くように注ぎます。\n4. 第1投のスイッチ: 「閉じる」と甘みが強く豊かなボディに。「開く」とより明るく爽やかな酸味が際立ちます（作者個人の好みは「開く」です！）。`), 
+    description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：一般冰塊 ${Math.round(100*r)}g\n\n💡 沖煮備註：\n1. 研磨度：建議 C40 24-26。阿爾法濾杯萃取濃度會稍微比較高，可適度調整粗一點以避免雜味。\n2. 注水節奏：悶蒸後，待每段流乾即刻注入下一段，請依實際濾杯流速彈性調整萃取時間。\n3. 注水手法：盡量使用細水流快速多繞圈的方式，才會獲得飽滿的咖啡液體喔！\n4. 悶蒸開關差異：第一段悶蒸若「關閉」風味較具甜感與飽滿；若「打開」不關，酸值會更明亮清爽（我個人蠻喜歡不關的風味！）。`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: Normal ice ${Math.round(100*r)}g\n\n💡 Notes:\n1. Grind: C40 24-26. Alpha Dripper yields slightly higher concentration, so adjust coarser to avoid off-flavors.\n2. Pace: Pour the next stage immediately after the previous drawdown. Adjust extraction time flexibly based on your dripper's flow rate.\n3. Pouring: Use a fine water stream and fast, multiple circles to get a full-bodied brew!\n4. 1st Pour Switch: 'Closed' yields higher sweetness and full body. 'Open' gives a brighter acidity (I personally prefer the open flavor!).`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 通常の氷 ${Math.round(100*r)}g\n\n💡 抽出メモ:\n1. 挽き目: C40 24-26。アルファドリッパーは抽出濃度がやや高くなるため、適度に粗く調整して雑味を防ぎます。\n2. リズム: 蒸らし後、各段階のお湯が落ちきったらすぐに次を注ぎます。お使いのドリッパーに合わせて抽出時間を柔軟に調整してください。\n3. 注湯: 細いお湯で素早く多めに円を描くように注ぐと、より豊かなボディのコーヒー液が得られます！\n4. 第1投のスイッチ: 「閉じる」と甘みが強く豊かなボディに。「開く」と酸味がより明るくなります（個人的には「開く」風味が好みです！）。`), 
     steps:[
-        rs('c1','0:00', bClose, l('關閉或打開開關注水', 'Close/Open switch & pour', 'スイッチを閉じる/開いて注ぐ'), 50),
+        rs('c1','0:00', bClose, l('第一段可自由選擇關閉或打開開關注水', 'Close/Open switch & pour', 'スイッチを閉じる/開いて注ぐ'), 50),
         rs('c2','0:40', pAct, l('打開開關注水至', 'Open switch & pour to', '開けて注ぐ'), 90),
         rs('c3', l('流乾', 'Drawdown', '落ちきり'), pAct, l('注水至', 'Pour to', '注ぐ'), 130),
         rs('c4', l('流乾', 'Drawdown', '落ちきり'), pAct, l('注水至', 'Pour to', '注ぐ'), 160),
