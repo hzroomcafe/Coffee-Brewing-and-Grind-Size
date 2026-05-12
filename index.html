@@ -269,12 +269,13 @@ changelog: [
 };
 
 /* ==========================================
-   3. 動態資料庫 (Data) - 新增絲綢濾杯 SAMO BLOOM
+   3. 動態資料庫 (Data)
    ========================================== */
 function useDatabases(lang) {
 return useMemo(() => {
 const l = (zh, en, ja) => ({ zh, en, ja }[lang] || zh);
 
+// 排序原則：所有名稱統一以「品牌 + 型號」(英文) 起首，分類內依字母排序；中／日文版以「· 在地俗稱」做副標。
 const DRIPPER_CATEGORIES = {
 [l('錐形濾杯', 'Cone Drippers', '円錐ドリッパー')]: [
 { id:'Hario Switch 02', name: l('Hario Switch 02 / 阿爾法濾杯', 'Hario Switch 02 / Alpha Dripper', 'Hario Switch 02 / アルファドリッパー') },
@@ -300,29 +301,18 @@ const swirl = l('搖晃', 'Swirl', '揺らす');
 const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 
 const RECIPE_DATABASE = [
-// 新增：BEANDY SILK 絲綢濾杯 - SAMO BLOOM (Rikuto Tanaka 版本)
+// 新增：Switch - SAMO BLOOM 改良版
 { 
-    id:'silk-samo-rikuto', name:l('SAMO BLOOM (Rikuto 版)','SAMO BLOOM (Rikuto Ver.)','SAMO BLOOM (田中陸人版)'), author:'Rikuto Tanaka', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:16, temperature:90, 
-    baseGrind: { grinder: 'm_c40', val: 22 }, 
-    description: l('SAMO BLOOM 是一種先進的悶蒸技術：先使用室溫水（Room Temp）浸泡咖啡粉約 2 分鐘，能更溫和地排出氣體並預濕，顯著提升甜感與乾淨度。\n\n💡 操作重點：\n1. 先在杯中使用 50g 室溫水與咖啡粉混合浸泡 2 分鐘。\n2. 浸泡完成後，再將濕粉移至絲綢濾杯中開始正式注熱水。\n\n完整教學影片：https://www.instagram.com/reel/DQEzav0EQ7O/', 'SAMO BLOOM is a pre-infusion technique: mix grounds with 50g room temp water for 2 mins to degas gently, boosting sweetness and clarity. Transfer to the dripper before starting hot pours.\n\nVideo Guide: https://www.instagram.com/reel/DQEzav0EQ7O/', 'SAMO BLOOMは、まず常温の水50gで2分間蒸らす高度な技術です。ガスを優しく抜き、甘みとクリーンさを引き出します。蒸らし後、粉をドリッパーに移して抽出を開始します。\n\n解説動画：https://www.instagram.com/reel/DQEzav0EQ7O/'), 
+    id:'switch-samo-improved', name:l('SAMO BLOOM (改良版)','SAMO BLOOM (Improved)','SAMO BLOOM (改良版)'), author:'', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:13, temperature:94, 
+    baseGrind: { grinder: 'm_c40', val: 28 }, 
+    description: l('結合常溫悶蒸（SAMO BLOOM）與 Switch 濾杯特性的改良手法。使用常溫水長時間悶蒸並攪拌，能溫和排氣並大幅提升甜感；後續再以 94°C 高溫水萃取，確保風味飽滿。\n\n💡 沖煮備註：\n1. 研磨度：建議 C40 26-30（偏中粗）。\n2. 悶蒸攪拌：注入常溫水後，請攪拌 10-20 秒使粉層充分且均勻濕潤。\n3. 水質與濾紙：原配方建議搭配軟水（硬度約 30）與 Abaca 濾紙以獲得乾淨明亮的口感。', 'An improved SAMO BLOOM method adapted for the Hario Switch. A 2-minute room temperature bloom with agitation gently degasses the coffee, enhancing sweetness. This is followed by 94°C pours for a full-bodied extraction.\n\n💡 Notes:\n1. Grind: C40 26-30 (Medium-Coarse).\n2. Bloom Agitation: Stir for 10-20s immediately after the room temp pour.\n3. Water & Filter: Soft water (hardness ~30) and Abaca filters are recommended for a crystal-clean cup.', '常温蒸らし（SAMO BLOOM）とハリオスイッチを組み合わせた改良版レシピ。常温水で2分間攪拌しながら蒸らすことで優しくガスを抜き、甘みを最大限に引き出します。その後94℃の熱湯で抽出し、豊かなボディを作ります。\n\n💡 抽出メモ:\n1. 挽き目: C40 26-30（中粗挽き推奨）。\n2. 蒸らしの攪拌: 常温水を注いだ後、10-20秒ほど攪拌して粉全体を均一に湿らせてください。\n3. 水とフィルター: 軟水（硬度30程度）とアバカフィルターの使用が推奨されています。'), 
     steps:[
-        rs('sb1',l('開始前','Pre-start','準備'), l('常溫悶蒸','Room Temp Bloom','常温蒸らし'), l('使用 50g 室溫水浸泡 2 分鐘後移至濾杯', 'Mix with 50g Room Temp water for 2 mins, then transfer to dripper', '常温の水50gで2分蒸らし、ドリッパーへ移す'), null),
-        rs('sb2','0:00-0:10', pAct, r=>l(`第一注熱水至 ${Math.round(90*r)}g`, `1st hot pour to ${Math.round(90*r)}g`, `第1投 熱湯を${Math.round(90*r)}gまで`), 90), 
-        rs('sb3','0:40-0:50', pAct, r=>l(`第二注熱水至 ${Math.round(170*r)}g`, `2nd hot pour to ${Math.round(170*r)}g`, `第2投 熱湯を${Math.round(170*r)}gまで`), 170), 
-        rs('sb4','1:30-1:40', pAct, r=>l(`第三注熱水至 ${Math.round(250*r)}g`, `3rd hot pour to ${Math.round(250*r)}g`, `第3投 熱湯を${Math.round(250*r)}gまで`), 250), 
-        rs('sb5','2:40', dAct, dAct, null)
-    ] 
-},
-{ 
-    id:'orea-z1-rikuto', name:l('Z1 設計者配方','Z1 Designer Recipe','Z1 設計者レシピ'), author:'Rikuto Tanaka', dripper:'OREA Z1', drinkType:'hot', baseCoffee:13, temperature:90, 
-    baseGrind: { grinder: 'm_c40', val: 22 }, 
-    description: l('由 OREA Z1 設計者 Rikuto Tanaka 親自研發。此配方採用 1:15.4 的比例，透過精確的四段斷水法引導穩定的萃取路徑。特色在於能完美展現淺焙咖啡的高甜感與純淨度，口感層次分明且乾淨。', 'Developed by OREA Z1 designer Rikuto Tanaka. This 1:15.4 ratio recipe utilizes a 4-stage pour method to ensure a stable extraction path. Designed to maximize sweetness and clarity of light roasts with a crystal-clean finish.', 'OREA Z1の設計者、田中陸人氏による公式レシピ。1:15.4の比率と4段階に分けた注湯により、安定した抽出を実現します。浅煎り豆が持つ高い甘みとクリーンな口当たりを最大限に引き出します。'), 
-    steps:[
-        rs('z1','0:00-0:07', mAct, r=>l(`悶蒸注水至 ${Math.round(30*r)}g`, `Bloom with ${Math.round(30*r)}g`, `蒸らし注湯 ${Math.round(30*r)}gまで`), 30), 
-        rs('z2','0:40-0:47', pAct, r=>l(`補水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r) }gまで注ぐ`), 80), 
-        rs('z3','1:20-1:27', pAct, r=>l(`補水至 ${Math.round(130*r)}g`, `Pour to ${Math.round(130*r)}g`, `${Math.round(130*r)}gまで注ぐ`), 130), 
-        rs('z4','1:45-1:55', pAct, r=>l(`補水至 ${Math.round(200*r)}g`, `Pour to ${Math.round(200*r)}g`, `${Math.round(200*r)}gまで注ぐ`), 200), 
-        rs('z5','2:40', dAct, dAct, null)
+        rs('sm1','0:00', bClose, r=>l(`常溫水注至 ${Math.round(39*r)}g 並攪拌 10-20s`, `Room temp water to ${Math.round(39*r)}g & stir 10-20s`, `常温水を${Math.round(39*r)}gまで注ぎ10-20秒攪拌`), 39), 
+        rs('sm2','2:00', bOpen, l('打開開關開始滴濾', 'Open switch to drip', 'スイッチを開いてドリップ開始'), null), 
+        rs('sm3','2:20', pAct, r=>l(`94°C 熱水注至 ${Math.round(91*r)}g`, `94°C hot water to ${Math.round(91*r)}g`, `94°Cの熱湯を${Math.round(91*r)}gまで注ぐ`), 91), 
+        rs('sm4','3:00', pAct, r=>l(`熱水注至 ${Math.round(143*r)}g`, `Hot water to ${Math.round(143*r)}g`, `熱湯を${Math.round(143*r)}gまで注ぐ`), 143), 
+        rs('sm5','3:40', pAct, r=>l(`熱水注至 ${Math.round(195*r)}g`, `Hot water to ${Math.round(195*r)}g`, `熱湯を${Math.round(195*r)}gまで注ぐ`), 195), 
+        rs('sm6','5:00', dAct, l('5分鐘內流乾完成', 'Drawdown within 5 mins', '5分以内に落ちきり完了'), null)
     ] 
 },
 { 
@@ -337,6 +327,18 @@ const RECIPE_DATABASE = [
         rs('dv5','1:45', pAct, l('開始注水至230g', 'Pour to 230g', '230gまで注ぐ'), 230), 
         rs('dv6','2:10', '', l('等待萃取結束', 'Wait for drawdown', '落ちきるまで待機'), null), 
         rs('dv7','2:30', dAct, dAct, null)
+    ] 
+},
+{ 
+    id:'orea-z1-rikuto', name:l('Z1 設計者配方','Z1 Designer Recipe','Z1 設計者レシピ'), author:'Rikuto Tanaka', dripper:'OREA Z1', drinkType:'hot', baseCoffee:13, temperature:90, 
+    baseGrind: { grinder: 'm_c40', val: 22 }, 
+    description: l('由 OREA Z1 設計者 Rikuto Tanaka 親自研發。此配方採用 1:15.4 的比例，透過精確的四段斷水法引導穩定的萃取路徑。特色在於能完美展現淺焙咖啡的高甜感與純淨度，口感層次分明且乾淨。', 'Developed by OREA Z1 designer Rikuto Tanaka. This 1:15.4 ratio recipe utilizes a 4-stage pour method to ensure a stable extraction path. Designed to maximize sweetness and clarity of light roasts with a crystal-clean finish.', 'OREA Z1の設計者、田中陸人氏による公式レシピ。1:15.4の比率と4段階に分けた注湯により、安定した抽出を実現します。浅煎り豆が持つ高い甘みとクリーンな口当たりを最大限に引き出します。'), 
+    steps:[
+        rs('z1','0:00-0:07', mAct, r=>l(`悶蒸注水至 ${Math.round(30*r)}g`, `Bloom with ${Math.round(30*r)}g`, `蒸らし注湯 ${Math.round(30*r)}gまで`), 30), 
+        rs('z2','0:40-0:47', pAct, r=>l(`補水至 ${Math.round(80*r)}g`, `Pour to ${Math.round(80*r)}g`, `${Math.round(80*r)}gまで注ぐ`), 80), 
+        rs('z3','1:20-1:27', pAct, r=>l(`補水至 ${Math.round(130*r)}g`, `Pour to ${Math.round(130*r)}g`, `${Math.round(130*r)}gまで注ぐ`), 130), 
+        rs('z4','1:45-1:55', pAct, r=>l(`補水至 ${Math.round(200*r)}g`, `Pour to ${Math.round(200*r)}g`, `${Math.round(200*r)}gまで注ぐ`), 200), 
+        rs('z5','2:40', dAct, dAct, null)
     ] 
 },
 { 
@@ -356,7 +358,7 @@ const RECIPE_DATABASE = [
     baseGrind: { grinder: 'm_c40', val: 25 },
     description: r => l(`下壺冰塊：${Math.round(80*r)}g\n飲用杯：一般冰塊 ${Math.round(100*r)}g\n\n💡 沖煮備註：\n1. 研磨度建議 C40 24-26。若使用阿爾法濾杯因濃度較高，可適度調粗避免雜味。\n2. 節奏彈性：悶蒸後，待每段流乾即立刻注入下一段，請依實際流速彈性調整。\n3. 注水手法：建議以「細水流、快速多繞圈」獲取更飽滿的咖啡液體。\n4. 首段開關差異：第一注水若「關閉開關」，風味較甜感且飽滿；若「打開開關」，酸值會更明亮清爽（作者個人更偏好打開的風味！）。`, `Server ice: ${Math.round(80*r)}g\nDrinking glass: Normal ice ${Math.round(100*r)}g\n\n💡 Notes:\n1. Grind: C40 24-26. If using an Alpha Dripper, adjust coarser to avoid harshness.\n2. Pace: Pour the next stage immediately after the previous drawdown.\n3. Pouring: Use a fine, fast, multi-circle pour for a full-bodied brew.\n4. 1st Pour Switch: "Closed" yields higher sweetness and a full body. "Open" highlights a brighter, crisp acidity (the author personally prefers keeping it open!).`, `サーバー氷: ${Math.round(80*r)}g\nグラス: 通常の氷 ${Math.round(100*r)}g\n\n💡 抽出メモ:\n1. 挽き目: C40 24-26。アルファドリッパーの場合は少し粗めに調整して雑味を防ぎます。\n2. リズム: 各段階のお湯が落ちきったらすぐに次を注ぎます。\n3. 注湯: 細いお湯で素早く多めに円を描くように注ぎます。\n4. 第1投のスイッチ: 「閉じる」と甘みが強く豊かなボディに。「開く」とより明るく爽やかな酸味が際立ちます（作者個人の好みは「開く」です！）。`), 
     steps:[
-        rs('c1','0:00', bClose, l('關閉或打開開關注水', 'Close/Open switch & pour', 'スイッチを閉じる/開いて注ぐ'), 50),
+        rs('c1','0:00', bClose, l('第一段可自由選擇關閉或打開開關注水', 'Close/Open switch & pour', 'スイッチを閉じる/開いて注ぐ'), 50),
         rs('c2','0:40', pAct, l('打開開關注水至', 'Open switch & pour to', '開けて注ぐ'), 90),
         rs('c3', l('流乾', 'Drawdown', '落ちきり'), pAct, l('注水至', 'Pour to', '注ぐ'), 130),
         rs('c4', l('流乾', 'Drawdown', '落ちきり'), pAct, l('注水至', 'Pour to', '注ぐ'), 160),
