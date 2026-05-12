@@ -269,7 +269,7 @@ changelog: [
 };
 
 /* ==========================================
-   3. 動態資料庫 (Data)
+   3. 動態資料庫 (Data) - 完整合併所有配方版
    ========================================== */
 function useDatabases(lang) {
 return useMemo(() => {
@@ -301,7 +301,20 @@ const swirl = l('搖晃', 'Swirl', '揺らす');
 const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 
 const RECIPE_DATABASE = [
-// 新增：Switch - SAMO BLOOM 改良版
+// 1. BEANDY SILK 絲綢濾杯 - SAMO BLOOM (Rikuto Tanaka 版本)
+{ 
+    id:'silk-samo-rikuto', name:l('SAMO BLOOM (Rikuto 版)','SAMO BLOOM (Rikuto Ver.)','SAMO BLOOM (田中陸人版)'), author:'Rikuto Tanaka', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:16, temperature:90, 
+    baseGrind: { grinder: 'm_c40', val: 22 }, 
+    description: l('SAMO BLOOM 是一種先進的悶蒸技術：先使用室溫水（Room Temp）浸泡咖啡粉約 2 分鐘，能更溫和地排出氣體並預濕，顯著提升甜感與乾淨度。\n\n💡 操作重點：\n1. 先在杯中使用 50g 室溫水與咖啡粉混合浸泡 2 分鐘。\n2. 浸泡完成後，再將濕粉移至絲綢濾杯中開始正式注熱水。\n\n完整教學影片：https://www.instagram.com/reel/DQEzav0EQ7O/', 'SAMO BLOOM is a pre-infusion technique: mix grounds with 50g room temp water for 2 mins to degas gently, boosting sweetness and clarity. Transfer to the dripper before starting hot pours.\n\nVideo Guide: https://www.instagram.com/reel/DQEzav0EQ7O/', 'SAMO BLOOMは、まず常温の水50gで2分間蒸らす高度な技術です。ガスを優しく抜き、甘みとクリーンさを引き出します。蒸らし後、粉をドリッパーに移して抽出を開始します。\n\n解説動画：https://www.instagram.com/reel/DQEzav0EQ7O/'), 
+    steps:[
+        rs('sb1',l('開始前','Pre-start','準備'), l('常溫悶蒸','Room Temp Bloom','常温蒸らし'), l('使用 50g 室溫水浸泡 2 分鐘後移至濾杯', 'Mix with 50g Room Temp water for 2 mins, then transfer to dripper', '常温の水50gで2分蒸らし、ドリッパーへ移す'), null),
+        rs('sb2','0:00-0:10', pAct, r=>l(`第一注熱水至 ${Math.round(90*r)}g`, `1st hot pour to ${Math.round(90*r)}g`, `第1投 熱湯を${Math.round(90*r)}gまで`), 90), 
+        rs('sb3','0:40-0:50', pAct, r=>l(`第二注熱水至 ${Math.round(170*r)}g`, `2nd hot pour to ${Math.round(170*r)}g`, `第2投 熱湯を${Math.round(170*r)}gまで`), 170), 
+        rs('sb4','1:30-1:40', pAct, r=>l(`第三注熱水至 ${Math.round(250*r)}g`, `3rd hot pour to ${Math.round(250*r)}g`, `第3投 熱湯を${Math.round(250*r)}gまで`), 250), 
+        rs('sb5','2:40', dAct, dAct, null)
+    ] 
+},
+// 2. Switch - SAMO BLOOM 改良版
 { 
     id:'switch-samo-improved', name:l('SAMO BLOOM (改良版)','SAMO BLOOM (Improved)','SAMO BLOOM (改良版)'), author:'', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:13, temperature:94, 
     baseGrind: { grinder: 'm_c40', val: 28 }, 
