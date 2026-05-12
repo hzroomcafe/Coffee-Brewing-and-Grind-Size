@@ -146,7 +146,7 @@ const useClasses = (c) => useMemo(() => ({
 }), [c]);
 
 /* ==========================================
-   2. 多語系翻譯字典 (完全 100% 保留您的 OK 版文字)
+   2. 多語系翻譯字典
    ========================================== */
 const i18n = {
 zh: {
@@ -181,11 +181,10 @@ dim_acid: '酸質', dim_sweet: '甜感', dim_bitter: '苦澀/雜感', dim_body: 
 tweak_reset: '重置',
 changelog_title: '版本更新紀錄',
 changelog: [
+{ version: 'v3.2.0', date: '2026.05', changes: ['職人體驗大升級：計時器加入「自動對齊當前步驟」與「防螢幕休眠 (Wake Lock)」，專注沖煮不中斷。', '全新進階配方：導入 SAMO BLOOM (常溫悶蒸) 技巧，支援絲綢濾杯與 Switch 改良版；並正式加入 OREA Z1 濾杯配方。'] },
 { version: 'v3.0.0', date: '2026.05', changes: ['全新首頁：「今天，沖什麼？」問題式 Hero 搭配時段問候，沖煮工具升為主要入口。', '視覺系統強化：紙質紋理、線稿圖示取代 emoji、莫蘭迪色系微調。', '研磨度警告框配色強化，提升閱讀對比。', '版本紀錄收摺至首頁底部，釋出首屏空間。'] },
 { version: 'v2.3.0', date: '2026.05', changes: ['新增配方：星芒濾杯與專屬『達文西咖啡店內沖煮』。', '體驗優化：研磨建議面板完美內嵌 1:1 實體顯微鏡圖表。'] },
-{ version: 'v2.2.3', date: '2026.05', changes: ['致命錯誤修復：解決了切換配方時的頁面崩潰問題。', 'UX 細節強化：所有下拉選單未選擇時自動呈現淡灰色提示，並將基準研磨度直接預覽於按鈕上。'] },
-{ version: 'v2.2.0', date: '2026.05', changes: ['配方內嵌研磨建議：自動換算使用者擁有的磨豆機刻度，並新增小富士與泰摩栗子S3數據。', '配方細節與選單優化：惡魔手沖(改良版)注水精準修正為280g，選單支援變體群組化。', '風味羅盤文案去標籤化，採用純粹精品咖啡萃取科學進行客觀診斷。'] },
-{ version: 'v1.5.0', date: '2026.05', changes: ['新增「礦物水調配計算」，支援 Aquacode、NAIRO DROP、APAX LAB 配方公式。'] }
+{ version: 'v2.2.0', date: '2026.05', changes: ['配方內嵌研磨建議：自動換算使用者擁有的磨豆機刻度，並新增小富士與泰摩栗子S3數據。'] }
 ]
 },
 en: {
@@ -220,11 +219,10 @@ dim_acid: 'Acidity', dim_sweet: 'Sweetness', dim_bitter: 'Bitterness', dim_body:
 tweak_reset: 'Reset',
 changelog_title: 'Release Notes',
 changelog: [
-{ version: 'v3.0.0', date: 'May 2026', changes: ['New home: question-led hero "What are we brewing today?" with time-of-day greeting; brew tool elevated as primary entry.', 'Visual system upgrade: paper texture, line-art icons replacing emoji, refined Morandi palette.', 'Improved contrast on grind-size advisory callout.', 'Release notes collapsed at bottom of home to free up first-screen space.'] },
+{ version: 'v3.2.0', date: 'May 2026', changes: ['Pro UX Upgrade: Added Auto-Scroll to the active brew step and Screen Wake Lock to prevent sleep during brewing.', 'Advanced Bloom Methods: Introduced SAMO BLOOM (room temp bloom) recipes for Beandy Silk and Hario Switch; added OREA Z1 dripper.'] },
+{ version: 'v3.0.0', date: 'May 2026', changes: ['New home: question-led hero "What are we brewing today?" with time-of-day greeting; brew tool elevated as primary entry.', 'Visual system upgrade: paper texture, line-art icons replacing emoji, refined Morandi palette.'] },
 { version: 'v2.3.0', date: 'May 2026', changes: ['Added Kadou M1 Dripper and Davinci Coffee in-shop recipe.'] },
-{ version: 'v2.2.3', date: 'May 2026', changes: ['Fatal Bug Fix: Resolved white-screen crash on recipe switch.', 'UX Polish: Show base grinder directly on header and added light-grey placeholders to all selects.'] },
-{ version: 'v2.2.0', date: 'May 2026', changes: ['Embedded grind suggestions in recipes with real-time conversion.', 'Added Fuji Royal & Timemore S3 to grinder database.', 'Refined Troubleshooter with objective scientific extraction analysis.'] },
-{ version: 'v1.5.0', date: 'May 2026', changes: ['Added Mineral Water Calculator supporting Aquacode, NAIRO DROP, APAX LAB.'] }
+{ version: 'v2.2.0', date: 'May 2026', changes: ['Embedded grind suggestions in recipes with real-time conversion.', 'Added Fuji Royal & Timemore S3 to grinder database.'] }
 ]
 },
 ja: {
@@ -259,11 +257,10 @@ dim_acid: '酸味', dim_sweet: '甘み', dim_bitter: '苦味/渋み', dim_body: 
 tweak_reset: 'リセット',
 changelog_title: 'リリースノート',
 changelog: [
-{ version: 'v3.0.0', date: '2026年5月', changes: ['新しいホーム：「今日は、何を淹れる？」の問いかけと時間帯の挨拶を導入、抽出ツールをメイン入口に。', 'ビジュアル刷新：紙質感、ラインアートアイコン、モランディカラーの微調整。', '挽き目アドバイザリーの配色を強化、視認性向上。', 'リリースノートをホーム下部に折りたたみ、ファーストビューを広く確保。'] },
+{ version: 'v3.2.0', date: '2026年5月', changes: ['プロ向けUX強化：抽出ステップの自動スクロール機能と、画面スリープ防止（Wake Lock）機能を搭載。', '新レシピ追加：常温蒸らし「SAMO BLOOM」レシピ（BEANDY SILK版・Switch改良版）、およびOREA Z1ドリッパーを追加。'] },
+{ version: 'v3.0.0', date: '2026年5月', changes: ['新しいホーム：「今日は、何を淹れる？」の問いかけと時間帯の挨拶を導入、抽出ツールをメイン入口に。', 'ビジュアル刷新：紙質感、ラインアートアイコン、モランディカラーの微調整。'] },
 { version: 'v2.3.0', date: '2026年5月', changes: ['StellarドリッパーとDavinci Coffee店内レシピを追加しました。'] },
-{ version: 'v2.2.3', date: '2026年5月', changes: ['バグ修正とUI改善：レシピ切り替え時のクラッシュを修正し、未選択時のプレースホルダーテキストを薄い灰色に統一しました。'] },
-{ version: 'v2.2.0', date: '2026年5月', changes: ['レシピ内に推奨挽き目と自動変換機能を追加。Fuji RoyalとTimemore S3をデータベースに追加。', '風味コンパスの診断ロジックをより客観的な抽出科学に基づいて最適化。'] },
-{ version: 'v1.5.0', date: '2026年5月', changes: ['Aquacode、NAIRO DROP、APAX LABをサポートする「ミネラルウォーター計算」を追加。'] }
+{ version: 'v2.2.0', date: '2026年5月', changes: ['レシピ内に推奨挽き目と自動変換機能を追加。Fuji RoyalとTimemore S3をデータベースに追加。'] }
 ]
 }
 };
