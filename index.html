@@ -1073,6 +1073,10 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
     const [isRunning, setIsRunning] = useState(false);
     const [showTroubleshoot, setShowTroubleshoot] = useState(false);
 
+    // 新增：用來記住每一個步驟在螢幕上位置的參考點
+    const stepRefs = useRef([]);
+    const wakeLockRef = useRef(null);
+
     useEffect(() => { let interval; if (isRunning) interval = setInterval(() => setElapsed(e => e + 1), 1000); return () => clearInterval(interval); }, [isRunning]);
     useEffect(() => { setElapsed(0); setIsRunning(false); setShowTroubleshoot(false); }, [recipe.id]);
 
@@ -1084,6 +1088,45 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
     }, [recipe]);
     
     const activeStepIndex = useMemo(() => { if (elapsed === 0 && !isRunning) return -1; let idx = 0; for(let i = 0; i < stepStartTimes.length; i++) { if (elapsed >= stepStartTimes[i]) idx = i; } return idx; }, [elapsed, isRunning, stepStartTimes]);
+
+    // 🌟 新增功能 1：Wake Lock API 保持螢幕長亮
+    useEffect(() => {
+        const requestWakeLock = async () => {
+            try {
+                if ('wakeLock' in navigator) {
+                    wakeLockRef.current = await navigator.wakeLock.request('screen');
+                }
+            } catch (err) {
+                console.log('Wake Lock Error:', err);
+            }
+        };
+        requestWakeLock();
+        
+        // 為了避免使用者切換分頁後失效，重新綁定可視狀態
+        const handleVisibilityChange = () => {
+            if (wakeLockRef.current !== null && document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+        };
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            if (wakeLockRef.current) {
+                wakeLockRef.current.release();
+                wakeLockRef.current = null;
+            }
+        };
+    }, []);
+
+    // 🌟 新增功能 2：Auto Scroll 自動捲動到進行中的步驟
+    useEffect(() => {
+        // 當計時器執行中，且有對應的步驟元素時
+        if (isRunning && activeStepIndex >= 0 && stepRefs.current[activeStepIndex]) {
+            // 使用 block: 'center' 讓步驟平滑地停在畫面正中央，避免被上方的計時器擋住
+            stepRefs.current[activeStepIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }, [activeStepIndex, isRunning]);
 
     return (
     <div className="space-y-4">
@@ -1129,7 +1172,10 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
                     const scaledWater = step.water !== null ? Math.round(step.water * ratio) : null;
                     const isTextTime = isNaN(parseInt(step.time.charAt(0))) || step.time.length > 5; const isActive = activeStepIndex === index; const isPast = activeStepIndex > index; const isUpcoming = activeStepIndex < index && activeStepIndex !== -1;
                     return (
-                        <div key={step.id || index} className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
+                        <div 
+                            key={step.id || index} 
+                            ref={el => stepRefs.current[index] = el} // 將這個步驟綁定到參考點上
+                            className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
                             <div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
                             <div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02] transform-gpu` : 'py-2 border border-transparent'}`}>
                                 <div className="flex-1 pr-3"><div className="flex items-center flex-wrap gap-2 mb-1.5"><span className={`font-mono font-black ${isTextTime ? 'text-[0.95rem]' : 'text-[1.1rem]'} ${isActive ? (isIced ? c.blueText : c.yellowText) : c.textDark} transition-colors`}>{step.time}</span>{step.action && <span className={`text-[11px] px-2 py-0.5 rounded-md ${isIced ? c.icedTag : c.hotTag} font-bold whitespace-nowrap`}>{step.action}</span>}</div><p className={`text-sm ${isActive ? c.activeText : c.textDark} leading-relaxed ${isActive ? 'font-bold' : 'font-medium'} transition-colors`}>{renderDynamicText(step.note)}</p></div>
