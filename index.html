@@ -1040,7 +1040,6 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
     const [isRunning, setIsRunning] = useState(false);
     const [showTroubleshoot, setShowTroubleshoot] = useState(false);
 
-    // 新增：用來記住每一個步驟在螢幕上位置的參考點
     const stepRefs = useRef([]);
     const wakeLockRef = useRef(null);
 
@@ -1056,7 +1055,6 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
     
     const activeStepIndex = useMemo(() => { if (elapsed === 0 && !isRunning) return -1; let idx = 0; for(let i = 0; i < stepStartTimes.length; i++) { if (elapsed >= stepStartTimes[i]) idx = i; } return idx; }, [elapsed, isRunning, stepStartTimes]);
 
-    // 🌟 新增功能 1：Wake Lock API 保持螢幕長亮
     useEffect(() => {
         const requestWakeLock = async () => {
             try {
@@ -1069,7 +1067,6 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
         };
         requestWakeLock();
         
-        // 為了避免使用者切換分頁後失效，重新綁定可視狀態
         const handleVisibilityChange = () => {
             if (wakeLockRef.current !== null && document.visibilityState === 'visible') {
                 requestWakeLock();
@@ -1086,11 +1083,8 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
         };
     }, []);
 
-    // 🌟 新增功能 2：Auto Scroll 自動捲動到進行中的步驟
     useEffect(() => {
-        // 當計時器執行中，且有對應的步驟元素時
         if (isRunning && activeStepIndex >= 0 && stepRefs.current[activeStepIndex]) {
-            // 使用 block: 'center' 讓步驟平滑地停在畫面正中央，避免被上方的計時器擋住
             stepRefs.current[activeStepIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     }, [activeStepIndex, isRunning]);
@@ -1101,10 +1095,16 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
         <div className={`${classes.card} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
             <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
             <p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>{t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText}/></p>
-            <div className="flex items-center gap-6">
-                <button onClick={() => setCustomWeight(Math.max(1, customWeight - 1))} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>-</button>
-                <div className="relative flex items-baseline"><input type="number" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-24 text-center text-6xl font-black ${c.textDark} bg-transparent focus:outline-none`} /><span className={`text-xl font-bold ${c.textMuted} ml-1`}>g</span></div>
-                <button onClick={() => setCustomWeight(customWeight + 1)} className={`w-14 h-14 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>+</button>
+            <div className="flex items-center gap-3 sm:gap-6">
+                {/* 減號按鈕改為 0.5g 級距 */}
+                <button onClick={() => setCustomWeight(Math.max(1, customWeight - 0.5))} className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>-</button>
+                <div className="relative flex items-baseline">
+                    {/* 輸入框寬度加大為 w-32 (手機) 與 w-40 (電腦)，完美容納小數點 */}
+                    <input type="number" step="0.5" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-32 sm:w-40 text-center text-5xl sm:text-6xl font-black ${c.textDark} bg-transparent focus:outline-none tracking-tight`} />
+                    <span className={`text-lg sm:text-xl font-bold ${c.textMuted} ml-1 shrink-0`}>g</span>
+                </div>
+                {/* 加號按鈕改為 0.5g 級距 */}
+                <button onClick={() => setCustomWeight(customWeight + 0.5)} className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>+</button>
             </div>
         </div>
 
@@ -1141,7 +1141,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
                     return (
                         <div 
                             key={step.id || index} 
-                            ref={el => stepRefs.current[index] = el} // 將這個步驟綁定到參考點上
+                            ref={el => stepRefs.current[index] = el}
                             className={`relative pl-8 transition-all duration-500 ${isActive ? 'opacity-100 z-10' : (isPast ? 'opacity-30' : (isUpcoming ? 'opacity-50' : 'opacity-100'))}`}>
                             <div className={`absolute -left-[9px] ${isActive ? 'top-1/2 -translate-y-1/2' : 'top-3'} w-4 h-4 rounded-full border-2 ${c.card} ${isActive ? (isIced ? c.blue : c.yellow) + ' shadow-md scale-125' : (step.water ? (isIced ? c.blue : c.yellow) : c.secondary)} transition-all duration-500`}></div>
                             <div className={`flex justify-between items-center rounded-2xl transition-all duration-500 ${isActive ? `p-4 -ml-3 -mr-2 shadow-[0_4px_20px_rgba(0,0,0,0.06)] border-y border-r border-l-4 ${isIced ? c.activeIcedBorder : c.activeHotBorder} ${isIced ? c.activeIcedBg : c.activeHotBg} scale-[1.02] transform-gpu` : 'py-2 border border-transparent'}`}>
@@ -1158,7 +1158,6 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
     </div>
     );
 }
-
 // ==========================================
 // 12. BrewTool 總管
 // ==========================================
