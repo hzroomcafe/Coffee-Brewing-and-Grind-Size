@@ -268,7 +268,7 @@ changelog: [
 };
 
 /* ==========================================
-   3. 動態資料庫 (Data) - 整合 Glitch Coffee 方案
+   3. 動態資料庫 (Data) - 包含 Ole 冠軍與 Rikuto 混合浸泡
    ========================================== */
 function useDatabases(lang) {
 return useMemo(() => {
@@ -300,6 +300,34 @@ const swirl = l('搖晃', 'Swirl', '揺らす');
 const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 
 const RECIPE_DATABASE = [
+// --- 新增：Rikuto REELS 混合浸泡 ---
+{ 
+    id:'switch-rikuto-hybrid', name:l('混合浸泡 (Rikuto REELS)','Hybrid Steeping (Rikuto REELS)','ハイブリッド浸漬 (Rikuto REELS)'), author:'Rikuto', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:12.5, temperature:90, 
+    baseGrind: { grinder: 'm_c40', val: 20 }, 
+    description: l('推薦咖啡豆：淺烘焙，衣索比亞水洗。\n採用先注水後下粉 (Water-First) 的特殊手法，結合反覆的開關切換，能有效避免底層細粉堵塞，創造出極致乾淨且充滿甜感的風味。', 'Recommended: Light roast, washed Ethiopian beans.\nUses a "Water-First" technique combined with switch toggling to prevent fines migration, resulting in an exceptionally clean and sweet cup.', '推奨豆：浅煎り、エチオピアウォッシュド。\nお湯を先に入れ後から粉を投入する（Water-First）特殊な手法。粉の詰まりを防ぎ、極めてクリーンで甘みのある風味を作り出します。'), 
+    steps:[
+        rs('r1', l('開始前', 'Pre-start', '準備'), bClose, r=>l(`關閉開關，先注入 ${Math.round(50*r)}g 熱水`, `Close switch, pour ${Math.round(50*r)}g hot water first`, `スイッチを閉じ、先に熱湯を${Math.round(50*r)}g注ぐ`), 50),
+        rs('r2','0:00', pAct, l('倒入咖啡粉', 'Add coffee grounds', 'コーヒー粉を入れる'), null),
+        rs('r3','0:30-0:37', pAct, r=>l(`注水至 ${Math.round(100*r)}g`, `Pour to ${Math.round(100*r)}g`, `${Math.round(100*r)}gまで注ぐ`), 100),
+        rs('r4','1:00', bOpen, l('打開開關', 'Open the switch', 'スイッチをオープン'), null),
+        rs('r5','1:30-1:45', bClose, r=>l(`關閉開關並注水至 ${Math.round(200*r)}g`, `Close switch & pour to ${Math.round(200*r)}g`, `スイッチをクローズし${Math.round(200*r)}gまで注ぐ`), 200),
+        rs('r6','2:00', bOpen, l('打開開關', 'Open the switch', 'スイッチをオープン'), null),
+        rs('r7','2:30', dAct, dAct, null)
+    ] 
+},
+// --- 新增：Ole 挪威冠軍配方 ---
+{ 
+    id:'switch-ole-2020', name:l('Ole 混合萃取法','Ole Hybrid Method','Ole ハイブリッド抽出'), author:'Ole Kristian Bøen', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:93, 
+    baseGrind: { grinder: 'm_c40', val: 25 }, 
+    description: l('2020 挪威手沖賽冠軍配方。\n利用「浸泡」提升甜感與容錯率，再利用「滴濾」拉高香氣與明亮酸值，是兼具層次與厚度的比賽級手法。', '2020 Norwegian Brewers Cup Champion recipe.\nUses immersion to boost sweetness and percolation to elevate aroma and bright acidity.', '2020年ノルウェー・ブリュワーズカップ優勝レシピ。\n浸漬式で甘みを引き出し、透過式で香りと明るい酸味を高めます。'), 
+    steps:[
+        rs('o1','0:00', bClose, r=>l(`關閉開關，注水至 ${Math.round(50*r)}g 悶蒸`, `Close switch, pour to ${Math.round(50*r)}g & bloom`, `スイッチを閉じ、${Math.round(50*r)}gまで注ぎ蒸らす`), 50),
+        rs('o2','0:45', bOpen, r=>l(`打開開關，注水至 ${Math.round(130*r)}g`, `Open switch, pour to ${Math.round(130*r)}g`, `スイッチを開け、${Math.round(130*r)}gまで注ぐ`), 130),
+        rs('o3','1:15', bClose, r=>l(`關閉開關，注水至 ${Math.round(250*r)}g`, `Close switch, pour to ${Math.round(250*r)}g`, `スイッチを閉じ、${Math.round(250*r)}gまで注ぐ`), 250),
+        rs('o4','2:00', bOpen, l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null),
+        rs('o5','2:30', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)
+    ] 
+},
 // --- Glitch Coffee 官方方案 ---
 { 
     id:'glitch-origami-hot', name:l('Glitch 店內沖煮 (熱)','Glitch Origami (Hot)','Glitch 店内レシピ (Origami 熱)'), author:'Glitch Coffee', dripper:'ORIGAMI', drinkType:'hot', baseCoffee:14.5, temperature:87, 
@@ -346,7 +374,7 @@ const RECIPE_DATABASE = [
         rs('gvi4', dAct, dAct, l('搖晃下壺冷卻後倒出', 'Swirl to cool and serve', '冷やして注ぐ'), null)
     ] 
 },
-// --- 職人專屬配方 ---
+// --- 其他經典職人配方 ---
 { 
     id:'silk-samo-rikuto', name:l('SAMO BLOOM 悶蒸法 (Rikuto 版本)','SAMO BLOOM (Rikuto Ver.)','SAMO BLOOM 蒸らし法 (田中陸人版)'), author:'Rikuto Tanaka', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:16, temperature:90, 
     baseGrind: { grinder: 'm_c40', val: 22 }, 
@@ -422,7 +450,6 @@ const RECIPE_DATABASE = [
         rs('c5', dAct, l('倒出', 'Serve', '注ぐ'), l('搖晃後倒出', 'Swirl and serve', '揺らして注ぐ'), null)
     ] 
 },
-// --- 其他經典配方 ---
 { id:'switch-devil-single', name:l('惡魔手沖(單人)','Devil(Single)','悪魔(1人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:92, baseGrind: { grinder: 'm_c40', val: 28 }, description:l('SOP化流程，新手友善。','Standardized procedure, beginner friendly.','SOP化された手順で初心者向け。'), steps:[rs('s1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 30), rs('s2','0:40', '', l('保持滴濾注水至', 'Keep open & pour to', '開けたまま注ぐ'), 90), rs('s3','1:20', bClose, l('關閉開關注水至目標水量', 'Close switch & pour to target', '閉じて目標量まで注ぐ'), 225), rs('s4','1:50', '', l('打開開關', 'Open switch', 'スイッチを開く'), null), rs('s5','2:20', '', l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
 { id:'switch-devil-double', name:l('惡魔手沖(雙人)','Devil(Double)','悪魔(2人用)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:24, temperature:92, baseGrind: { grinder: 'm_c40', val: 28 }, description:l('大份量版本。','Large batch version.','大容量バージョン。'), steps:[rs('d1','0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 50), rs('d2','0:40', '', l('保持滴濾注水至', 'Keep open & pour to', '開けたまま注ぐ'), 150), rs('d3','1:20', bClose, l('關閉開關注水至目標水量', 'Close switch & pour to target', '閉じて目標量まで注ぐ'), 360), rs('d4','2:00', '', l('打開開關', 'Open switch', 'スイッチを開く'), null), rs('d5','3:00', '', l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
 { id:'switch-devil-original', name:l('惡魔手沖(原始)','Devil(Original)','悪魔(オリジナル)'), author:'粕谷哲', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:20, temperature:92, baseGrind: { grinder: 'm_c40', val: 28 }, description:l('高溫滴濾與低溫浸泡。','High temp drip, low temp steep.','高温ドリップと低温浸漬。'), steps:[rs('do1','0:00', bOpen, r=>l(`92°C 水注至 ${Math.round(60*r)}g`, `92°C water to ${Math.round(60*r)}g`, `92°Cのお湯で${Math.round(60*r)}gまで`), 60), rs('do2','0:30', pAct, r=>l(`注至 ${Math.round(120*r)}g 等待至 1:10`, `Pour to ${Math.round(120*r)}g, wait till 1:10`, `${Math.round(120*r)}gまで注ぎ、1:10まで待機`), 120), rs('do3','1:10', bClose, r=>l(`70°C 水注至 ${Math.round(280*r)}g`, `70°C water to ${Math.round(280*r)}g`, `70°Cのお湯で${Math.round(280*r)}gまで`), 280), rs('do4','1:45', l('打開', 'Open', '開く'), l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null), rs('do5','3:00', dAct, l('時間到即移開濾杯', 'Remove dripper at 3:00', '3:00でドリッパーを外す'), null)] },
