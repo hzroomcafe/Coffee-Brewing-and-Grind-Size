@@ -268,7 +268,7 @@ changelog: [
 };
 
 /* ==========================================
-   3. 動態資料庫 (Data) - 包含 Ole 冠軍與 Rikuto 混合浸泡
+   3. 動態資料庫 (Data) - 包含 ADCafe 星芒濾杯配方
    ========================================== */
 function useDatabases(lang) {
 return useMemo(() => {
@@ -300,7 +300,21 @@ const swirl = l('搖晃', 'Swirl', '揺らす');
 const rs = (id, time, action, note, water) => ({id, time, action, note, water});
 
 const RECIPE_DATABASE = [
-// --- 新增：Rikuto REELS 混合浸泡 ---
+// --- 新增：星芒濾杯 ADCafe 厚實甜感法 ---
+{ 
+    id:'stellar-adcafe', name:l('ADCafe 厚實甜感法','ADCafe Rich & Sweet','ADCafe コク甘み抽出'), author:'ADCafe', dripper:'Stellar Dripper', drinkType:'hot', baseCoffee:20, temperature:92, 
+    baseGrind: { grinder: 'm_c40', val: 24 }, 
+    description: l('利用拉長悶蒸時間與中心大水柱快速帶出酸香，後段改用小水流繞外圈增加萃取時間，最終補水避免過度翻攪，創造厚實飽滿的甜感。\n(依原配方 300g 總水量推算基準粉量為 20g)', 'Extends bloom for a fuller body, uses a heavy center pour for bright acidity, then shifts to a gentle outer circle pour to boost extraction time, finishing with a gentle top-up to minimize agitation.', '蒸らし時間を少し長めに取りボディを強め、中心への太い注湯で酸味を引き出します。後半は細いお湯で外側を回し抽出時間を稼ぎ、過度な撹拌を防ぐことで厚みのある甘さを作り出します。'), 
+    steps:[
+        rs('ad1','0:00', pAct, r=>l(`慢速注水至 ${Math.round(40*r)}g，確保每顆粉吃水`, `Slow pour to ${Math.round(40*r)}g to fully wet grounds`, `ゆっくりと${Math.round(40*r)}gまで注ぐ`), 40),
+        rs('ad2','0:40-0:45', mAct, l('悶蒸結束 (拉長悶蒸讓風味更飽滿)', 'Bloom ends (extended for fuller flavor)', '蒸らし完了 (少し長めで風味豊かに)'), null),
+        rs('ad3','0:45', pAct, r=>l(`中心大水柱注水至 ${Math.round(140*r)}g，快速帶出酸香`, `Fast heavy center pour to ${Math.round(140*r)}g`, `中心に太く早く${Math.round(140*r)}gまで注ぐ`), 140),
+        rs('ad4',l('接下來','Next','次へ'), pAct, r=>l(`改用小水流繞外圈注水至 ${Math.round(240*r)}g，增加萃取時間`, `Gentle outer circle pour to ${Math.round(240*r)}g`, `細く外側を回しながら${Math.round(240*r)}gまで注ぐ`), 240),
+        rs('ad5',l('最後','Last','最後'), pAct, r=>l(`小水流補足水量至 ${Math.round(300*r)}g，避免過度翻攪`, `Gentle center pour to ${Math.round(300*r)}g, minimize agitation`, `細く中心に${Math.round(300*r)}gまで注ぐ（撹拌を防ぐ）`), 300),
+        rs('ad6','2:30', dAct, l('全部流完撤濾杯', 'Drawdown finished', '落ちきり完了'), null)
+    ] 
+},
+// --- Rikuto REELS 混合浸泡 ---
 { 
     id:'switch-rikuto-hybrid', name:l('混合浸泡 (Rikuto REELS)','Hybrid Steeping (Rikuto REELS)','ハイブリッド浸漬 (Rikuto REELS)'), author:'Rikuto', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:12.5, temperature:90, 
     baseGrind: { grinder: 'm_c40', val: 20 }, 
@@ -315,7 +329,7 @@ const RECIPE_DATABASE = [
         rs('r7','2:30', dAct, dAct, null)
     ] 
 },
-// --- 新增：Ole 挪威冠軍配方 ---
+// --- Ole 挪威冠軍配方 ---
 { 
     id:'switch-ole-2020', name:l('Ole 混合萃取法','Ole Hybrid Method','Ole ハイブリッド抽出'), author:'Ole Kristian Bøen', dripper:'Hario Switch 02', drinkType:'hot', baseCoffee:15, temperature:93, 
     baseGrind: { grinder: 'm_c40', val: 25 }, 
@@ -332,7 +346,7 @@ const RECIPE_DATABASE = [
 { 
     id:'glitch-origami-hot', name:l('Glitch 店內沖煮 (熱)','Glitch Origami (Hot)','Glitch 店内レシピ (Origami 熱)'), author:'Glitch Coffee', dripper:'ORIGAMI', drinkType:'hot', baseCoffee:14.5, temperature:87, 
     baseGrind: { grinder: 'm_c40', val: 24 }, 
-    description: l('Glitch Coffee 官方 ORIGAMI 指南。建議選用 Kalita Wave 蛋糕濾紙。若使用 Paragon 導溫球，水溫建議調高至 89-90℃。\n官方網址：https://shop.glitchcoffee.com/en/pages/brew-guide', 'Official Glitch ORIGAMI guide. Kalita Wave filters recommended. Raise temp to 89-90℃ if using Paragon cooling rocks.', 'Glitch Coffee公式ORIGAMIレシピ。カリタウェーブフィルター推奨。Paragon使用時は89-90℃に調整。'), 
+    description: l('Glitch Coffee 官方 ORIGAMI 指南。建議選用 Kalita Wave 蛋糕濾紙。若使用 Paragon 導溫球，水溫建議調高至 89-90℃。', 'Official Glitch ORIGAMI guide. Kalita Wave filters recommended. Raise temp to 89-90℃ if using Paragon cooling rocks.', 'Glitch Coffee公式ORIGAMIレシピ。カリタウェーブフィルター推奨。Paragon使用時は89-90℃に調整。'), 
     steps:[
         rs('go1','0:00-0:05', pAct, l('注入 30g', 'Pour 30g', '30g注ぐ'), 30), 
         rs('go2','0:20-0:25', pAct, l('補水至 60g', 'Pour to 60g', '60gまで注ぐ'), 60), 
@@ -344,7 +358,7 @@ const RECIPE_DATABASE = [
 { 
     id:'glitch-origami-iced', name:l('Glitch 店內沖煮 (冰)','Glitch Origami (Iced)','Glitch 店内レシピ (Origami 冰)'), author:'Glitch Coffee', dripper:'ORIGAMI', drinkType:'iced', baseCoffee:14.5, temperature:87, 
     baseGrind: { grinder: 'm_c40', val: 22 },
-    description: r => l(`下壺冰塊：${Math.round(90*r)}g\n使用 Kalita Wave 濾紙。沖煮結束後，將咖啡液與下壺冰塊冷卻混合。\n官方網址：https://shop.glitchcoffee.com/en/pages/brew-guide`, `Server ice: ${Math.round(90*r)}g\nUse Kalita Wave filters. Swirl to cool after brewing.`, `サーバー氷: ${Math.round(90*r)}g\nカリタウェーブフィルター推奨。抽出後、氷で急冷してください。`), 
+    description: r => l(`下壺冰塊：${Math.round(90*r)}g\n使用 Kalita Wave 濾紙。沖煮結束後，將咖啡液與下壺冰塊冷卻混合。`, `Server ice: ${Math.round(90*r)}g\nUse Kalita Wave filters. Swirl to cool after brewing.`, `サーバー氷: ${Math.round(90*r)}g\nカリタウェーブフィルター推奨。抽出後、氷で急冷してください。`), 
     steps:[
         rs('gi1','0:00-0:05', pAct, l('注入 30g', 'Pour 30g', '30g注ぐ'), 30), 
         rs('gi2','0:30-0:35', pAct, l('補水至 50g', 'Pour to 50g', '50gまで注ぐ'), 50), 
@@ -355,7 +369,7 @@ const RECIPE_DATABASE = [
 { 
     id:'glitch-v60-hot', name:l('Glitch 店內沖煮 (熱)','Glitch V60 (Hot)','Glitch 店内レシピ (V60 熱)'), author:'Glitch Coffee', dripper:'Hario V60 01', drinkType:'hot', baseCoffee:15.5, temperature:87, 
     baseGrind: { grinder: 'm_c40', val: 24 }, 
-    description: l('Glitch Coffee 官方 V60 指南。首段注水後進行攪拌以提升萃取均勻度。\n官方網址：https://shop.glitchcoffee.com/en/pages/brew-guide', 'Official Glitch V60 guide. Stir after first pour for even extraction.', 'Glitch Coffee公式V60レシピ。第1投の後に攪拌を行います。'), 
+    description: l('Glitch Coffee 官方 V60 指南。首段注水後進行攪拌以提升萃取均勻度。', 'Official Glitch V60 guide. Stir after first pour for even extraction.', 'Glitch Coffee公式V60レシピ。第1投の後に攪拌を行います。'), 
     steps:[
         rs('gv1','0:00-0:10', pAct, l('注入 60g 並攪拌 5 下', 'Pour 60g & stir 5 times', '60g注湯し5回攪拌'), 60), 
         rs('gv2','0:30-0:40', pAct, l('補水至 170g', 'Pour to 170g', '170gまで注ぐ'), 170), 
@@ -366,7 +380,7 @@ const RECIPE_DATABASE = [
 { 
     id:'glitch-v60-iced', name:l('Glitch 店內沖煮 (冰)','Glitch V60 (Iced)','Glitch 店内レシピ (V60 冰)'), author:'Glitch Coffee', dripper:'Hario V60 01', drinkType:'iced', baseCoffee:15.5, temperature:87, 
     baseGrind: { grinder: 'm_c40', val: 22 },
-    description: r => l(`下壺冰塊：${Math.round(90*r)}g\n首段注水後攪拌 5 下。沖煮完成後請務必充份冷卻。\n官方網址：https://shop.glitchcoffee.com/en/pages/brew-guide`, `Server ice: ${Math.round(90*r)}g\nStir 5 times after the 1st pour. Cool down before serving.`, `サーバー氷: ${Math.round(90*r)}g\n第1投の後に5回攪拌します。`), 
+    description: r => l(`下壺冰塊：${Math.round(90*r)}g\n首段注水後攪拌 5 下。沖煮完成後請務必充份冷卻。`, `Server ice: ${Math.round(90*r)}g\nStir 5 times after the 1st pour. Cool down before serving.`, `サーバー氷: ${Math.round(90*r)}g\n第1投の後に5回攪拌します。`), 
     steps:[
         rs('gvi1','0:00-0:05', pAct, l('注入 70g 並攪拌 5 下', 'Pour 70g & stir 5 times', '70g注湯し5回攪拌'), 70), 
         rs('gvi2','1:00-1:10', pAct, l('補水至 100g', 'Pour to 100g', '100gまで注ぐ'), 100), 
@@ -374,11 +388,11 @@ const RECIPE_DATABASE = [
         rs('gvi4', dAct, dAct, l('搖晃下壺冷卻後倒出', 'Swirl to cool and serve', '冷やして注ぐ'), null)
     ] 
 },
-// --- 其他經典職人配方 ---
+// --- 職人專屬配方 ---
 { 
     id:'silk-samo-rikuto', name:l('SAMO BLOOM 悶蒸法 (Rikuto 版本)','SAMO BLOOM (Rikuto Ver.)','SAMO BLOOM 蒸らし法 (田中陸人版)'), author:'Rikuto Tanaka', dripper:'BEANDY SILK', drinkType:'hot', baseCoffee:16, temperature:90, 
     baseGrind: { grinder: 'm_c40', val: 22 }, 
-    description: l('SAMO BLOOM 是一種先進的悶蒸技術：先使用室溫水（Room Temp）浸泡咖啡粉約 2 分鐘，能更溫和地排出氣體並預濕，顯著提升甜感與乾淨度。\n\n💡 操作重點：\n1. 先在杯中使用 50g 室溫水與咖啡粉混合浸泡 2 分鐘。\n2. 浸泡完成後，再將濕粉移至絲綢濾杯中開始正式注熱水。\n\n完整教學影片：https://www.instagram.com/reel/DQEzav0EQ7O/', 'SAMO BLOOM is a pre-infusion technique: mix grounds with 50g room temp water for 2 mins for sweetness and clarity. Transfer to dripper for hot pours.\n\nVideo: https://www.instagram.com/reel/DQEzav0EQ7O/', 'SAMO BLOOMは常温の水50gで2分間蒸らす技術です。甘みとクリーンさを引き出します。蒸らし後、粉をドリッパーに移して抽出を開始します。'), 
+    description: l('SAMO BLOOM 是一種先進的悶蒸技術：先使用室溫水（Room Temp）浸泡咖啡粉約 2 分鐘，能更溫和地排出氣體並預濕，顯著提升甜感與乾淨度。\n\n💡 操作重點：\n1. 先在杯中使用 50g 室溫水與咖啡粉混合浸泡 2 分鐘。\n2. 浸泡完成後，再將濕粉移至絲綢濾杯中開始正式注熱水。', 'SAMO BLOOM is a pre-infusion technique: mix grounds with 50g room temp water for 2 mins for sweetness and clarity. Transfer to dripper for hot pours.', 'SAMO BLOOMは常温の水50gで2分間蒸らす技術です。甘みとクリーンさを引き出します。蒸らし後、粉をドリッパーに移して抽出を開始します。'), 
     steps:[
         rs('sb1',l('開始前','Pre-start','準備'), l('常溫悶蒸','Room Temp Bloom','常温蒸らし'), l('使用 50g 室溫水浸泡 2 分鐘後移至濾杯', 'Mix with 50g Room Temp water for 2 mins, then transfer to dripper', '常温の水50gで2分蒸らし、ドリッパーへ移す'), null),
         rs('sb2','0:00-0:10', pAct, r=>l(`第一注熱水至 ${Math.round(90*r)}g`, `1st hot pour to ${Math.round(90*r)}g`, `第1投 熱湯を${Math.round(90*r)}gまで`), 90), 
