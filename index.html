@@ -1428,7 +1428,7 @@ return (
 // 重要：DiagSection 定義在 BrewDiagnostics 外部
 // 否則每次 render 都會重新建立內部元件，導致輸入框失焦與滑桿卡頓。
 const DiagSection = ({ label, num, c, classes, children }) => (
-    <div className={`${classes.card} p-5 sm:p-6 space-y-4`}>
+    <div className={`${classes.card} p-4 sm:p-6 space-y-4`}>
         <div className={`flex items-center justify-between border-b border-dashed ${c.border} pb-3`}>
             <h2 className={`text-[11px] font-bold tracking-[0.18em] uppercase ${c.primaryText} flex items-center gap-2`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${c.primary}`}></span>{label}
@@ -1704,11 +1704,11 @@ function BrewDiagnostics({ lang, t, c }) {
             <DiagSection c={c} classes={classes} label={l('沖煮設定', 'Brewing Setup', '抽出設定')} num="I / SETUP">
                 <div>
                     <div className={classes.label}>{l('濾杯類型', 'Dripper', 'ドリッパー')}</div>
-                    <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                         {dripperOpts.map(opt => (
-                            <button key={opt.id} onClick={() => setDripper(opt.id)} className={`p-2 sm:p-2.5 rounded-xl border outline-none transition-all text-center ${dripper === opt.id ? `${c.primary} text-white border-transparent shadow-sm` : `${c.inputBg} ${c.textDark} ${c.border} hover:border-[#7E8D85]/40`}`}>
-                                <div className="text-[11px] sm:text-xs font-black">{opt.label}</div>
-                                <div className={`text-[9px] sm:text-[10px] mt-0.5 ${dripper === opt.id ? 'opacity-80' : c.textMuted}`}>{opt.sub}</div>
+                            <button key={opt.id} onClick={() => setDripper(opt.id)} className={`px-3 py-2.5 rounded-xl border outline-none transition-all text-left sm:text-center ${dripper === opt.id ? `${c.primary} text-white border-transparent shadow-sm` : `${c.inputBg} ${c.textDark} ${c.border} hover:border-[#7E8D85]/40`}`}>
+                                <div className="text-[12px] sm:text-[13px] font-black leading-tight">{opt.label}</div>
+                                <div className={`text-[10px] mt-0.5 ${dripper === opt.id ? 'opacity-80' : c.textMuted}`}>{opt.sub}</div>
                             </button>
                         ))}
                     </div>
@@ -1749,7 +1749,7 @@ function BrewDiagnostics({ lang, t, c }) {
                         <span>100°C</span>
                     </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
                     <div className="sm:col-span-2 space-y-2">
                         <div className="flex items-center justify-between">
                             <span className={`text-[11px] font-bold tracking-[0.12em] uppercase ${c.textDark}`}>{l('粉水比', 'Brew ratio', '粉水比')}</span>
@@ -1773,12 +1773,12 @@ function BrewDiagnostics({ lang, t, c }) {
                 <div>
                     <label className={classes.label}>{l('總沖煮時間', 'Total brew time', '総抽出時間')}</label>
                     <div className="flex items-center gap-2">
-                        <input type="number" min="0" inputMode="numeric" value={mm} onChange={e => setMm(e.target.value)} className={`${classes.input} text-center font-mono w-14 sm:w-20`} />
+                        <input type="number" min="0" inputMode="numeric" value={mm} onChange={e => setMm(e.target.value)} className={`${classes.input} text-center font-mono w-16`} />
                         <span className={`font-mono ${c.textMuted} text-lg`}>:</span>
-                        <input type="number" min="0" max="59" inputMode="numeric" value={ss} onChange={e => setSs(e.target.value)} className={`${classes.input} text-center font-mono w-14 sm:w-20`} />
+                        <input type="number" min="0" max="59" inputMode="numeric" value={ss} onChange={e => setSs(e.target.value)} className={`${classes.input} text-center font-mono w-16`} />
                         <div className={`flex-1 min-w-0 text-[10px] ${c.textMuted} leading-tight pl-2`}>
-                            <div className="truncate">{l('理論預估', 'Expected', '予測')}</div>
-                            <div className={`font-mono ${c.primaryText} font-bold tabular-nums truncate`}>{isValid ? expTimeStr : '–'}</div>
+                            <div>{l('理論預估', 'Expected', '予測')}</div>
+                            <div className={`font-mono ${c.primaryText} font-bold tabular-nums`}>{isValid ? expTimeStr : '–'}</div>
                         </div>
                     </div>
                 </div>
@@ -1863,8 +1863,8 @@ function BrewDiagnostics({ lang, t, c }) {
                 <div className="relative rounded-2xl overflow-hidden border" style={{ borderColor: isDark ? '#393E43' : '#E2DAC9', backgroundColor: isDark ? 'rgba(255,255,255,0.02)' : 'rgba(126,141,133,0.03)' }}>
                     <div className="absolute top-0 left-0 right-0 h-1" style={{ backgroundColor: accentColor }}></div>
                     <div className="p-4 sm:p-5 space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                            <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-black tracking-[0.18em] uppercase border ${c.border}`} style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.7)', color: accentColor }}>
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                            <span className={`inline-flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-black tracking-[0.18em] uppercase border ${c.border}`} style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.7)', color: accentColor }}>
                                 <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: accentColor }}></span>
                                 {badge}
                             </span>
@@ -1917,7 +1917,7 @@ function BrewDiagnostics({ lang, t, c }) {
                         '下のチャートはEY（収率）×TDS（濃度）。中央がSCAゴールドカップ。'
                     )}
                 </p>
-                <div className="relative w-full max-w-[520px] mx-auto rounded-xl border overflow-hidden" style={{ aspectRatio: '6/5', borderColor: chartGrid, backgroundColor: chartBg }}>
+                <div className="relative w-full sm:max-w-[520px] mx-auto rounded-xl border overflow-hidden" style={{ aspectRatio: '6/5', borderColor: chartGrid, backgroundColor: chartBg }}>
                     <svg viewBox="0 0 360 300" className="w-full h-full block">
                         <line x1="0" y1="240" x2="360" y2="240" stroke={chartGrid} strokeWidth="1" />
                         <line x1="0" y1="180" x2="360" y2="180" stroke={chartGrid} strokeWidth="1" />
@@ -1933,10 +1933,10 @@ function BrewDiagnostics({ lang, t, c }) {
                         <text x="6"   y="116" fill={chartLbl} fontSize="9" fontWeight="700" fontFamily="JetBrains Mono">1.5% TDS</text>
                         <text x="159" y="294" fill={chartLbl} fontSize="9" fontWeight="700" fontFamily="JetBrains Mono">18%</text>
                         <text x="236" y="294" fill={chartLbl} fontSize="9" fontWeight="700" fontFamily="JetBrains Mono">21%</text>
-                        <text x="8" y="20" fill={chartLbl} fontSize="8" fontWeight="700">{l('過濃/不足', 'Strong/Under', '濃い/不足')}</text>
-                        <text x="352" y="20" fill={chartLbl} fontSize="8" fontWeight="700" textAnchor="end">{l('過濃/過萃', 'Strong/Over', '濃い/過抽出')}</text>
-                        <text x="8" y="290" fill={chartLbl} fontSize="8" fontWeight="700">{l('稀薄/不足', 'Weak/Under', '薄い/不足')}</text>
-                        <text x="352" y="290" fill={chartLbl} fontSize="8" fontWeight="700" textAnchor="end">{l('稀薄/過萃', 'Weak/Over', '薄い/過抽出')}</text>
+                        <text x="8" y="20" fill={chartLbl} fontSize="9" fontWeight="700">{l('過濃/不足', 'Strong/Under', '濃い/不足')}</text>
+                        <text x="352" y="20" fill={chartLbl} fontSize="9" fontWeight="700" textAnchor="end">{l('過濃/過萃', 'Strong/Over', '濃い/過抽出')}</text>
+                        <text x="8" y="290" fill={chartLbl} fontSize="9" fontWeight="700">{l('稀薄/不足', 'Weak/Under', '薄い/不足')}</text>
+                        <text x="352" y="290" fill={chartLbl} fontSize="9" fontWeight="700" textAnchor="end">{l('稀薄/過萃', 'Weak/Over', '薄い/過抽出')}</text>
                         {isValid && (
                             <g>
                                 <circle cx={dotX} cy={dotY} r="13" fill={chartDot} fillOpacity="0.18" />
