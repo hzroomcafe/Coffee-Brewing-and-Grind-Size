@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>咖啡小村莊工具箱 v3.4.0</title>
+<title>咖啡小村莊工具箱 v3.5.0</title>
 <meta property="og:title" content="咖啡小村莊工具箱 v3.4.0">
 <meta property="og:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta property="og:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
@@ -187,6 +187,7 @@ const i18n = {
     tweak_reset: '重置',
     changelog_title: '版本更新紀錄',
     changelog: [
+    { version: 'v3.5.0', date: '2026.05', changes: ['新增濾杯：Hario V60 NEO（錐形）、Orea Z1（平底），以及全新「不使用濾杯」分類。', '新增配方：粕谷哲 V60 NEO「10投式新配方」（附影片連結）、ChaCha VIP 社群「明亮風味」（Orea Z1，可擴充風味分頁）、ChaCha「冷萃咖啡」（司令官 25 格 / 1:16 / 冰箱 12-15 小時）。', '統一所有沖煮手法結尾為「待咖啡液流乾」，並修正 Orea V3 重複的冰手沖（保留 Rikuto 版）。', '金杯萃取診斷：感官評估改為分組卡片並新增餘韻維度，淺／深色配色強化，手機版面優化。'] },
     { version: 'v3.4.0', date: '2026.05', changes: ['新增「金杯萃取診斷」工具：依 SCA 金杯標準推算 EY / TDS，標記兩種輸入模式、以莫蘭迪色系重作金杯圖。', '診斷但不指令：根據粒徑與實際滑濾時間偏離，提示深淺萃、通道效應與細粉堵塞的方向。', '顯著調整滑桿與下拉的點擊可用區，手機與電腦均與現有工具一致。'] },
     { version: 'v3.3.0', date: '2026.05', changes: ['新增 Glitch Coffee 官方方案：ORIGAMI 折紙濾杯與 Hario V60 的店內沖煮參數。', '支持 Paragon 導溫球水溫補償提示與蛋糕濾紙專屬建議。'] },
     { version: 'v3.2.0', date: '2026.05', changes: ['職人體驗大升級：計時器加入「自動捲動」與「防螢幕休眠」，專注沖煮不中斷。', '全新進階配方：導入 SAMO BLOOM (常溫悶蒸) 技巧，支持絲綢濾杯與 Switch 改良版；並正式加入 OREA Baby O brewer 配方。'] },
@@ -229,6 +230,7 @@ const i18n = {
     tweak_reset: 'Reset',
     changelog_title: 'Release Notes',
     changelog: [
+    { version: 'v3.5.0', date: 'May 2026', changes: ['New drippers: Hario V60 NEO (cone), Orea Z1 (flat bottom), plus a new "No Dripper" category.', 'New recipes: Kasuya\'s V60 NEO "10-Pour New Recipe" (with video link), ChaCha VIP community "Bright" profile (Orea Z1, expandable variants), and ChaCha "Cold Brew" (Comandante 25 clicks / 1:16 / 12-15h fridge).', 'Unified all brew endings to "Wait for drawdown" and removed the duplicate Orea V3 iced recipe (kept Rikuto).', 'Golden Cup Diagnosis: sensory input regrouped into cards with an aftertaste dimension; light/dark palette strengthened; mobile layout refined.'] },
     { version: 'v3.4.0', date: 'May 2026', changes: ['Added "Golden Cup Diagnosis" tool: SCA-based EY/TDS analyzer with refractometer mode and sensory-inference mode; the BCC chart is redrawn in the Morandi palette.', 'Diagnostic, not directive: by comparing your particle size against actual drawdown time it surfaces channeling, bypass and fines clogging as directions to investigate.', 'Touch-tuned ergonomics: larger slider hit areas and selects across both phone and desktop, consistent with the existing tools.'] },
     { version: 'v3.2.0', date: 'May 2026', changes: ['Pro UX Upgrade: Added Auto-Scroll to the active brew step and Screen Wake Lock to prevent sleep during brewing.', 'Advanced Bloom Methods: Introduced SAMO BLOOM (room temp bloom) recipes for Beandy Silk and Hario Switch; added OREA Z1 dripper.'] },
     { version: 'v3.0.0', date: 'May 2026', changes: ['New home: question-led hero "What are we brewing today?" with time-of-day greeting; brew tool elevated as primary entry.', 'Visual system upgrade: paper texture, line-art icons replacing emoji, refined Morandi palette.'] },
@@ -269,6 +271,7 @@ const i18n = {
     tweak_reset: 'リセット',
     changelog_title: 'リリースノート',
     changelog: [
+    { version: 'v3.5.0', date: '2026年5月', changes: ['新しいドリッパー：Hario V60 NEO（円錐）、Orea Z1（平底）、および新カテゴリ「ドリッパー不使用」。', '新レシピ：粕谷哲 V60 NEO「10投式の新レシピ」（動画リンク付き）、ChaCha VIPコミュニティ「明るい」（Orea Z1、バリエーション拡張可）、ChaCha「水出しコーヒー」（コマンダンテ25クリック / 1:16 / 冷蔵12-15時間）。', '全レシピの最終ステップを「落ちきるまで待つ」に統一、Orea V3の重複アイスを削除（Rikutoを保持）。', 'ゴールドカップ診断：官能入力をカード化し余韻軸を追加、ライト/ダーク配色を強化、モバイルレイアウトを最適化。'] },
     { version: 'v3.4.0', date: '2026年5月', changes: ['「ゴールドカップ診断」を追加：SCA基準でEY/TDSを計算、屈折計モードと官能推定モードを備え、BCCチャートをモランディカラーで再描画。', '診断は指示ではなく方向提示：挽き目と実測滑下時間の乖離から、チャネリング、バイパス、微粉詰まりの可能性を提示。', 'スライダーとセレクトのタッチ領域を拡大し、スマホとPC両方で使いやすさを探した。'] },
     { version: 'v3.2.0', date: '2026年5月', changes: ['プロ向けUX強化：抽出ステップの自動スクロール機能と、画面スリープ防止（Wake Lock）機能を搭載。', '新レシピ追加：常温蒸らし「SAMO BLOOM」レシピ（BEANDY SILK版・Switch改良版）、およびOREA Z1ドリッパーを追加。'] },
     { version: 'v3.0.0', date: '2026年5月', changes: ['新しいホーム：「今日は、何を淹れる？」の問いかけと時間帯の挨拶を導入、抽出ツールをメイン入口に。', 'ビジュアル刷新：紙質感、ラインアートアイコン、モランディカラーの微調整。'] },
