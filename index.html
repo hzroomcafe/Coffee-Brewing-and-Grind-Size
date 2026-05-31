@@ -150,6 +150,20 @@ const useClasses = (c) => useMemo(() => ({
   label: `block text-[11px] font-bold ${c.textDark} mb-2 tracking-[0.12em] uppercase`
 }), [c]);
 
+// 長按連續加減：滑鼠/觸控按住後加速重複觸發
+function useHold() {
+  const timer = useRef(null);
+  const start = (fn) => {
+    fn();
+    let delay = 350;
+    const tick = () => { fn(); delay = Math.max(40, delay * 0.8); timer.current = setTimeout(tick, delay); };
+    timer.current = setTimeout(tick, delay);
+  };
+  const stop = () => { if (timer.current) { clearTimeout(timer.current); timer.current = null; } };
+  useEffect(() => stop, []);
+  return { start, stop };
+}
+
 /* ==========================================
    2. 多語系翻譯字典
    ========================================== */
@@ -164,11 +178,11 @@ const i18n = {
     tool_water_title: '礦物水調配計算', tool_water_desc: '支援 Aquacode、NAIRO DROP、APAX LAB 等主流配方，快速計算出目標 TDS 的沖煮用水比例。',
     select_dripper: '濾杯款式', select_dripper_placeholder: '請選擇濾杯...', no_dripper_title: '請選擇濾杯',
     no_dripper_desc: '請從上方選單選擇您要使用的濾杯款式', select_recipe: '請選擇沖煮手法...',
-    current_recipe: '目前參數', available_recipes: '可用的沖煮手法', no_recipe_title: '目前沒有任何參數',
+    current_recipe: '目前參數', available_recipes: '可用的沖煮手法', filter_all: '全部', filter_hot: '熱沖', filter_iced: '冰沖', no_recipe_title: '目前沒有任何參數',
     no_recipe_desc: '這個濾杯尚未建立參數資料庫', select_recipe_prompt: '👆 請從上方選擇沖煮手法',
     auto_calc_title: '調整手邊粉重，自動換算水量', suggest_temp: '建議水溫', suggest_weight: '建議粉量',
     base_ratio: '基準比例', brew_steps: '沖煮流程', converted_ratio: '已換算', original_water: '原',
-    select_grinder_placeholder: '請選擇磨豆機...', timer_title: '沖煮計時器',
+    select_grinder_placeholder: '請選擇磨豆機...', timer_title: '沖煮計時器', summary_btn: '沖煎總結', summary_title: '這杯的沖煎紀錄', summary_total: '總時間', summary_dose: '粉量', summary_water: '總水量', summary_ratio: '粉水比', summary_temp: '水溫', summary_hint: '截圖保存這張卡片，下次重現你的好味道。', summary_close: '關閉',
     from_grinder: '從此磨豆機 (A)', to_grinder: '轉換至磨豆機 (B)', current_grind: '目前刻度',
     target_grind: '建議對應刻度', input_placeholder: '輸入數值', unit: '單位', grind_result_msg: '刻度約落在',
     mapped_linear: '，已為您線性對應。', grind_visual: '沖煮粗細度落點',
@@ -207,11 +221,11 @@ const i18n = {
     tool_water_title: 'Mineral Water Calc', tool_water_desc: 'Supports Aquacode, NAIRO DROP, APAX LAB. Calculate ratio of water to concentrate.',
     select_dripper: 'Dripper', select_dripper_placeholder: 'Select a dripper...', no_dripper_title: 'Select a Dripper',
     no_dripper_desc: 'Please select a dripper from the menu above', select_recipe: 'Select a recipe...',
-    current_recipe: 'Current Recipe', available_recipes: 'Available Recipes', no_recipe_title: 'No Recipes Found',
+    current_recipe: 'Current Recipe', available_recipes: 'Available Recipes', filter_all: 'All', filter_hot: 'Hot', filter_iced: 'Iced', no_recipe_title: 'No Recipes Found',
     no_recipe_desc: 'No recipes registered for this dripper yet.', select_recipe_prompt: '👆 Select a brew recipe above',
     auto_calc_title: 'Adjust coffee weight to auto-calculate', suggest_temp: 'Water Temp', suggest_weight: 'Coffee Wt.',
     base_ratio: 'Base Ratio', brew_steps: 'Brew Steps', converted_ratio: 'Scaled', original_water: 'Orig.',
-    select_grinder_placeholder: 'Select a grinder...', timer_title: 'Brew Timer',
+    select_grinder_placeholder: 'Select a grinder...', timer_title: 'Brew Timer', summary_btn: 'Brew Summary', summary_title: 'This Brew', summary_total: 'Total Time', summary_dose: 'Dose', summary_water: 'Total Water', summary_ratio: 'Ratio', summary_temp: 'Temp', summary_hint: 'Screenshot this card to recreate your great cup next time.', summary_close: 'Close',
     from_grinder: 'From Grinder (A)', to_grinder: 'To Grinder (B)', current_grind: 'Current Grind',
     target_grind: 'Target Grind', input_placeholder: 'Input value', unit: 'Unit', grind_result_msg: 'The grind falls into',
     mapped_linear: ', linearly mapped.', grind_visual: 'Grind Size Category',
@@ -248,11 +262,11 @@ const i18n = {
     tool_water_title: 'ミネラルウォーター計算', tool_water_desc: 'Aquacode、NAIRO DROP、APAX LAB対応。目標TDSに合わせた割合を計算します。',
     select_dripper: 'ドリッパー', select_dripper_placeholder: 'ドリッパーを選択...', no_dripper_title: 'ドリッパーを選択',
     no_dripper_desc: '上のメニューからドリッパーを選択してください', select_recipe: 'レシピを選択...',
-    current_recipe: '現在のレシピ', available_recipes: '利用可能なレシピ', no_recipe_title: 'レシピがありません',
+    current_recipe: '現在のレシピ', available_recipes: '利用可能なレシピ', filter_all: '全部', filter_hot: 'ホット', filter_iced: 'アイス', no_recipe_title: 'レシピがありません',
     no_recipe_desc: 'このドリッパーのレシピはまだありません', select_recipe_prompt: '👆 上からレシピを選択してください',
     auto_calc_title: '粉量を調整して湯量を自動計算', suggest_temp: '推奨湯温', suggest_weight: '推奨粉量',
     base_ratio: '基本比率', brew_steps: '抽出手順', converted_ratio: '換算済', original_water: '元',
-    select_grinder_placeholder: 'ミルを選択...', timer_title: '抽出タイマー',
+    select_grinder_placeholder: 'ミルを選択...', timer_title: '抽出タイマー', summary_btn: '抽出サマリー', summary_title: 'この一杯', summary_total: '合計時間', summary_dose: '粉量', summary_water: '総湯量', summary_ratio: '比率', summary_temp: '湯温', summary_hint: 'このカードをスクリーンショットして次回再現。', summary_close: '閉じる',
     from_grinder: '変換元ミル (A)', to_grinder: '変換先ミル (B)', current_grind: '現在の設定',
     target_grind: '推奨設定値', input_placeholder: '数値を入力', unit: '単位', grind_result_msg: '挽き目の目安は',
     mapped_linear: '。線形変換されました。', grind_visual: '挽き目の範囲',
@@ -293,7 +307,7 @@ function useDatabases(lang) {
       { id: 'Hario Switch 02', name: l('Hario Switch 02 / 阿爾法濾杯', 'Hario Switch 02 / Alpha Dripper', 'Hario Switch 02 / アルファドリッパー') },
       { id: 'Hario V60 01', name: 'Hario V60 01' },
       { id: 'Hario V60 02', name: 'Hario V60 02' },
-      { id: 'Hario V60 NEO', name: l('Hario V60 NEO', 'Hario V60 NEO', 'Hario V60 NEO') },
+      { id: 'Hario V60 NEO', name: l('Hario Neo', 'Hario Neo', 'Hario Neo') },
       { id: 'ORIGAMI', name: l('ORIGAMI 折紙濾杯', 'ORIGAMI Dripper', 'ORIGAMI ドリッパー') },
       { id: 'Stellar Dripper', name: l('星芒濾杯', 'Kadou M1 Dripper', '星芒ドリッパー') },
       { id: 'Tri-Up Flow 01/02', name: 'Tri-Up Flow 01/02' }],
@@ -489,7 +503,7 @@ function useDatabases(lang) {
     { id: 'switch-devil-improved', name: l('惡魔手沖(改良)', 'Devil(Improved)', '悪魔(改良版)'), author: '粕谷哲', dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 20, temperature: 92, baseGrind: { grinder: 'm_c40', val: 28 }, description: l('浸泡-滴濾-低溫浸泡。', 'Steep-Drip-Low Temp Steep.', '浸漬-ドリップ-低温浸漬。'), steps: [rs('di1', '0:00', bClose, (r) => l(`92°C 水注至 ${Math.round(50 * r)}g`, `92°C water to ${Math.round(50 * r)}g`, `92°Cのお湯で${Math.round(50 * r)}gまで`), 50), rs('di2', '0:40', bOpen, (r) => l(`打開開關並注水至 ${Math.round(120 * r)}g`, `Open switch & pour to ${Math.round(120 * r)}g`, `スイッチを開けて${Math.round(120 * r)}gまで`), 120), rs('di3', '1:30', pAct, (r) => l(`注水至 ${Math.round(200 * r)}g`, `Pour to ${Math.round(200 * r)}g`, `${Math.round(200 * r)}gまで注ぐ`), 200), rs('di4', '2:10', bClose, (r) => l(`70°C 水注至 ${Math.round(280 * r)}g`, `70°C water to ${Math.round(280 * r)}g`, `70°Cのお湯で${Math.round(280 * r)}gまで`), 280), rs('di5', '2:45', l('打開', 'Open', '開く'), l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null), rs('di6', l('滴完', 'Finish', '完了'), dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
     { id: 'beandy-silk', name: 'Lonich Coffee', author: 'Tatsumi', dripper: 'BEANDY SILK', drinkType: 'hot', baseCoffee: 15, temperature: 90, baseGrind: { grinder: '1z_kultra', val: 7.5 }, description: l('穩定流速。', 'Stable flow rate.', '安定した流速。'), steps: [rs('b1', '0:00', mAct, mAct, 40), rs('b2', '0:35', pAct, pAct, 80), rs('b3', '1:10', pAct, pAct, 160), rs('b4', '1:45', pAct, l('最後注水', 'Final pour', '最後の注湯'), 230), rs('b5', '2:15', dAct, l('撤走濾杯', 'Remove dripper', 'ドリッパーを外す'), null)] },
     {
-      id: 'hario-neo-kasuya-10', name: l('10投式新配方', '10-Pour New Recipe', '10投式の新レシピ'), author: '粕谷哲', dripper: 'Hario V60 NEO', drinkType: 'hot', baseCoffee: 20, temperature: 95,
+      id: 'hario-neo-kasuya-10', name: l('10刀流配方', '10-Pour New Recipe', '10投式の新レシピ'), author: '粕谷哲', dripper: 'Hario V60 NEO', drinkType: 'hot', baseCoffee: 20, temperature: 95,
       baseGrind: { grinder: 'm_c40', val: 42 },
       link: 'https://www.youtube.com/watch?v=k0nsShguOsU',
       description: l(
@@ -1145,12 +1159,17 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
   const [elapsed, setElapsed] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
+  const holdMinus = useHold();
+  const holdPlus = useHold();
+  const [showSummary, setShowSummary] = useState(false);
 
   const stepRefs = useRef([]);
   const wakeLockRef = useRef(null);
 
   useEffect(() => {let interval;if (isRunning) interval = setInterval(() => setElapsed((e) => e + 1), 1000);return () => clearInterval(interval);}, [isRunning]);
   useEffect(() => {setElapsed(0);setIsRunning(false);setShowTroubleshoot(false);}, [recipe.id]);
+
+
 
   const formatTime = (secs) => {const m = Math.floor(secs / 60);const s = secs % 60;return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;};
 
@@ -1162,6 +1181,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
   const activeStepIndex = useMemo(() => {if (elapsed === 0 && !isRunning) return -1;let idx = 0;for (let i = 0; i < stepStartTimes.length; i++) {if (elapsed >= stepStartTimes[i]) idx = i;}return idx;}, [elapsed, isRunning, stepStartTimes]);
 
   useEffect(() => {
+    if (!isRunning) return undefined;
     const requestWakeLock = async () => {
       try {
         if ('wakeLock' in navigator) {
@@ -1183,15 +1203,19 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (wakeLockRef.current) {
-        wakeLockRef.current.release();
+        try { wakeLockRef.current.release(); } catch (e) {}
         wakeLockRef.current = null;
       }
     };
-  }, []);
+  }, [isRunning]);
 
   useEffect(() => {
     if (isRunning && activeStepIndex >= 0 && stepRefs.current[activeStepIndex]) {
-      stepRefs.current[activeStepIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const el = stepRefs.current[activeStepIndex];
+      const rect = el.getBoundingClientRect();
+      const absoluteY = window.scrollY + rect.top;
+      const target = absoluteY - (window.innerHeight / 2) + (rect.height / 2);
+      window.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
     }
   }, [activeStepIndex, isRunning]);
 
@@ -1202,15 +1226,27 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
             <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
             <p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>{t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText} /></p>
             <div className="flex items-center gap-3 sm:gap-6">
-                {/* 減號按鈕改為 0.5g 級距 */}
-                <button onClick={() => setCustomWeight(Math.max(1, customWeight - 0.5))} className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>-</button>
+                {/* 減號按鈕改為 0.5g 級距，支援長按連續遞減 */}
+                <button
+                    onClick={() => setCustomWeight((w) => Math.max(1, w - 0.5))}
+                    onMouseDown={() => holdMinus.start(() => setCustomWeight((w) => Math.max(1, w - 0.5)))}
+                    onMouseUp={holdMinus.stop} onMouseLeave={holdMinus.stop}
+                    onTouchStart={(e) => { e.preventDefault(); holdMinus.start(() => setCustomWeight((w) => Math.max(1, w - 0.5))); }}
+                    onTouchEnd={holdMinus.stop}
+                    className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none select-none`}>-</button>
                 <div className="relative flex items-baseline">
                     {/* 輸入框寬度加大為 w-32 (手機) 與 w-40 (電腦)，完美容納小數點 */}
                     <input type="number" step="0.5" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-32 sm:w-40 text-center text-5xl sm:text-6xl font-black ${c.textDark} bg-transparent focus:outline-none tracking-tight`} />
                     <span className={`text-lg sm:text-xl font-bold ${c.textMuted} ml-1 shrink-0`}>g</span>
                 </div>
-                {/* 加號按鈕改為 0.5g 級距 */}
-                <button onClick={() => setCustomWeight(customWeight + 0.5)} className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none`}>+</button>
+                {/* 加號按鈕改為 0.5g 級距，支援長按連續遞增 */}
+                <button
+                    onClick={() => setCustomWeight((w) => w + 0.5)}
+                    onMouseDown={() => holdPlus.start(() => setCustomWeight((w) => w + 0.5))}
+                    onMouseUp={holdPlus.stop} onMouseLeave={holdPlus.stop}
+                    onTouchStart={(e) => { e.preventDefault(); holdPlus.start(() => setCustomWeight((w) => w + 0.5)); }}
+                    onTouchEnd={holdPlus.stop}
+                    className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none select-none`}>+</button>
             </div>
         </div>
 
@@ -1241,7 +1277,52 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
                 <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all outline-none`}>{isRunning ? <Pause size={24} /> : <Play size={24} className="ml-1" />}</button><button onClick={() => {setElapsed(0);setIsRunning(false);}} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all outline-none`}><RotateCcw size={18} /></button></div>
                 <div className="text-right"><div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div><div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div></div>
             </div>
+            {elapsed > 0 &&
+            <button onClick={() => setShowSummary(true)} className={`w-full mt-2 py-2.5 rounded-xl ${c.inputBg} border ${c.border} ${c.primaryText} text-sm font-bold flex items-center justify-center gap-2 hover:opacity-80 active:scale-[0.99] transition-all outline-none`}><CheckCircle2 size={16} /> {t('summary_btn')}</button>
+            }
         </div>
+
+        {/* 沖煮總結卡（可截圖） */}
+        {showSummary &&
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowSummary(false)}>
+            <div className={`${c.card} border ${c.border} rounded-3xl p-6 sm:p-7 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200 relative`} onClick={(e) => e.stopPropagation()}>
+                <div className={`absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl ${isIced ? c.blue : c.secondary}`}></div>
+                <div className="flex items-start justify-between mb-4 mt-1">
+                    <div className="flex items-center gap-2.5">
+                        <div className={`p-2 rounded-full ${isIced ? c.icedTag : c.hotTag}`}>{isIced ? <Snowflake size={18} /> : <Flame size={18} />}</div>
+                        <div>
+                            <div className={`text-[10px] font-bold tracking-[0.18em] uppercase ${c.textMuted}`}>{t('summary_title')}</div>
+                            <div className={`text-base font-black ${c.textDark} leading-tight`}>{recipe.name}</div>
+                        </div>
+                    </div>
+                    <button onClick={() => setShowSummary(false)} className={`p-1.5 rounded-full ${c.inputBg} ${c.textMuted} hover:${c.textDark} outline-none`}>✕</button>
+                </div>
+                <div className="grid grid-cols-2 gap-2.5 mb-4">
+                    {[[t('summary_dose'), `${customWeight}g`], [t('summary_water'), `${Math.round(maxWater * ratio)}g`], [t('summary_ratio'), `1:${baseRatio}`], [t('summary_temp'), `${recipe.temperature}°C`]].map(([k, v], i) =>
+                    <div key={i} className={`${c.inputBg} border ${c.border} rounded-xl px-3 py-2.5`}>
+                        <div className={`text-[9px] font-bold tracking-[0.15em] uppercase ${c.textMuted} mb-0.5`}>{k}</div>
+                        <div className={`font-mono text-lg font-black ${c.textDark} tabular-nums`}>{v}</div>
+                    </div>
+                    )}
+                </div>
+                <div className={`${c.inputBg} border ${c.border} rounded-xl p-3 mb-4`}>
+                    <div className={`flex items-center justify-between mb-2 pb-2 border-b border-dashed ${c.border}`}>
+                        <span className={`text-[10px] font-bold tracking-[0.15em] uppercase ${c.textMuted}`}>{t('brew_steps')}</span>
+                        <span className={`font-mono text-sm font-black ${c.primaryText} tabular-nums`}>{t('summary_total')} {formatTime(elapsed)}</span>
+                    </div>
+                    <div className="space-y-1">
+                        {recipe.steps.filter((s) => s.water !== null).map((s, i) =>
+                        <div key={i} className="flex items-center justify-between text-[11px]">
+                            <span className={`font-mono ${c.textMuted}`}>{s.time}</span>
+                            <span className={`font-mono font-bold ${c.textDark} tabular-nums`}>{Math.round(s.water * ratio)}g</span>
+                        </div>
+                        )}
+                    </div>
+                </div>
+                <p className={`text-[11px] ${c.textMuted} leading-relaxed text-center mb-1 flex items-center justify-center gap-1.5`}><Coffee size={12} /> {t('summary_hint')}</p>
+            </div>
+        </div>
+        }
 
         {/* 沖煮步驟列表與風味羅盤 */}
         <div className={`${classes.card} p-5 pb-6`}>
@@ -1280,9 +1361,13 @@ function BrewTool({ lang, t, c }) {
   const [selectedRecipeId, setSelectedRecipeId] = useState(null);
   const [customWeight, setCustomWeight] = useState(15);
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
-  const handleDripperChange = (id) => {setSelectedDripperId(id);setIsSelectorOpen(false);setSelectedRecipeId(null);};
+  const [drinkFilter, setDrinkFilter] = useState('all');
+  const handleDripperChange = (id) => {setSelectedDripperId(id);setIsSelectorOpen(false);setSelectedRecipeId(null);setDrinkFilter('all');};
   const handleSelectRecipe = (recipe) => {setSelectedRecipeId(recipe.id);setCustomWeight(recipe.baseCoffee);setIsSelectorOpen(false);};
-  const filteredRecipes = selectedDripperId ? RECIPE_DATABASE.filter((r) => r.dripper === selectedDripperId) : [];
+  const allDripperRecipes = selectedDripperId ? RECIPE_DATABASE.filter((r) => r.dripper === selectedDripperId) : [];
+  const hasHot = allDripperRecipes.some((r) => r.drinkType !== 'iced');
+  const hasIced = allDripperRecipes.some((r) => r.drinkType === 'iced');
+  const filteredRecipes = allDripperRecipes.filter((r) => drinkFilter === 'all' || (drinkFilter === 'iced' ? r.drinkType === 'iced' : r.drinkType !== 'iced'));
   const selectedRecipe = RECIPE_DATABASE.find((r) => r.id === selectedRecipeId);
 
   const groupedRecipes = useMemo(() => {
@@ -1306,11 +1391,25 @@ function BrewTool({ lang, t, c }) {
 <select value={selectedDripperId} onChange={(e) => handleDripperChange(e.target.value)} className={`${classes.select} ${selectedDripperId === '' ? 'text-gray-400' : c.textDark}`}>
 <option value="" disabled>{t('select_dripper_placeholder')}</option>
 {Object.entries(DRIPPER_CATEGORIES).map(([category, drippers]) =>
-            <optgroup key={category} label={category} className={`${c.textMuted} font-bold`}>{drippers.map((d) => <option key={d.id} value={d.id} className={`${c.textDark} font-medium`}>{d.name}</option>)}</optgroup>
+            <optgroup key={category} label={category} className={`${c.textMuted} font-bold`}>{drippers.slice().sort((a, b) => {
+              const isLatin = (s) => /^[A-Za-z0-9]/.test(s);
+              const la = isLatin(a.name), lb = isLatin(b.name);
+              if (la !== lb) return la ? -1 : 1;
+              return a.name.localeCompare(b.name, lang === 'ja' ? 'ja' : lang === 'en' ? 'en' : 'zh-Hant', { numeric: true, sensitivity: 'base' });
+            }).map((d) => <option key={d.id} value={d.id} className={`${c.textDark} font-medium`}>{d.name}</option>)}</optgroup>
             )}
 </select>
 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><ChevronDown size={20} /></div>
 </div>
+{selectedDripperId && hasHot && hasIced &&
+<div className="flex gap-2 mt-3">
+{[['all', t('filter_all')], ['hot', t('filter_hot')], ['iced', t('filter_iced')]].map(([key, label]) =>
+<button key={key} onClick={() => { setDrinkFilter(key); setSelectedRecipeId(null); }} className={`flex-1 py-2 px-2 text-xs font-bold rounded-xl transition-all outline-none flex items-center justify-center gap-1.5 ${drinkFilter === key ? `${c.primary} text-white shadow-sm` : `${c.inputBg} ${c.textMuted} border ${c.border} hover:${c.textDark}`}`}>
+{key === 'hot' && <Flame size={13} />}{key === 'iced' && <Snowflake size={13} />}{label}
+</button>
+)}
+</div>
+}
 </div>
 {!selectedDripperId ?
       <div className={`${classes.card} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Filter size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_dripper_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_dripper_desc')}</p></div> :
@@ -2084,15 +2183,27 @@ function BrewDiagnostics({ lang, t, c }) {
 // 15. App 主程式
 // ==========================================
 function App() {
-  const [view, setView] = useState('home');const [lang, setLang] = useState('zh');const [isDark, setIsDark] = useState(false);const t = (k) => i18n[lang][k] || k;const c = getColors(isDark);
+  const [view, setView] = useState('home');const [lang, setLang] = useState('zh');
+  const [isDark, setIsDark] = useState(() => { try { const s = localStorage.getItem('coffee_theme'); if (s === 'dark') return true; if (s === 'light') return false; return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } });
+  const t = (k) => i18n[lang][k] || k;const c = getColors(isDark);
   useEffect(() => {document.body.className = c.bg;}, [isDark, c.bg]);
+  // 深色模式：記住使用者選擇，並在未手動設定時跟隨系統
+  useEffect(() => { try { localStorage.setItem('coffee_theme', isDark ? 'dark' : 'light'); } catch (e) {} }, [isDark]);
+  useEffect(() => {
+    if (!window.matchMedia) return undefined;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e) => { try { if (!localStorage.getItem('coffee_theme_manual')) setIsDark(e.matches); } catch (err) {} };
+    mq.addEventListener && mq.addEventListener('change', handler);
+    return () => { mq.removeEventListener && mq.removeEventListener('change', handler); };
+  }, []);
+  const toggleDark = () => { setIsDark((v) => !v); try { localStorage.setItem('coffee_theme_manual', '1'); } catch (e) {} };
 
   // 新增：只要切換頁面 (view 改變)，就自動將畫面捲動回最上方，解決手機版停留在底部的問題
   useEffect(() => {window.scrollTo(0, 0);}, [view]);
 
   return (
     <div className={`min-h-screen ${c.bg} font-sans ${c.textDark} pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
-    <button onClick={() => setIsDark(!isDark)} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full paper-card border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300 outline-none`}>{isDark ? <Sun size={22} /> : <Moon size={22} />}</button>
+    <button onClick={toggleDark} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full paper-card border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300 outline-none`}>{isDark ? <Sun size={22} /> : <Moon size={22} />}</button>
     <div className={`${c.card} ${c.textDark} border-b ${c.border} sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md bg-opacity-90`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className={`p-2 -ml-2 rounded-full hover:${c.inputBg} transition-colors outline-none ${c.textMuted}`}><ArrowLeft size={20} /></button>}<div className={`p-2 rounded-full ${c.primary} text-white`}><Coffee size={18} strokeWidth={2.2} /></div><h1 className={`text-base sm:text-lg font-bold tracking-wide ${c.textDark} hidden sm:block`}>{view === 'home' ? t('app_title') : view === 'brew' ? t('tool_brew_title') : view === 'water' ? t('tool_water_title') : view === 'diag' ? t('tool_diag_title') : t('tool_grind_title')}</h1></div><div className={`flex items-center ${c.inputBg} p-1 rounded-full border ${c.border}`}><button onClick={() => setLang('zh')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'zh' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'en' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'ja' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>JA</button></div></div></div>
     <main className="max-w-3xl mx-auto px-4 py-8 sm:py-10 relative">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : view === 'brew' ? <BrewTool lang={lang} t={t} c={c} /> : view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : view === 'diag' ? <BrewDiagnostics lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />}</main>
 </div>);
