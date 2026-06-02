@@ -185,7 +185,7 @@ const i18n = {
     no_recipe_desc: '這個濾杯尚未建立參數資料庫', select_recipe_prompt: '👆 請從上方選擇沖煮手法',
     auto_calc_title: '調整手邊粉重，自動換算水量', suggest_temp: '建議水溫', suggest_weight: '建議粉量',
     base_ratio: '基準比例', brew_steps: '沖煮流程', converted_ratio: '已換算', original_water: '原',
-    select_grinder_placeholder: '請選擇磨豆機...', timer_title: '沖煮計時器', summary_btn: '沖煎總結', summary_title: '這杯的沖煎紀錄', summary_total: '總時間', summary_dose: '粉量', summary_water: '總水量', summary_ratio: '粉水比', summary_temp: '水溫', summary_hint: '截圖保存這張卡片，下次重現你的好味道。', summary_close: '關閉',
+    select_grinder_placeholder: '請選擇磨豆機...', timer_title: '沖煮計時器', keep_awake: '螢幕常亮', keep_awake_unsupported: '此裝置不支援螢幕常亮', summary_btn: '沖煎總結', summary_title: '這杯的沖煎紀錄', summary_total: '總時間', summary_dose: '粉量', summary_water: '總水量', summary_ratio: '粉水比', summary_temp: '水溫', summary_hint: '截圖保存這張卡片，下次重現你的好味道。', summary_close: '關閉',
     from_grinder: '從此磨豆機 (A)', to_grinder: '轉換至磨豆機 (B)', current_grind: '目前刻度',
     target_grind: '建議對應刻度', input_placeholder: '輸入數值', unit: '單位', grind_result_msg: '刻度約落在',
     mapped_linear: '，已為您線性對應。', grind_visual: '沖煮粗細度落點',
@@ -204,7 +204,7 @@ const i18n = {
     tweak_reset: '重置',
     changelog_title: '版本更新紀錄',
     changelog: [
-    { version: 'v3.6.0', date: '2026.06', changes: ['全新「沖煮小卡」分享：按下分享改為產生一張美觀、適合截圖的奶油色配方小卡，可儲存圖片或直接叫出系統分享面板。', '小卡內容：中英文配方名稱、濾杯與作者、粉量／水量／粉水比／水溫、總沖煮時間與注水段數、研磨度，以及含動作色籤與時間軸線的完整步驟。', '自動風味標籤：依配方描述擷取風味關鍵字顯示於標題下方。', '修正分享連結失效問題；連結現可正確深入對應配方。', '修正手機版配方選單捲動到底時誤觸整頁滑動的問題。'] },
+    { version: 'v3.6.0', date: '2026.06', changes: ['全新「沖煮小卡」分享：按下分享改為產生一張美觀、適合截圖的奶油色配方小卡，可儲存圖片或直接叫出系統分享面板。', '小卡內容：中英文配方名稱、濾杯與作者、粉量／水量／粉水比／水溫、總沖煮時間與注水段數、研磨度，以及含動作色籤與時間軸線的完整步驟。', '自動風味標籤：依配方描述擷取風味關鍵字顯示於標題下方。', '計時器加回「螢幕常亮」開關（預設開啟）：查看配方時防止手機螢幕變暗休眠，可一鍵切換。', '修正分享連結失效問題；連結現可正確深入對應配方。', '配方選單改為底部彈出式設計：開啟時鎖住背景頁面，解決手機雙層滑動不直覺的問題。'] },
     { version: 'v3.5.0', date: '2026.05', changes: ['新增濾杯：Hario V60 NEO（錐形）、Orea Z1（平底），以及全新「不使用濾杯」分類。', '新增配方：粕谷哲 V60 NEO「10投式新配方」（附影片連結）、ChaCha VIP 社群「明亮風味」（Orea Z1，可擴充風味分頁）、ChaCha「冷萃咖啡」（司令官 25 格 / 1:16 / 冰箱 12-15 小時）。', '統一所有沖煮手法結尾為「待咖啡液流乾」，並修正 Orea V3 重複的冰手沖（保留 Rikuto 版）。', '金杯萃取診斷：感官評估改為分組卡片並新增餘韻維度，淺／深色配色強化，手機版面優化。'] },
     { version: 'v3.4.0', date: '2026.05', changes: ['新增「金杯萃取診斷」工具：依 SCA 金杯標準推算 EY / TDS，標記兩種輸入模式、以莫蘭迪色系重作金杯圖。', '診斷但不指令：根據粒徑與實際滑濾時間偏離，提示深淺萃、通道效應與細粉堵塞的方向。', '顯著調整滑桿與下拉的點擊可用區，手機與電腦均與現有工具一致。'] },
     { version: 'v3.3.0', date: '2026.05', changes: ['新增 Glitch Coffee 官方方案：ORIGAMI 折紙濾杯與 Hario V60 的店內沖煮參數。', '支持 Paragon 導溫球水溫補償提示與蛋糕濾紙專屬建議。'] },
@@ -229,7 +229,7 @@ const i18n = {
     no_recipe_desc: 'No recipes registered for this dripper yet.', select_recipe_prompt: '👆 Select a brew recipe above',
     auto_calc_title: 'Adjust coffee weight to auto-calculate', suggest_temp: 'Water Temp', suggest_weight: 'Coffee Wt.',
     base_ratio: 'Base Ratio', brew_steps: 'Brew Steps', converted_ratio: 'Scaled', original_water: 'Orig.',
-    select_grinder_placeholder: 'Select a grinder...', timer_title: 'Brew Timer', summary_btn: 'Brew Summary', summary_title: 'This Brew', summary_total: 'Total Time', summary_dose: 'Dose', summary_water: 'Total Water', summary_ratio: 'Ratio', summary_temp: 'Temp', summary_hint: 'Screenshot this card to recreate your great cup next time.', summary_close: 'Close',
+    select_grinder_placeholder: 'Select a grinder...', timer_title: 'Brew Timer', keep_awake: 'Keep Screen On', keep_awake_unsupported: 'Screen-on not supported on this device', summary_btn: 'Brew Summary', summary_title: 'This Brew', summary_total: 'Total Time', summary_dose: 'Dose', summary_water: 'Total Water', summary_ratio: 'Ratio', summary_temp: 'Temp', summary_hint: 'Screenshot this card to recreate your great cup next time.', summary_close: 'Close',
     from_grinder: 'From Grinder (A)', to_grinder: 'To Grinder (B)', current_grind: 'Current Grind',
     target_grind: 'Target Grind', input_placeholder: 'Input value', unit: 'Unit', grind_result_msg: 'The grind falls into',
     mapped_linear: ', linearly mapped.', grind_visual: 'Grind Size Category',
@@ -248,7 +248,7 @@ const i18n = {
     tweak_reset: 'Reset',
     changelog_title: 'Release Notes',
     changelog: [
-    { version: 'v3.6.0', date: 'Jun 2026', changes: ['New "Brew Card" sharing: the share button now generates a beautiful, screenshot-ready cream recipe card — save the image or open the native share sheet.', 'Card contents: recipe name (with English subtitle), dripper & author, dose / water / ratio / temp, total brew time & pour count, grind setting, plus full steps with action chips and a timeline spine.', 'Auto flavor tags: keywords pulled from the recipe description appear under the title.', 'Fixed broken share links — links now deep-link to the correct recipe.', 'Fixed mobile bug where scrolling the recipe menu to its edge would scroll the whole page instead.'] },
+    { version: 'v3.6.0', date: 'Jun 2026', changes: ['New "Brew Card" sharing: the share button now generates a beautiful, screenshot-ready cream recipe card — save the image or open the native share sheet.', 'Card contents: recipe name (with English subtitle), dripper & author, dose / water / ratio / temp, total brew time & pour count, grind setting, plus full steps with action chips and a timeline spine.', 'Auto flavor tags: keywords pulled from the recipe description appear under the title.', 'Restored the "Keep Screen On" toggle (on by default): prevents the phone screen from dimming while viewing a recipe, with one-tap control.', 'Fixed broken share links — links now deep-link to the correct recipe.', 'Recipe picker is now a bottom sheet that locks background scrolling, fixing the confusing double-scroll on mobile.'] },
     { version: 'v3.5.0', date: 'May 2026', changes: ['New drippers: Hario V60 NEO (cone), Orea Z1 (flat bottom), plus a new "No Dripper" category.', 'New recipes: Kasuya\'s V60 NEO "10-Pour New Recipe" (with video link), ChaCha VIP community "Bright" profile (Orea Z1, expandable variants), and ChaCha "Cold Brew" (Comandante 25 clicks / 1:16 / 12-15h fridge).', 'Unified all brew endings to "Wait for drawdown" and removed the duplicate Orea V3 iced recipe (kept Rikuto).', 'Golden Cup Diagnosis: sensory input regrouped into cards with an aftertaste dimension; light/dark palette strengthened; mobile layout refined.'] },
     { version: 'v3.4.0', date: 'May 2026', changes: ['Added "Golden Cup Diagnosis" tool: SCA-based EY/TDS analyzer with refractometer mode and sensory-inference mode; the BCC chart is redrawn in the Morandi palette.', 'Diagnostic, not directive: by comparing your particle size against actual drawdown time it surfaces channeling, bypass and fines clogging as directions to investigate.', 'Touch-tuned ergonomics: larger slider hit areas and selects across both phone and desktop, consistent with the existing tools.'] },
     { version: 'v3.2.0', date: 'May 2026', changes: ['Pro UX Upgrade: Added Auto-Scroll to the active brew step and Screen Wake Lock to prevent sleep during brewing.', 'Advanced Bloom Methods: Introduced SAMO BLOOM (room temp bloom) recipes for Beandy Silk and Hario Switch; added OREA Z1 dripper.'] },
@@ -271,7 +271,7 @@ const i18n = {
     no_recipe_desc: 'このドリッパーのレシピはまだありません', select_recipe_prompt: '👆 上からレシピを選択してください',
     auto_calc_title: '粉量を調整して湯量を自動計算', suggest_temp: '推奨湯温', suggest_weight: '推奨粉量',
     base_ratio: '基本比率', brew_steps: '抽出手順', converted_ratio: '換算済', original_water: '元',
-    select_grinder_placeholder: 'ミルを選択...', timer_title: '抽出タイマー', summary_btn: '抽出サマリー', summary_title: 'この一杯', summary_total: '合計時間', summary_dose: '粉量', summary_water: '総湯量', summary_ratio: '比率', summary_temp: '湯温', summary_hint: 'このカードをスクリーンショットして次回再現。', summary_close: '閉じる',
+    select_grinder_placeholder: 'ミルを選択...', timer_title: '抽出タイマー', keep_awake: '画面オン', keep_awake_unsupported: 'この端末は画面オンに非対応', summary_btn: '抽出サマリー', summary_title: 'この一杯', summary_total: '合計時間', summary_dose: '粉量', summary_water: '総湯量', summary_ratio: '比率', summary_temp: '湯温', summary_hint: 'このカードをスクリーンショットして次回再現。', summary_close: '閉じる',
     from_grinder: '変換元ミル (A)', to_grinder: '変換先ミル (B)', current_grind: '現在の設定',
     target_grind: '推奨設定値', input_placeholder: '数値を入力', unit: '単位', grind_result_msg: '挽き目の目安は',
     mapped_linear: '。線形変換されました。', grind_visual: '挽き目の範囲',
@@ -290,7 +290,7 @@ const i18n = {
     tweak_reset: 'リセット',
     changelog_title: 'リリースノート',
     changelog: [
-    { version: 'v3.6.0', date: '2026年6月', changes: ['新しい「抽出カード」共有：共有ボタンで、美しくスクリーンショットに最適なクリーム色のレシピカードを生成。画像を保存またはシステム共有シートを表示できます。', 'カード内容：レシピ名（英語サブタイトル付き）、ドリッパーと考案者、粉量／湯量／比率／湯温、総抽出時間と注湯回数、挽き目、そして動作タグとタイムライン軸を備えた全ステップ。', '自動フレーバータグ：レシピ説明からキーワードを抽出してタイトル下に表示。', '共有リンク切れを修正。リンクは正しいレシピへ直接遷移します。', 'モバイルでレシピメニューを端までスクロールするとページ全体がスクロールしてしまう不具合を修正。'] },
+    { version: 'v3.6.0', date: '2026年6月', changes: ['新しい「抽出カード」共有：共有ボタンで、美しくスクリーンショットに最適なクリーム色のレシピカードを生成。画像を保存またはシステム共有シートを表示できます。', 'カード内容：レシピ名（英語サブタイトル付き）、ドリッパーと考案者、粉量／湯量／比率／湯温、総抽出時間と注湯回数、挽き目、そして動作タグとタイムライン軸を備えた全ステップ。', '自動フレーバータグ：レシピ説明からキーワードを抽出してタイトル下に表示。', 'タイマーに「画面オン」トグルを復活（既定でオン）：レシピ閲覧中に画面が暗くならないよう防止し、ワンタップで切替可能。', '共有リンク切れを修正。リンクは正しいレシピへ直接遷移します。', 'レシピ選択をボトムシート化：開いている間は背景スクロールをロックし、モバイルの二重スクロール問題を解消。'] },
     { version: 'v3.5.0', date: '2026年5月', changes: ['新しいドリッパー：Hario V60 NEO（円錐）、Orea Z1（平底）、および新カテゴリ「ドリッパー不使用」。', '新レシピ：粕谷哲 V60 NEO「10投式の新レシピ」（動画リンク付き）、ChaCha VIPコミュニティ「明るい」（Orea Z1、バリエーション拡張可）、ChaCha「水出しコーヒー」（コマンダンテ25クリック / 1:16 / 冷蔵12-15時間）。', '全レシピの最終ステップを「落ちきるまで待つ」に統一、Orea V3の重複アイスを削除（Rikutoを保持）。', 'ゴールドカップ診断：官能入力をカード化し余韻軸を追加、ライト/ダーク配色を強化、モバイルレイアウトを最適化。'] },
     { version: 'v3.4.0', date: '2026年5月', changes: ['「ゴールドカップ診断」を追加：SCA基準でEY/TDSを計算、屈折計モードと官能推定モードを備え、BCCチャートをモランディカラーで再描画。', '診断は指示ではなく方向提示：挽き目と実測滑下時間の乖離から、チャネリング、バイパス、微粉詰まりの可能性を提示。', 'スライダーとセレクトのタッチ領域を拡大し、スマホとPC両方で使いやすさを探した。'] },
     { version: 'v3.2.0', date: '2026年5月', changes: ['プロ向けUX強化：抽出ステップの自動スクロール機能と、画面スリープ防止（Wake Lock）機能を搭載。', '新レシピ追加：常温蒸らし「SAMO BLOOM」レシピ（BEANDY SILK版・Switch改良版）、およびOREA Z1ドリッパーを追加。'] },
@@ -1376,6 +1376,11 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
   const holdPlus = useHold();
   const [showSummary, setShowSummary] = useState(false);
   const [showCard, setShowCard] = useState(false);
+  const wakeSupported = typeof navigator !== 'undefined' && 'wakeLock' in navigator;
+  const [keepAwake, setKeepAwake] = useState(() => {
+    try {return localStorage.getItem('keepAwake') !== '0';} catch (e) {return true;}
+  });
+  useEffect(() => {try {localStorage.setItem('keepAwake', keepAwake ? '1' : '0');} catch (e) {}}, [keepAwake]);
 
   const stepRefs = useRef([]);
   const wakeLockRef = useRef(null);
@@ -1395,12 +1400,12 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
   const activeStepIndex = useMemo(() => {if (elapsed === 0 && !isRunning) return -1;let idx = 0;for (let i = 0; i < stepStartTimes.length; i++) {if (elapsed >= stepStartTimes[i]) idx = i;}return idx;}, [elapsed, isRunning, stepStartTimes]);
 
   useEffect(() => {
-    if (!isRunning) return undefined;
+    if (!keepAwake || !wakeSupported) return undefined;
+    let released = false;
     const requestWakeLock = async () => {
       try {
-        if ('wakeLock' in navigator) {
-          wakeLockRef.current = await navigator.wakeLock.request('screen');
-        }
+        wakeLockRef.current = await navigator.wakeLock.request('screen');
+        wakeLockRef.current.addEventListener('release', () => {});
       } catch (err) {
         console.log('Wake Lock Error:', err);
       }
@@ -1408,20 +1413,21 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
     requestWakeLock();
 
     const handleVisibilityChange = () => {
-      if (wakeLockRef.current !== null && document.visibilityState === 'visible') {
+      if (!released && document.visibilityState === 'visible') {
         requestWakeLock();
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
+      released = true;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (wakeLockRef.current) {
         try { wakeLockRef.current.release(); } catch (e) {}
         wakeLockRef.current = null;
       }
     };
-  }, [isRunning]);
+  }, [keepAwake, wakeSupported]);
 
   useEffect(() => {
     if (isRunning && activeStepIndex >= 0 && stepRefs.current[activeStepIndex]) {
@@ -1496,7 +1502,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
         {/* 沖煮計時器 (Sticky) */}
         <div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
             <div className={`${classes.card} p-4 flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.08)]`}>
-                <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all outline-none`}>{isRunning ? <Pause size={24} /> : <Play size={24} className="ml-1" />}</button><button onClick={() => {setElapsed(0);setIsRunning(false);}} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all outline-none`}><RotateCcw size={18} /></button></div>
+                <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all outline-none`}>{isRunning ? <Pause size={24} /> : <Play size={24} className="ml-1" />}</button><button onClick={() => {setElapsed(0);setIsRunning(false);}} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all outline-none`}><RotateCcw size={18} /></button>{wakeSupported && <button onClick={() => setKeepAwake((v) => !v)} aria-label={t('keep_awake')} title={t('keep_awake')} className={`h-10 px-3 rounded-full flex items-center gap-1.5 border active:scale-95 transition-all outline-none ${keepAwake ? `${c.primary} text-white border-transparent shadow-sm` : `${c.iconBg} ${c.textMuted} ${c.border}`}`}><Sun size={16} strokeWidth={2.4} /><span className="text-[11px] font-bold hidden min-[360px]:inline">{t('keep_awake')}</span></button>}</div>
                 <div className="text-right"><div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div><div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div></div>
             </div>
             {elapsed > 0 &&
@@ -1593,6 +1599,13 @@ function BrewTool({ lang, t, c, initial }) {
   const [search, setSearch] = useState('');
   const handleDripperChange = (id) => {setSelectedDripperId(id);setIsSelectorOpen(false);setSelectedRecipeId(null);setDrinkFilter('all');};
   const handleSelectRecipe = (recipe) => {setSelectedRecipeId(recipe.id);setCustomWeight(recipe.baseCoffee);setIsSelectorOpen(false);setSearch('');};
+  // 配方選單開啟時鎖住背景頁面捲動，避免手機上出現雙層滑動
+  useEffect(() => {
+    if (!isSelectorOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {document.body.style.overflow = prev;};
+  }, [isSelectorOpen]);
   // 全域配方搜尋：跨所有濾杯比對名稱、作者、描述
   const dripperNameOf = (id) => { for (const arr of Object.values(DRIPPER_CATEGORIES)) { const d = arr.find((x) => x.id === id); if (d) return d.name; } return id; };
   const searchResults = useMemo(() => {
@@ -1687,9 +1700,18 @@ searchResults.map((r) =>
             <div className={`font-bold ${c.textMuted} text-lg`}>{t('select_recipe')}</div>}
 <div className={`p-2 rounded-full ${c.infoBg} ${c.textMuted} transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}><ChevronDown size={20} /></div>
 </button>
-{isSelectorOpen &&
-          <div className={`absolute top-full left-0 right-0 mt-2 ${c.card} border ${c.border} rounded-2xl shadow-xl overflow-hidden animate-in slide-in-from-top-2 duration-200 max-h-[60vh] overflow-y-auto overscroll-contain touch-pan-y no-scrollbar`}>
-<div className={`p-2 ${c.inputBg} border-b ${c.border}`}><p className={`text-xs font-bold ${c.textMuted} px-2 py-1`}>{t('available_recipes')} ({filteredRecipes.length})</p></div>
+{isSelectorOpen && ReactDOM.createPortal(
+          <div className="fixed inset-0 z-[80] flex items-end sm:items-center justify-center" onClick={() => setIsSelectorOpen(false)}>
+<div className="absolute inset-0 bg-black/45 backdrop-blur-sm animate-in fade-in duration-200"></div>
+<div onClick={(e) => e.stopPropagation()} className={`relative w-full sm:max-w-lg ${c.card} rounded-t-3xl sm:rounded-3xl shadow-2xl border-t sm:border ${c.border} flex flex-col max-h-[82vh] sm:max-h-[78vh] animate-in slide-in-from-bottom-4 sm:zoom-in-95 duration-300`} style={{ fontFamily: "ui-sans-serif" }}>
+<div className={`shrink-0 ${c.card} rounded-t-3xl px-4 pt-3 pb-3 border-b ${c.border}`}>
+<div className={`sm:hidden w-10 h-1.5 rounded-full ${c.textMuted} opacity-25 mx-auto mb-3`}></div>
+<div className="flex items-center justify-between">
+<p className={`text-sm font-bold ${c.textDark}`}>{t('available_recipes')} <span className={c.textMuted}>({filteredRecipes.length})</span></p>
+<button onClick={() => setIsSelectorOpen(false)} aria-label="close" className={`w-8 h-8 flex items-center justify-center rounded-full ${c.inputBg} ${c.textMuted} hover:${c.textDark} text-sm outline-none active:scale-90 transition-transform`}>✕</button>
+</div>
+</div>
+<div className="flex-1 overflow-y-auto overscroll-contain touch-pan-y no-scrollbar">
 {groupedRecipes.map((group, idx) =>
             <div key={idx} className={`p-4 border-b last:border-0 ${c.border} ${group.items.some((i) => i.id === selectedRecipe?.id) ? c.infoBg : c.card} transition-colors`} style={{ fontFamily: "ui-sans-serif" }}>
         {group.items.length === 1 && !group.items[0].variant ?
@@ -1730,7 +1752,9 @@ searchResults.map((r) =>
     </div>
             )}
 </div>
-          }
+</div>
+</div>,
+          document.body)}
 </div>
 {selectedRecipe ?
         <div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><BrewRecipeDetail recipe={selectedRecipe} GRINDER_DATABASE={GRINDER_DATABASE} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} c={c} lang={lang} nameEn={recipeNameEn[selectedRecipe.id]} dripperName={dripperNameOf(selectedRecipe.dripper)} /></div> :
