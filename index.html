@@ -13,7 +13,7 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script type="text/javascript" nonce="ba0ee679d4aa40fab92034544e4" src="//local.adguard.org?ts=1780473492632&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v4.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="ba0ee679d4aa40fab92034544e4" src="//local.adguard.org?ts=1780473492632&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" nonce="ba0ee679d4aa40fab92034544e4" src="//local.adguard.org?ts=1780477093549&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v4.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="ba0ee679d4aa40fab92034544e4" src="//local.adguard.org?ts=1780477093549&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -1241,6 +1241,10 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
           el.style.width = CARD_W + 'px';
           el.style.maxWidth = CARD_W + 'px';
           el.style.margin = '0';
+          // html2canvas 1.4.1 會把 CJK 文字壓到行框底部，導致膠囊標籤文字看似貼底；
+          // 僅在截圖複製品裡用 paddingBottom 把文字往上推，使其視覺置中（即時預覽不受影響）。
+          el.querySelectorAll('.bc-pill-action').forEach((p) => { p.style.paddingBottom = '4px'; });
+          el.querySelectorAll('.bc-pill-flavor').forEach((p) => { p.style.paddingBottom = '5px'; });
         }
       });
       await new Promise((resolve) => {
@@ -1291,7 +1295,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
         {flavors.length > 0 &&
         <div style={{ marginBottom: 9, marginTop: -2 }}>
             {flavors.map((f, i) =>
-          <span key={i} style={{ display: 'inline-block', fontSize: 11, fontWeight: 700, color: accent, background: accentBg, padding: '4px 11px', borderRadius: 999, letterSpacing: '0.02em', marginRight: 6, marginBottom: 6 }}>{f}</span>
+          <span key={i} className="bc-pill bc-pill-flavor" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: accent, background: accentBg, padding: '0 11px', height: 24, lineHeight: 1, boxSizing: 'border-box', borderRadius: 999, letterSpacing: '0.02em', verticalAlign: 'middle', marginRight: 6, marginBottom: 6 }}>{f}</span>
           )}
           </div>
         }
@@ -1344,7 +1348,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
                     <span style={{ minWidth: 0, flex: 1 }}>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: accent, verticalAlign: 'middle' }}>{s.time}</span>
-                      {s.action && <span style={{ display: 'inline-block', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.03em', color: accent, background: accentBg, padding: '2px 7px', borderRadius: 999, whiteSpace: 'nowrap', verticalAlign: 'middle', marginLeft: 7 }}>{s.action}</span>}
+                      {s.action && <span className="bc-pill bc-pill-action" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.03em', color: accent, background: accentBg, padding: '0 8px', height: 17, lineHeight: 1, boxSizing: 'border-box', borderRadius: 999, whiteSpace: 'nowrap', verticalAlign: 'middle', marginLeft: 7 }}>{s.action}</span>}
                     </span>
                     {w != null &&
                     <span style={{ flexShrink: 0, fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 800, color: ink, paddingLeft: 8 }}>{w}<span style={{ fontSize: 10, color: muted, marginLeft: 1 }}>g</span></span>
