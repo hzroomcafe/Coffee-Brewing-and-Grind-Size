@@ -13,11 +13,26 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script type="text/javascript" nonce="ba0ee679d4aa40fab92034544e4" src="//local.adguard.org?ts=1780477093549&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v4.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="ba0ee679d4aa40fab92034544e4" src="//local.adguard.org?ts=1780477093549&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script>
+// 吞掉瀏覽器無害的 ResizeObserver 迴圈警告，避免污染 console
+window.addEventListener('error', function (e) {
+  if (e && e.message && e.message.indexOf('ResizeObserver loop') !== -1) { e.stopImmediatePropagation(); e.preventDefault(); }
+});
+(function () {
+  var _ce = console.error;
+  console.error = function () {
+    var m = arguments && arguments[0];
+    if (typeof m === 'string' && m.indexOf('ResizeObserver loop') !== -1) return;
+    return _ce.apply(console, arguments);
+  };
+})();
+</script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1228,47 +1243,64 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
 
   const saveImage = async () => {
     const cardNode = cardRef.current;
-    if (busy || !cardNode || typeof html2canvas === 'undefined') return;
+    if (busy || !cardNode) return;
     setBusy(true);
     try {
       try {if (document.fonts && document.fonts.ready) await document.fonts.ready;} catch (e) {}
-      const outCanvas = await html2canvas(cardNode, {
-        scale: 3, backgroundColor: paper, useCORS: true, logging: false,
-        width: CARD_W, windowWidth: CARD_W + 80,
-        onclone: (doc, el) => {
-          // 鎖定截圖時卡片為固定寬度，避免縮放或響應式造成版型跑掉
-          el.style.transform = 'none';
-          el.style.width = CARD_W + 'px';
-          el.style.maxWidth = CARD_W + 'px';
-          el.style.margin = '0';
-          // html2canvas 1.4.1 會把 CJK 文字壓到行框底部，導致膠囊標籤文字看似貼底；
-          // 僅在截圖複製品裡用 paddingBottom 把文字往上推，使其視覺置中（即時預覽不受影響）。
-          el.querySelectorAll('.bc-pill-action').forEach((p) => { p.style.paddingBottom = '4px'; });
-          el.querySelectorAll('.bc-pill-flavor').forEach((p) => { p.style.paddingBottom = '5px'; });
+
+      let blob = null;
+      // 首選 html-to-image：透過瀏覽器自身的繪圖引擎 (SVG foreignObject) 光柵化，
+      // 輸出與螢幕預覽在原理上完全一致（字體、排版、垂直置中都不會跑掉）。
+      const hti = window.htmlToImage;
+      if (hti && hti.toBlob) {
+        try {
+          // skipFonts: 不嘗試內嵌網頁字體（小卡已改用系統字體，隔離環境也拿得到）；
+          // 同時用逾時保護，避免任何情況下卡住。
+          blob = await Promise.race([
+            hti.toBlob(cardNode, {
+              pixelRatio: 3,
+              backgroundColor: paper,
+              width: CARD_W,
+              height: cardNode.offsetHeight,
+              skipFonts: true,
+              style: { transform: 'none', margin: '0' }
+            }),
+            new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 9000))
+          ]);
+        } catch (e) { blob = null; }
+      }
+      // 後備：html2canvas（極少數環境 foreignObject 不可用時）
+      if (!blob && typeof html2canvas !== 'undefined') {
+        const outCanvas = await html2canvas(cardNode, {
+          scale: 3, backgroundColor: paper, useCORS: true, logging: false,
+          width: CARD_W, windowWidth: CARD_W + 80,
+          onclone: (doc, el) => { el.style.transform = 'none'; el.style.width = CARD_W + 'px'; el.style.maxWidth = CARD_W + 'px'; el.style.margin = '0'; }
+        });
+        blob = await new Promise((res) => outCanvas.toBlob(res, 'image/png'));
+      }
+      if (!blob) { setBusy(false); return; }
+
+      const file = new File([blob], `${slug}.png`, { type: 'image/png' });
+      try {
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: recipe.name });
+          setBusy(false); return;
         }
-      });
-      await new Promise((resolve) => {
-        outCanvas.toBlob(async (blob) => {
-          if (!blob) { resolve(); return; }
-          const file = new File([blob], `${slug}.png`, { type: 'image/png' });
-          try {
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              await navigator.share({ files: [file], title: recipe.name });
-              resolve(); return;
-            }
-          } catch (e) {/* fall through to download */}
-          try {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = `${slug}.png`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 1500);
-          } catch (e) {}
-          resolve();
-        }, 'image/png');
-      });
+      } catch (e) {/* fall through to download */}
+      try {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `${slug}.png`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1500);
+      } catch (e) {}
     } catch (e) {} finally {setBusy(false);}
   };
+
+  // 小卡採「系統字體」堆疊：foreignObject 截圖在隔離環境拿不到網頁 Google Fonts、卻拿得到系統字體，
+  // 故預覽與輸出圖一律使用同一套系統字體 → 兩者像素一致（不依賴字體內嵌、不會卡 CORS）。
+  const cardFont = "-apple-system, BlinkMacSystemFont, 'PingFang TC', 'PingFang SC', 'Microsoft JhengHei', 'Hiragino Sans', 'Noto Sans TC', sans-serif";
+  const monoFont = "ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace";
 
   const metaItems = [[<Clock size={12} key="c" />, fmtT(totalSecs)], [<Droplets size={12} key="d" />, `${pours} ${t('card_pours')}`]];
 
@@ -1276,7 +1308,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
   // 注意：所有間距一律使用 margin / padding，避免 flex `gap` 與 `margin-left:auto`
   // 在 html2canvas 1.4.1 下渲染不一致，導致儲存圖片時版型跑掉。
   const cardEl =
-  <div ref={cardRef} style={{ width: CARD_W, background: paper, borderRadius: 28, overflow: 'hidden', boxShadow: `0 24px 60px ${T.shadow}`, fontFamily: "'Noto Sans TC', system-ui, sans-serif" }}>
+  <div ref={cardRef} style={{ width: CARD_W, background: paper, borderRadius: 28, overflow: 'hidden', boxShadow: `0 24px 60px ${T.shadow}`, fontFamily: cardFont }}>
       <div style={{ height: 6, background: accent }}></div>
       <div style={{ padding: '24px 24px 20px' }}>
         {/* Header */}
@@ -1295,7 +1327,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
         {flavors.length > 0 &&
         <div style={{ marginBottom: 9, marginTop: -2 }}>
             {flavors.map((f, i) =>
-          <span key={i} className="bc-pill bc-pill-flavor" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: accent, background: accentBg, padding: '0 11px', height: 24, lineHeight: 1, boxSizing: 'border-box', borderRadius: 999, letterSpacing: '0.02em', verticalAlign: 'middle', marginRight: 6, marginBottom: 6 }}>{f}</span>
+          <span key={i} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: accent, background: accentBg, padding: '0 11px', height: 24, lineHeight: 1, borderRadius: 999, letterSpacing: '0.02em', verticalAlign: 'middle', marginRight: 6, marginBottom: 6 }}>{f}</span>
           )}
           </div>
         }
@@ -1305,7 +1337,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
           {metaItems.map(([icon, val], i) =>
           <span key={i} style={{ display: 'inline-block', whiteSpace: 'nowrap', marginRight: i === metaItems.length - 1 ? 0 : 18 }}>
               <span style={{ color: accent, display: 'inline-block', verticalAlign: 'middle', marginRight: 6 }}>{icon}</span>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: ink, verticalAlign: 'middle' }}>{val}</span>
+              <span style={{ fontFamily: monoFont, fontWeight: 700, color: ink, verticalAlign: 'middle' }}>{val}</span>
             </span>
           )}
         </div>
@@ -1315,7 +1347,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
           {stats.map(([label, val, unit], i) =>
           <div key={i} style={{ flex: 1, textAlign: 'center', padding: '11px 4px', borderLeft: i === 0 ? 'none' : `1px solid ${line}` }}>
               <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: muted, marginBottom: 6 }}>{label}</div>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 800, color: ink, fontSize: 18, lineHeight: 1 }}>
+              <div style={{ fontFamily: monoFont, fontWeight: 800, color: ink, fontSize: 18, lineHeight: 1 }}>
                 {val}<span style={{ fontSize: 11, color: muted, marginLeft: 1 }}>{unit}</span>
               </div>
             </div>
@@ -1326,7 +1358,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
         {grindLabel &&
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: inset, borderRadius: 14, padding: '10px 15px', marginBottom: 16 }}>
             <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: muted }}>{t('base_grind')}</span>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12.5, fontWeight: 700, color: accent }}>{grindLabel}</span>
+            <span style={{ fontFamily: monoFont, fontSize: 12.5, fontWeight: 700, color: accent }}>{grindLabel}</span>
           </div>
         }
 
@@ -1347,11 +1379,11 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
                     <span style={{ minWidth: 0, flex: 1 }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 700, color: accent, verticalAlign: 'middle' }}>{s.time}</span>
-                      {s.action && <span className="bc-pill bc-pill-action" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.03em', color: accent, background: accentBg, padding: '0 8px', height: 17, lineHeight: 1, boxSizing: 'border-box', borderRadius: 999, whiteSpace: 'nowrap', verticalAlign: 'middle', marginLeft: 7 }}>{s.action}</span>}
+                      <span style={{ fontFamily: monoFont, fontSize: 12, fontWeight: 700, color: accent, verticalAlign: 'middle' }}>{s.time}</span>
+                      {s.action && <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 9.5, fontWeight: 800, letterSpacing: '0.03em', color: accent, background: accentBg, padding: '0 8px', height: 18, lineHeight: 1, borderRadius: 999, whiteSpace: 'nowrap', verticalAlign: 'middle', marginLeft: 7 }}>{s.action}</span>}
                     </span>
                     {w != null &&
-                    <span style={{ flexShrink: 0, fontFamily: "'JetBrains Mono', monospace", fontSize: 14, fontWeight: 800, color: ink, paddingLeft: 8 }}>{w}<span style={{ fontSize: 10, color: muted, marginLeft: 1 }}>g</span></span>
+                    <span style={{ flexShrink: 0, fontFamily: monoFont, fontSize: 14, fontWeight: 800, color: ink, paddingLeft: 8 }}>{w}<span style={{ fontSize: 10, color: muted, marginLeft: 1 }}>g</span></span>
                     }
                   </div>
                   <div style={{ fontSize: 12.5, lineHeight: 1.45, color: ink, fontWeight: 500 }}>{rt(s.note)}</div>
@@ -1910,7 +1942,7 @@ const DiagSection = ({ label, num, c, classes, children, accentColor }) => {
 function BrewDiagnostics({ lang, t, c }) {
   const l = (zh, en, ja) => ({ zh, en, ja })[lang] || zh;
   const classes = useClasses(c);
-  const isDark = c.bg === 'bg-[#1A1D1F]';
+  const isDark = c.bg === 'bg-[#1B1E22]';
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
   // ===== Brewing Setup =====
@@ -2496,11 +2528,11 @@ function App() {
     return null;
   })();
   const [view, setView] = useState(initialRoute ? initialRoute.view : 'home');const [lang, setLang] = useState('zh');
-  const [isDark, setIsDark] = useState(() => { try { const s = localStorage.getItem('coffee_theme'); if (s === 'dark') return true; if (s === 'light') return false; return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } });
+  const [isDark, setIsDark] = useState(() => { try { const manual = localStorage.getItem('coffee_theme_manual'); if (manual) { const s = localStorage.getItem('coffee_theme'); if (s === 'dark') return true; if (s === 'light') return false; } return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches; } catch (e) { return false; } });
   const t = (k) => i18n[lang][k] || k;const c = getColors(isDark);
   useEffect(() => {document.body.className = c.bg;}, [isDark, c.bg]);
   // 深色模式：記住使用者選擇，並在未手動設定時跟隨系統
-  useEffect(() => { try { localStorage.setItem('coffee_theme', isDark ? 'dark' : 'light'); } catch (e) {} }, [isDark]);
+  useEffect(() => { try { if (localStorage.getItem('coffee_theme_manual')) { localStorage.setItem('coffee_theme', isDark ? 'dark' : 'light'); } } catch (e) {} }, [isDark]);
   useEffect(() => {
     if (!window.matchMedia) return undefined;
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
