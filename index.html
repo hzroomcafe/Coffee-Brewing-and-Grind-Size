@@ -13,7 +13,7 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" nonce="71a351ad966644e29ca5a7b6bd2" src="//local.adguard.org?ts=1780643701639&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v4.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="71a351ad966644e29ca5a7b6bd2" src="//local.adguard.org?ts=1780643701639&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script>
@@ -219,6 +219,7 @@ const i18n = {
     tweak_reset: '重置',
     changelog_title: '版本更新紀錄',
     changelog: [
+    { version: 'v3.8.0', date: '2026.06', changes: ['新增濾杯類型：無肋平底濾杯（通用），支援錐形或平底無肋骨濾杯使用。', '新增配方：「杜嘉寧 10克萃 / Ten Gram Brew」（C40 約 18 格 / 93°C / 4 × 40g / 粉水比 1:16），附原始 Instagram 食譜連結。'] },
     { version: 'v3.7.0', date: '2026.06', changes: ['配方選單改為從按鈕直接往下展開的下拉式設計，手機與電腦操作一致、更直覺，並修復選單底部圓角。', '解決手機雙層滑動：在配方清單內捲動到頂／底不再誤觸整頁滑動，頁面本身維持正常捲動。', '搜尋欄移除外層框線，只留乾淨的搜尋欄位本身。', '新增配方：Orea Z1「ChaCha VIP（旅行沖煮法）」，併入 ChaCha VIP 家族分頁（C40 20 格 / 100°C / 搭配 MELODRIP，濃可 bypass）。', '4:6 沖煮法說明全面改寫：以「前 40% 控酸甜、後 60% 控濃度」為核心，補充首投以粉重三倍為基準、前兩投合計固定等概念。'] },
     { version: 'v3.6.0', date: '2026.06', changes: ['新增配方：Orea Z1「旅行沖煮法」（ChaCha，C40 20 格 / 100°C / 搭配 MELODRIP，濃可 bypass）。', '全新「沖煮小卡」分享：按下分享改為產生一張美觀、適合截圖的奶油色配方小卡，可儲存圖片或直接叫出系統分享面板。', '修正儲存圖片時版型跑掉的問題：改用固定寬度與穩定排版，預覽與下載的圖片一致。', '小卡內容：中英文配方名稱、濾杯與作者、粉量／水量／粉水比／水溫、總沖煮時間與注水段數、研磨度，以及含動作色籤與時間軸線的完整步驟。', '自動風味標籤：依配方描述擷取風味關鍵字顯示於標題下方。', '進入沖煮配方頁即自動保持螢幕常亮，不再因待機變暗（離開頁面自動釋放）。', '修正粉量 +／− 按鈕：單擊一次穩定遞增 0.5g、長按連續加速，不再一次跳兩格。', '修正分享連結失效問題；連結現可正確深入對應配方。', '配方選單改為彈出式設計（從頁面頂部顯示）：開啟時鎖住背景頁面，解決手機雙層滑動不直覺的問題。'] },
     { version: 'v3.5.0', date: '2026.05', changes: ['新增濾杯：Hario V60 NEO（錐形）、Orea Z1（平底），以及全新「不使用濾杯」分類。', '新增配方：粕谷哲 V60 NEO「10投式新配方」（附影片連結）、ChaCha VIP 社群「明亮風味」（Orea Z1，可擴充風味分頁）、ChaCha「冷萃咖啡」（司令官 25 格 / 1:16 / 冰箱 12-15 小時）。', '統一所有沖煮手法結尾為「待咖啡液流乾」，並修正 Orea V3 重複的冰手沖（保留 Rikuto 版）。', '金杯萃取診斷：感官評估改為分組卡片並新增餘韻維度，淺／深色配色強化，手機版面優化。'] },
@@ -264,6 +265,7 @@ const i18n = {
     tweak_reset: 'Reset',
     changelog_title: 'Release Notes',
     changelog: [
+    { version: 'v3.8.0', date: 'Jun 2026', changes: ['New dripper type: Ribless Flat Bottom (Universal) — supports any ribless cone or flat-bottom dripper.', 'New recipe: "Ten Gram Brew" by 杜嘉寧 (C40 ~18 clicks / 93°C / 4 × 40g pours / 1:16 ratio), with link to original Instagram recipe.'] },
     { version: 'v3.7.0', date: 'Jun 2026', changes: ['Recipe picker is now a dropdown that expands directly below the button — consistent on mobile and desktop, more intuitive, with the bottom corners rounded again.', 'Fixed mobile double-scroll: scrolling to the top/bottom of the recipe list no longer chain-scrolls the whole page, while the page itself stays normally scrollable.', 'Removed the outer frame around the search field — just the clean search input remains.', 'New recipe: Orea Z1 "ChaCha VIP (Travel Brew)", grouped under the ChaCha VIP family tab (C40 20 clicks / 100°C / with MELODRIP, bypass if too strong).', 'Rewrote the 4:6 method guide around its core idea — front 40% controls acidity/sweetness, back 60% controls strength — adding the "first pour = 3× coffee weight" baseline and the fixed front-two-pours concept.'] },
     { version: 'v3.6.0', date: 'Jun 2026', changes: ['New recipe: Orea Z1 "Travel Brew" (ChaCha, C40 20 clicks / 100°C / with MELODRIP, bypass if too strong).', 'New "Brew Card" sharing: the share button now generates a beautiful, screenshot-ready cream recipe card — save the image or open the native share sheet.', 'Fixed the saved-image layout drift: the card now renders at a fixed width with stable spacing, so the downloaded image matches the preview.', 'Card contents: recipe name (with English subtitle), dripper & author, dose / water / ratio / temp, total brew time & pour count, grind setting, plus full steps with action chips and a timeline spine.', 'Auto flavor tags: keywords pulled from the recipe description appear under the title.', 'Screen now stays awake automatically while viewing a recipe (released when you leave the page) — no toggle needed.', 'Fixed the dose +/− buttons: a single tap reliably steps 0.5g and press-and-hold accelerates, instead of jumping two steps at once.', 'Fixed broken share links — links now deep-link to the correct recipe.', 'Recipe picker is now a pop-up panel anchored to the top of the screen that locks background scrolling, fixing the confusing double-scroll on mobile.'] },
     { version: 'v3.5.0', date: 'May 2026', changes: ['New drippers: Hario V60 NEO (cone), Orea Z1 (flat bottom), plus a new "No Dripper" category.', 'New recipes: Kasuya\'s V60 NEO "10-Pour New Recipe" (with video link), ChaCha VIP community "Bright" profile (Orea Z1, expandable variants), and ChaCha "Cold Brew" (Comandante 25 clicks / 1:16 / 12-15h fridge).', 'Unified all brew endings to "Wait for drawdown" and removed the duplicate Orea V3 iced recipe (kept Rikuto).', 'Golden Cup Diagnosis: sensory input regrouped into cards with an aftertaste dimension; light/dark palette strengthened; mobile layout refined.'] },
@@ -307,6 +309,7 @@ const i18n = {
     tweak_reset: 'リセット',
     changelog_title: 'リリースノート',
     changelog: [
+    { version: 'v3.8.0', date: '2026年6月', changes: ['新ドリッパー種別：リブなし平底ドリッパー（汎用）—— リブなしの円錐・平底ドリッパーに対応。', '新レシピ：杜嘉寧「10グラムブリュー / Ten Gram Brew」（C40 約18クリック / 93°C / 4×40g / 1:16比率）、オリジナルInstagramレシピへのリンク付き。'] },
     { version: 'v3.7.0', date: '2026年6月', changes: ['レシピ選択をボタン直下に展開するドロップダウン式に変更。スマホとPCで操作が統一され、より直感的に。下部の角丸も修正。', 'モバイルの二重スクロールを解消：レシピ一覧の上端／下端までスクロールしてもページ全体が連動せず、ページ自体は通常どおりスクロール可能。', '検索欄の外枠を撤去し、すっきりとした検索入力欄のみに。', '新レシピ：Orea Z1「ChaCha VIP（旅行抽出法）」をChaCha VIPファミリーのタブに統合（C40 20クリック / 100℃ / MELODRIP使用、濃ければバイパス希釈）。', '4:6メソッドの解説を全面改稿：「前40%で酸味・甘み、後60%で濃度」を核に、第1投は粉量の3倍が基準・前2投の合計は一定という考え方を補足。'] },
     { version: 'v3.6.0', date: '2026年6月', changes: ['新レシピ：Orea Z1「旅行抽出法」（ChaCha、C40 20クリック / 100℃ / MELODRIP使用、濃ければバイパス希釈）。', '新しい「抽出カード」共有：共有ボタンで、美しくスクリーンショットに最適なクリーム色のレシピカードを生成。画像を保存またはシステム共有シートを表示できます。', '画像保存時のレイアウト崩れを修正：固定幅と安定した余白でレンダリングし、プレビューとダウンロード画像が一致。', 'カード内容：レシピ名（英語サブタイトル付き）、ドリッパーと考案者、粉量／湯量／比率／湯温、総抽出時間と注湯回数、挽き目、そして動作タグとタイムライン軸を備えた全ステップ。', '自動フレーバータグ：レシピ説明からキーワードを抽出してタイトル下に表示。', 'レシピ閲覧中は自動で画面が常時オンになり、スリープで暗くなりません（ページを離れると解除）。', '粉量 +／− ボタンを修正：1タップで確実に0.5g刻み、長押しで加速。一度に2段飛ぶ不具合を解消。', '共有リンク切れを修正。リンクは正しいレシピへ直接遷移します。', 'レシピ選択をポップアップ化（画面上部に表示）：開いている間は背景スクロールをロックし、モバイルの二重スクロール問題を解消。'] },
     { version: 'v3.5.0', date: '2026年5月', changes: ['新しいドリッパー：Hario V60 NEO（円錐）、Orea Z1（平底）、および新カテゴリ「ドリッパー不使用」。', '新レシピ：粕谷哲 V60 NEO「10投式の新レシピ」（動画リンク付き）、ChaCha VIPコミュニティ「明るい」（Orea Z1、バリエーション拡張可）、ChaCha「水出しコーヒー」（コマンダンテ25クリック / 1:16 / 冷蔵12-15時間）。', '全レシピの最終ステップを「落ちきるまで待つ」に統一、Orea V3の重複アイスを削除（Rikutoを保持）。', 'ゴールドカップ診断：官能入力をカード化し余韻軸を追加、ライト/ダーク配色を強化、モバイルレイアウトを最適化。'] },
@@ -340,7 +343,8 @@ function useDatabases(lang) {
       { id: 'BEANDY SILK', name: l('BEANDY SILK 絲綢濾杯', 'BEANDY SILK', 'BEANDY SILK') },
       { id: 'OREA Baby O brewer', name: 'OREA Baby O brewer' },
       { id: 'Orea V3', name: 'Orea V3' },
-      { id: 'Orea Z1', name: 'Orea Z1' }],
+      { id: 'Orea Z1', name: 'Orea Z1' },
+      { id: '無肋平底濾杯', name: l('無肋平底濾杯（通用）', 'Ribless Flat Bottom (Universal)', 'リブなし平底ドリッパー（汎用）') }],
 
       [l('不使用濾杯', 'No Dripper', 'ドリッパー不使用')]: [
       { id: 'No Dripper', name: l('免濾杯沖煮', 'Dripper-free Methods', 'ドリッパー不要の抽出') }]
@@ -574,6 +578,20 @@ function useDatabases(lang) {
       rs('tz3', '1:00', pAct, (r) => l(`注水至 ${Math.round(180 * r)}g`, `Pour to ${Math.round(180 * r)}g`, `${Math.round(180 * r)}gまで`), 180),
       rs('tz4', '1:30', pAct, (r) => l(`注水至 ${Math.round(240 * r)}g`, `Pour to ${Math.round(240 * r)}g`, `${Math.round(240 * r)}gまで`), 240),
       rs('tz5', '2:00', dAct, l('移除濾杯（未滴完也移走）', 'Remove dripper (even if not fully drained)', 'ドリッパーを外す（落ちきらなくてもOK）'), null)]
+    },
+    {
+      id: 'ribless-10gram-du', name: l('杜嘉寧 10克萃', 'Ten Gram Brew', '10グラムブリュー'), author: l('杜嘉寧', 'Dujianing', 'Dujianing'), dripper: '無肋平底濾杯', drinkType: 'hot', baseCoffee: 10, temperature: 93,
+      baseGrind: { grinder: 'm_c40', val: 18 },
+      description: l(
+        '有時候，只是想要簡單喝一杯咖啡。這套手法正是為這樣的心情設計的。\n\n濾杯使用無肋骨的平底或錐形濾杯皆可，濾紙需貼合杯壁，選用快速流速款。用接近杯測的研磨度，讓豆子本身的個性充分表達。\n\n研磨度：C40 約 18 格（杯測研磨度）\n水溫：93°C（非常淺焙可提高至 95–96°C）\n總水量：150–160g\n\n【口感調整技巧】\n↗ 清爽乾淨：每段間隔縮短至 20 秒，或總水量推至 160g\n↘ 圓潤平衡：每段間隔拉長至 25 秒，或總水量保持 150g\n\n原始食譜：https://www.instagram.com/p/DWWDQnZDGTu',
+        'Sometimes you just want a simple, uncomplicated cup — this method is built for exactly that feeling.\n\nUse any ribless flat-bottom or cone dripper with a fast-flow filter paper pressed against the wall. Grind at cupping size to let the bean speak for itself.\n\nGrind: C40 ~18 clicks (cupping size)\nTemp: 93°C (95–96°C for very light roasts)\nTotal water: 150–160g\n\n[Taste adjustments]\n↗ Crisp & Clean: 20s intervals, or push to 160g total\n↘ Round & Balanced: 25s intervals, or keep at 150g\n\nOriginal recipe: https://www.instagram.com/p/DWWDQnZDGTu',
+        'ときには、シンプルに一杯飲みたいだけ——このメソッドはそんな気分のために作られました。\n\nリブなしの平底または円錐ドリッパーに、速流の濾紙を壁面に密着させて使用します。カッピンググラインドサイズで豆本来の個性を引き出します。\n\n挽き目：C40 約18クリック（カッピングサイズ）\n湯温：93°C（超浅煎りは95–96°C）\n総湯量：150–160g\n\n【味の調整】\n↗ すっきりクリーン：20秒間隔、または160gまで注ぐ\n↘ まろやかバランス：25秒間隔、または150gをキープ\n\nオリジナルレシピ：https://www.instagram.com/p/DWWDQnZDGTu'),
+      steps: [
+      rs('tg1', '0:00', pAct, (r) => l(`大水流高擾動注水至 ${Math.round(40 * r)}g`, `High agitation pour to ${Math.round(40 * r)}g`, `高撹拌で${Math.round(40 * r)}gまで注ぐ`), 40),
+      rs('tg2', '0:20', pAct, (r) => l(`大水流高擾動注水至 ${Math.round(80 * r)}g`, `High agitation pour to ${Math.round(80 * r)}g`, `高撹拌で${Math.round(80 * r)}gまで注ぐ`), 80),
+      rs('tg3', '0:40', pAct, (r) => l(`輕柔繞圈注水至 ${Math.round(120 * r)}g`, `Slow circular pour to ${Math.round(120 * r)}g`, `ゆっくり円を描いて${Math.round(120 * r)}gまで注ぐ`), 120),
+      rs('tg4', '1:00', pAct, (r) => l(`中心注水至 ${Math.round(160 * r)}g（完成，可提前至 ${Math.round(150 * r)}g）`, `Center pour to ${Math.round(160 * r)}g (or stop at ${Math.round(150 * r)}g for balanced)`, `センターポアで${Math.round(160 * r)}gまで（${Math.round(150 * r)}gで止めてもOK）`), 160),
+      rs('tg5', '~2:00', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)]
     },
     {
       id: 'coldbrew-commander', name: l('冷萃咖啡', 'Cold Brew', '水出しコーヒー'), author: 'ChaCha', dripper: 'No Dripper', drinkType: 'iced', baseCoffee: 20, temperature: 25,
@@ -951,16 +969,25 @@ function Troubleshooter({ recipe, c, t, lang, onClose }) {
 
     <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8">
         <div className={`w-32 h-32 sm:w-40 sm:h-40 shrink-0 relative flex items-center justify-center rounded-full ${c.inputBg} border ${c.border} shadow-inner`}>
-            <svg viewBox="0 0 100 100" className="absolute w-[80%] h-[80%] opacity-20">
+            <svg viewBox="0 0 100 100" className="absolute inset-0 m-auto w-[80%] h-[80%] opacity-20">
                 {[10, 20, 30, 40].map((r, idx) =>
             <polygon key={idx} fill="none" stroke="currentColor" strokeWidth="0.5" className={c.textMuted} points={[0, 1, 2, 3, 4].map((i) => `${50 + r * Math.cos(Math.PI * 2 * i / 5 - Math.PI / 2)},${50 + r * Math.sin(Math.PI * 2 * i / 5 - Math.PI / 2)}`).join(' ')} />
             )}
                 {[0, 1, 2, 3, 4].map((i) =>
             <line key={i} x1="50" y1="50" x2={50 + 40 * Math.cos(Math.PI * 2 * i / 5 - Math.PI / 2)} y2={50 + 40 * Math.sin(Math.PI * 2 * i / 5 - Math.PI / 2)} stroke="currentColor" strokeWidth="0.5" className={c.textMuted} />
             )}
+                {[0, 1, 2, 3, 4].map((i) => {
+              const keys = ['a', 's', 'b', 'bd', 'af'];
+              const angle = Math.PI * 2 * i / 5 - Math.PI / 2;
+              const lr = 52;
+              const x = 50 + lr * Math.cos(angle);
+              const y = 50 + lr * Math.sin(angle);
+              const shortLabels = { a: l('酸','Acid','酸'), s: l('甜','Sweet','甜'), b: l('苦','Bitter','苦'), bd: l('醇','Body','コク'), af: l('韻','Finish','余韻') };
+              return <text key={i} x={x} y={y} textAnchor="middle" dominantBaseline="central" fontSize="7" fontWeight="800" fill={dimLabels[keys[i]].hex} opacity="0.85">{shortLabels[keys[i]]}</text>;
+            })}
             </svg>
-            <svg viewBox="0 0 100 100" className="absolute w-[80%] h-[80%] overflow-visible">
-                <polygon points={polygonPoints} fill={dimLabels.af.hex} fillOpacity="0.25" stroke={dimLabels.af.hex} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <svg viewBox="0 0 100 100" className="absolute inset-0 m-auto w-[80%] h-[80%] overflow-visible">
+                <polygon points={polygonPoints} fill={dimLabels[Object.keys(scores).reduce((best, k) => scores[k] > scores[best] ? k : best)].hex} fillOpacity="0.2" stroke={dimLabels[Object.keys(scores).reduce((best, k) => scores[k] > scores[best] ? k : best)].hex} strokeWidth="2" strokeLinejoin="round" />
                 {[0, 1, 2, 3, 4].map((i) => {
               const keys = ['a', 's', 'b', 'bd', 'af'];
               const r = scores[keys[i]] / 5 * 40;
@@ -1438,6 +1465,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
 
   const [elapsed, setElapsed] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [activeStepIdx, setActiveStepIdx] = useState(0);
   const [showTroubleshoot, setShowTroubleshoot] = useState(false);
   const holdMinus = useHold();
   const holdPlus = useHold();
@@ -1448,7 +1476,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
   const wakeLockRef = useRef(null);
 
   useEffect(() => {let interval;if (isRunning) interval = setInterval(() => setElapsed((e) => e + 1), 1000);return () => clearInterval(interval);}, [isRunning]);
-  useEffect(() => {setElapsed(0);setIsRunning(false);setShowTroubleshoot(false);}, [recipe.id]);
+  useEffect(() => {setElapsed(0);setIsRunning(false);setActiveStepIdx(0);setShowTroubleshoot(false);}, [recipe.id]);
 
 
 
@@ -1516,12 +1544,12 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
                     className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none select-none`}>-</button>
                 <div className="relative flex items-baseline">
                     {/* 輸入框寬度加大為 w-32 (手機) 與 w-40 (電腦)，完美容納小數點 */}
-                    <input type="number" step="0.5" value={customWeight || ''} onChange={(e) => setCustomWeight(Number(e.target.value))} className={`w-32 sm:w-40 text-center text-5xl sm:text-6xl font-black ${c.textDark} bg-transparent focus:outline-none tracking-tight`} />
+                    <input type="number" step="0.5" min="1" max="80" value={customWeight || ''} onChange={(e) => { const v = Number(e.target.value); if (!isNaN(v)) setCustomWeight(v); }} onBlur={(e) => { const v = Math.min(80, Math.max(1, Number(e.target.value) || 1)); setCustomWeight(Math.round(v * 10) / 10); }} className={`w-32 sm:w-40 text-center text-5xl sm:text-6xl font-black ${c.textDark} bg-transparent focus:outline-none tracking-tight`} />
                     <span className={`text-lg sm:text-xl font-bold ${c.textMuted} ml-1 shrink-0`}>g</span>
                 </div>
                 {/* 加號按鈕：0.5g 級距，單擊一次跳一次、長按連續遞增（pointer 事件避免重複觸發） */}
                 <button
-                    onPointerDown={(e) => { if (e.button && e.button !== 0) return; e.preventDefault(); holdPlus.start(() => setCustomWeight((w) => Math.round((w + 0.5) * 10) / 10)); }}
+                    onPointerDown={(e) => { if (e.button && e.button !== 0) return; e.preventDefault(); holdPlus.start(() => setCustomWeight((w) => Math.min(80, Math.round((w + 0.5) * 10) / 10))); }}
                     onPointerUp={holdPlus.stop} onPointerLeave={holdPlus.stop} onPointerCancel={holdPlus.stop}
                     style={{ touchAction: 'none' }}
                     className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none select-none`}>+</button>
@@ -1560,7 +1588,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
         {/* 沖煮計時器 (Sticky) */}
         <div className={`sticky top-16 z-30 pt-4 pb-2 ${c.bg}`}>
             <div className={`${classes.card} p-4 flex items-center justify-between shadow-[0_8px_30px_rgb(0,0,0,0.08)]`}>
-                <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all outline-none`}>{isRunning ? <Pause size={24} /> : <Play size={24} className="ml-1" />}</button><button onClick={() => {setElapsed(0);setIsRunning(false);}} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all outline-none`}><RotateCcw size={18} /></button></div>
+                <div className="flex items-center gap-3"><button onClick={() => setIsRunning(!isRunning)} className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${isRunning ? c.red : c.primary} shadow-md active:scale-95 transition-all outline-none`}>{isRunning ? <Pause size={24} /> : <Play size={24} className="ml-1" />}</button><button onClick={() => {setElapsed(0);setIsRunning(false);setActiveStepIdx(0);}} className={`w-10 h-10 rounded-full flex items-center justify-center ${c.iconBg} ${c.textMuted} border ${c.border} active:scale-95 transition-all outline-none`}><RotateCcw size={18} /></button></div>
                 <div className="text-right"><div className={`text-[10px] font-bold ${c.textMuted} uppercase tracking-wider mb-0.5`}>{t('timer_title')}</div><div className={`font-mono text-4xl font-black ${isRunning ? c.primaryText : c.textDark} tracking-widest tabular-nums leading-none`}>{formatTime(elapsed)}</div></div>
             </div>
             {elapsed > 0 &&
@@ -1760,7 +1788,9 @@ searchResults.map((r) =>
 <button onClick={() => setIsSelectorOpen(false)} aria-label="close" className={`w-8 h-8 flex items-center justify-center rounded-full ${c.inputBg} ${c.textMuted} hover:${c.textDark} text-sm outline-none active:scale-90 transition-transform`}>✕</button>
 </div>
 <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain touch-pan-y no-scrollbar">
-{groupedRecipes.map((group, idx) =>
+{groupedRecipes.length === 0 ?
+<div className={`p-6 text-center text-sm ${c.textMuted} font-medium`}>{t('search_no_result')}</div> :
+groupedRecipes.map((group, idx) =>
             <div key={idx} className={`p-4 border-b last:border-0 ${c.border} ${group.items.some((i) => i.id === selectedRecipe?.id) ? c.infoBg : c.card} transition-colors`} style={{ fontFamily: "ui-sans-serif" }}>
         {group.items.length === 1 && !group.items[0].variant ?
               <button onClick={() => handleSelectRecipe(group.items[0])} className="w-full text-left flex items-center justify-between group outline-none">
@@ -1883,6 +1913,11 @@ function GrindTool({ lang, t, c }) {
             <div className={`text-center text-xs font-bold ${c.secondaryText} opacity-80 mt-2 min-h-[32px] flex items-center justify-center`}>{grinderB ? GRINDER_DATABASE[grinderB].unit : t('unit')}</div>
         </div>
     </div>
+    {(!grinderA || !grinderB) &&
+      <div className={`text-center py-4 px-6 rounded-2xl ${c.inputBg} border ${c.border} text-sm ${c.textMuted} font-medium animate-in fade-in duration-300`}>
+        {lang === 'ja' ? '上の2台のグラインダーを選択すると、研磨刻度の換算結果が表示されます' : lang === 'en' ? 'Select both grinders above to see the converted grind setting' : '請選擇上方的兩台磨豆機，即可換算對應研磨刻度'}
+      </div>
+    }
     {grinderB && result?.catIdx !== -1 &&
       <div className={`${c.card} p-6 rounded-2xl shadow-sm border ${c.border} animate-in fade-in duration-300`}>
             {result && !result.error && <div className={`text-center text-sm font-bold p-4 ${c.inputBg} rounded-xl border ${c.border} mb-6 ${c.textDark}`}>{t('grind_result_msg')} <strong className={c.primaryText}>{result.catName}</strong>{t('mapped_linear')}</div>}
@@ -2547,8 +2582,7 @@ function App() {
 
   return (
     <div className={`min-h-screen ${c.bg} font-sans ${c.textDark} pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
-    <button onClick={toggleDark} className={`fixed bottom-6 right-6 z-50 p-3.5 rounded-full paper-card border ${c.border} ${c.card} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-300 outline-none`}>{isDark ? <Sun size={22} /> : <Moon size={22} />}</button>
-    <div className={`${c.card} ${c.textDark} border-b ${c.border} sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md bg-opacity-90`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className={`p-2 -ml-2 rounded-full hover:${c.inputBg} transition-colors outline-none ${c.textMuted}`}><ArrowLeft size={20} /></button>}<div className={`p-2 rounded-full ${c.primary} text-white`}><Coffee size={18} strokeWidth={2.2} /></div><h1 className={`text-base sm:text-lg font-bold tracking-wide ${c.textDark} hidden sm:block`}>{view === 'home' ? t('app_title') : view === 'brew' ? t('tool_brew_title') : view === 'water' ? t('tool_water_title') : view === 'diag' ? t('tool_diag_title') : t('tool_grind_title')}</h1></div><div className={`flex items-center ${c.inputBg} p-1 rounded-full border ${c.border}`}><button onClick={() => setLang('zh')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'zh' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'en' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'ja' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>JA</button></div></div></div>
+    <div className={`${c.card} ${c.textDark} border-b ${c.border} sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md bg-opacity-90`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className={`p-2 -ml-2 rounded-full hover:${c.inputBg} transition-colors outline-none ${c.textMuted}`}><ArrowLeft size={20} /></button>}<div className={`p-2 rounded-full ${c.primary} text-white`}><Coffee size={18} strokeWidth={2.2} /></div><h1 className={`text-base sm:text-lg font-bold tracking-wide ${c.textDark} hidden sm:block`}>{view === 'home' ? t('app_title') : view === 'brew' ? t('tool_brew_title') : view === 'water' ? t('tool_water_title') : view === 'diag' ? t('tool_diag_title') : t('tool_grind_title')}</h1></div><div className="flex items-center gap-2"><div className={`flex items-center ${c.inputBg} p-1 rounded-full border ${c.border}`}><button onClick={() => setLang('zh')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'zh' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'en' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'ja' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>JA</button></div><button onClick={toggleDark} aria-label="toggle dark mode" className={`p-2 rounded-full ${c.inputBg} border ${c.border} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-200 outline-none`}>{isDark ? <Sun size={17} /> : <Moon size={17} />}</button></div></div></div>
     <main className="max-w-3xl mx-auto px-4 py-8 sm:py-10 relative">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : view === 'brew' ? <BrewTool lang={lang} t={t} c={c} initial={initialRoute} /> : view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : view === 'diag' ? <BrewDiagnostics lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />}</main>
 </div>);
 
@@ -2644,7 +2678,7 @@ function HomeView({ setView, t, c }) {
                                 <span className={`text-[11px] font-medium ${c.textMuted} tracking-wider`}>{log.date}</span>
                                 {idx === 0 && <span className={`text-[9px] font-bold tracking-widest uppercase ${c.primaryText} ${c.inputBg} border ${c.border} px-2 py-0.5 rounded-full ml-auto self-start sm:self-auto`}>Latest</span>}
                             </div>
-                            <ul className={`text-[12px] ${c.textDark} space-y-1.5 leading-relaxed font-medium`}>{log.changes.map((change, i) => <li key={i} className="flex gap-2"><span className={`mt-1.5 w-1 h-1 rounded-full ${c.accent} shrink-0`}></span><span>{change}</span></li>)}</ul>
+                            <ul className={`text-[13px] ${c.textDark} space-y-2.5 leading-relaxed font-medium`}>{log.changes.map((change, i) => <li key={i} className="flex gap-2.5"><span className={`mt-2 w-1.5 h-1.5 rounded-full ${c.accent} shrink-0`}></span><span className="flex-1">{change}</span></li>)}</ul>
                         </div>
             )}
                 </div>
