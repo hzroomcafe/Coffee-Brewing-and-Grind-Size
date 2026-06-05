@@ -580,7 +580,7 @@ function useDatabases(lang) {
       rs('tz5', '2:00', dAct, l('移除濾杯（未滴完也移走）', 'Remove dripper (even if not fully drained)', 'ドリッパーを外す（落ちきらなくてもOK）'), null)]
     },
     {
-      id: 'ribless-10gram-du', name: l('杜嘉寧 10克萃', 'Ten Gram Brew', '10グラムブリュー'), author: l('杜嘉寧', 'Dujianing', 'Dujianing'), dripper: '無肋平底濾杯', drinkType: 'hot', baseCoffee: 10, temperature: 93,
+      id: 'ribless-10gram-du', name: l('杜嘉寧 10克萃', 'Ten Gram Brew', '10グラムブリュー'), author: l('杜嘉寧', 'Dujianing', 'Dujianing'), dripper: '無肋平底濾杯', drinkType: 'hot', baseCoffee: 10, temperature: 93, lockedDose: true,
       baseGrind: { grinder: 'm_c40', val: 18 },
       description: l(
         '有時候，只是想要簡單喝一杯咖啡。這套手法正是為這樣的心情設計的。\n\n濾杯使用無肋骨的平底或錐形濾杯皆可，濾紙需貼合杯壁，選用快速流速款。用接近杯測的研磨度，讓豆子本身的個性充分表達。\n\n研磨度：C40 約 18 格（杯測研磨度）\n水溫：93°C（非常淺焙可提高至 95–96°C）\n總水量：150–160g\n\n【口感調整技巧】\n↗ 清爽乾淨：每段間隔縮短至 20 秒，或總水量推至 160g\n↘ 圓潤平衡：每段間隔拉長至 25 秒，或總水量保持 150g\n\n原始食譜：https://www.instagram.com/p/DWWDQnZDGTu',
@@ -1532,6 +1532,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
   return (
     <div className="space-y-4">
         {/* 重量計算卡片 */}
+        {!recipe.lockedDose &&
         <div className={`${classes.card} p-6 flex flex-col items-center justify-center relative overflow-hidden`}>
             <div className={`absolute top-0 left-0 w-1.5 h-full ${isIced ? c.blue : c.secondary}`}></div>
             <p className={`text-sm font-bold ${c.textDark} mb-5 flex items-center gap-2`}>{t('auto_calc_title')} <Droplets size={18} className={isIced ? c.blueText : c.secondaryText} /></p>
@@ -1555,6 +1556,7 @@ function BrewRecipeDetail({ recipe, GRINDER_DATABASE, customWeight, setCustomWei
                     className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 flex items-center justify-center rounded-full border-2 ${c.border} text-gray-500 hover:opacity-80 active:scale-95 text-2xl font-medium outline-none select-none`}>+</button>
             </div>
         </div>
+        }
 
         {/* 研磨建議模組 */}
         {recipe.baseGrind &&
