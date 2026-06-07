@@ -13,7 +13,7 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script type="text/javascript" nonce="71a351ad966644e29ca5a7b6bd2" src="//local.adguard.org?ts=1780643701639&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v4.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="71a351ad966644e29ca5a7b6bd2" src="//local.adguard.org?ts=1780643701639&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" nonce="8c5fd6cf6214457fba2f3a33217" src="//local.adguard.org?ts=1780808433512&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v4.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="8c5fd6cf6214457fba2f3a33217" src="//local.adguard.org?ts=1780808433512&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script>
@@ -1687,7 +1687,17 @@ function BrewTool({ lang, t, c, initial }) {
   const [search, setSearch] = useState('');
   const handleDripperChange = (id) => {setSelectedDripperId(id);setIsSelectorOpen(false);setSelectedRecipeId(null);setDrinkFilter('all');};
   const handleSelectRecipe = (recipe) => {setSelectedRecipeId(recipe.id);setCustomWeight(recipe.baseCoffee);setIsSelectorOpen(false);setSearch('');};
-  // 全域配方搜尋：跨所有濾杯比對名稱、作者、描述
+  const triggerRef = useRef(null);
+  const [dropdownStyle, setDropdownStyle] = useState({});
+  const openSelector = () => {
+    if (!isSelectorOpen && triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - r.bottom - 8;
+      const maxH = Math.min(Math.max(spaceBelow - 8, 200), 520);
+      setDropdownStyle({ top: r.bottom + 8, left: r.left, width: r.width, maxHeight: maxH });
+    }
+    setIsSelectorOpen((v) => !v);
+  };
   const dripperNameOf = (id) => { for (const arr of Object.values(DRIPPER_CATEGORIES)) { const d = arr.find((x) => x.id === id); if (d) return d.name; } return id; };
   const searchResults = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -1775,16 +1785,16 @@ searchResults.map((r) =>
       filteredRecipes.length > 0 ?
       <div className="space-y-4 animate-in fade-in duration-300">
 <div className="relative z-20">
-<button onClick={() => setIsSelectorOpen(!isSelectorOpen)} className={`w-full text-left ${c.card} border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : c.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between outline-none`}>
+<button ref={triggerRef} onClick={openSelector} className={`w-full text-left ${c.card} border ${isSelectorOpen ? 'border-[#7E8D85] ring-2 ring-[#7E8D85] ring-opacity-20' : c.border} rounded-2xl p-4 shadow-sm transition-all flex items-center justify-between outline-none`}>
 {selectedRecipe ?
             <div className="flex items-center gap-3"><div className={`p-2.5 rounded-full ${selectedRecipe.drinkType === 'iced' ? c.icedTag : c.hotTag}`}>{selectedRecipe.drinkType === 'iced' ? <Snowflake size={20} /> : <Flame size={20} />}</div><div><div className={`text-[11px] font-bold ${c.textMuted} mb-0.5`}>{t('current_recipe')}</div><div className={`font-bold text-lg ${c.textDark}`}>{selectedRecipe.name}</div></div></div> :
             <div className={`font-bold ${c.textMuted} text-lg`}>{t('select_recipe')}</div>}
 <div className={`p-2 rounded-full ${c.infoBg} ${c.textMuted} transition-transform duration-300 ${isSelectorOpen ? 'rotate-180' : ''}`}><ChevronDown size={20} /></div>
 </button>
-{isSelectorOpen &&
+{isSelectorOpen && ReactDOM.createPortal(
           <React.Fragment>
-<div className="fixed inset-0 z-[40]" onClick={() => setIsSelectorOpen(false)}></div>
-<div className={`absolute left-0 right-0 top-full mt-2 z-[50] ${c.card} rounded-2xl shadow-2xl border ${c.border} overflow-hidden flex flex-col max-h-[min(62vh,560px)] animate-in slide-in-from-top-2 fade-in duration-200`} style={{ fontFamily: "ui-sans-serif" }}>
+<div className="fixed inset-0 z-[60]" onClick={() => setIsSelectorOpen(false)}></div>
+<div className={`fixed z-[70] ${c.card} rounded-2xl shadow-2xl border ${c.border} overflow-hidden flex flex-col animate-in slide-in-from-top-2 fade-in duration-200`} style={{ ...dropdownStyle, fontFamily: 'ui-sans-serif' }}>
 <div className={`shrink-0 px-4 pt-3.5 pb-3 border-b ${c.border} flex items-center justify-between`}>
 <p className={`text-sm font-bold ${c.textDark}`}>{t('available_recipes')} <span className={c.textMuted}>({filteredRecipes.length})</span></p>
 <button onClick={() => setIsSelectorOpen(false)} aria-label="close" className={`w-8 h-8 flex items-center justify-center rounded-full ${c.inputBg} ${c.textMuted} hover:${c.textDark} text-sm outline-none active:scale-90 transition-transform`}>✕</button>
@@ -1833,8 +1843,8 @@ groupedRecipes.map((group, idx) =>
             )}
 </div>
 </div>
-</React.Fragment>
-          }
+</React.Fragment>,
+          document.body)}
 </div>
 {selectedRecipe ?
         <div className={`transition-opacity duration-300 ${isSelectorOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}><BrewRecipeDetail recipe={selectedRecipe} GRINDER_DATABASE={GRINDER_DATABASE} customWeight={customWeight} setCustomWeight={setCustomWeight} t={t} c={c} lang={lang} nameEn={recipeNameEn[selectedRecipe.id]} dripperName={dripperNameOf(selectedRecipe.dripper)} /></div> :
