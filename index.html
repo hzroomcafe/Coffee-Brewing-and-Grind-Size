@@ -13,7 +13,7 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script type="text/javascript" nonce="152d95f6fb1f4bc08a1f677e993" src="//local.adguard.org?ts=1781625345051&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v5.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="152d95f6fb1f4bc08a1f677e993" src="//local.adguard.org?ts=1781625345051&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" nonce="3ea5d2bd5d6f4183a0b356dac64" src="//local.adguard.org?ts=1782137382639&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v5.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3ea5d2bd5d6f4183a0b356dac64" src="//local.adguard.org?ts=1782137382639&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script>
@@ -203,7 +203,7 @@ const i18n = {
     tool_water_title: '礦物水調配計算', tool_water_desc: '支援 Aquacode、NAIRO DROP、APAX LAB 等主流配方，快速計算出目標 TDS 的沖煮用水比例。',
     select_dripper: '濾杯款式', select_dripper_placeholder: '請選擇濾杯...', no_dripper_title: '請選擇濾杯',
     no_dripper_desc: '請從上方選單選擇您要使用的濾杯款式', select_recipe: '請選擇沖煮手法...',
-    current_recipe: '目前參數', available_recipes: '可用的沖煮手法', filter_all: '全部', filter_hot: '熱沖', filter_iced: '冰沖', share_btn: '分享此配方', share_copied: '連結已複製！', search_placeholder: '搜尋配方（如：惡魔、冷萃、4:6）', search_no_result: '找不到符合的配方', share_btn: '分享此配方', share_copied: '連結已複製！', card_title: '沖煮小卡', card_save: '儲存圖片', card_share: '分享圖片', card_saving: '產生圖片中…', card_hint: '儲存或長按圖片即可分享給朋友', card_footer: '由咖啡小村莊工具箱製作', card_scan: '掃碼開啟這支配方', card_pours: '注水段數', card_format: '尺寸', fmt_auto: '自適應', fmt_square: '方形', fmt_story: '直式', card_theme: '配色', theme_cream: '奶油', theme_night: '深夜', theme_kraft: '牛皮', no_recipe_title: '目前沒有任何參數',
+    current_recipe: '目前參數', available_recipes: '可用的沖煮手法', filter_all: '全部', filter_hot: '熱沖', filter_iced: '冰沖', select_drink: '冰熱選擇', select_drink_hint: '先選冰熱，自動篩選對應濾杯', dripper_none_for_drink: '此類型暫無對應濾杯', share_btn: '分享此配方', share_copied: '連結已複製！', search_placeholder: '搜尋配方（如：惡魔、冷萃、4:6）', search_no_result: '找不到符合的配方', share_btn: '分享此配方', share_copied: '連結已複製！', card_title: '沖煮小卡', card_save: '儲存圖片', card_share: '分享圖片', card_saving: '產生圖片中…', card_hint: '儲存或長按圖片即可分享給朋友', card_footer: '由咖啡小村莊工具箱製作', card_scan: '掃碼開啟這支配方', card_pours: '注水段數', card_format: '尺寸', fmt_auto: '自適應', fmt_square: '方形', fmt_story: '直式', card_theme: '配色', theme_cream: '奶油', theme_night: '深夜', theme_kraft: '牛皮', no_recipe_title: '目前沒有任何參數',
     no_recipe_desc: '這個濾杯尚未建立參數資料庫', select_recipe_prompt: '👆 請從上方選擇沖煮手法',
     auto_calc_title: '調整手邊粉重，自動換算水量', suggest_temp: '建議水溫', suggest_weight: '建議粉量',
     base_ratio: '基準比例', brew_steps: '沖煮流程', converted_ratio: '已換算', original_water: '原',
@@ -226,9 +226,9 @@ const i18n = {
     tweak_reset: '重置',
     changelog_title: '版本更新紀錄',
     changelog: [
+    { version: 'v4.5.0', date: '2026.06', changes: ['依 Varia 官方與評測資料重新校正 Varia VS3 刻度：刻度為無段式 0–10（0.1 一格）。espresso 約 #4、濾泡／手沖 #9–11、法壓／冷萃約 #16。土耳其 1–2.5、espresso 2.5–6、摩卡／愛樂壓 6–9、手沖 9–12、法壓／冷萃 12–18（切勿低於 2，過細易卡刀盤）。'] },
     { version: 'v4.4.0', date: '2026.06', changes: ['磨豆機資料庫新增「xBloom Studio 2」全自動研磨手沖機：48mm 錐刀、80 段刻度（1–80）、每段 18.75 微米。（沖煮區間對應參考第三方烘豆商與 Basic Barista 指南，非 xBloom 官方表）。'] },
-    { version: 'v4.3.0', date: '2026.06', changes: ['磨豆機資料庫新增「Kinu M47（手沖刀盤 Pour-Over Burr）」：原廠刀盤之外的替換刀盤，專為手沖／批量沖煮設計，不建議用於 espresso。', '修正 Varia VS3 刻度（原本有誤）：espresso 約 #4、濾泡約 #10，總範圍約 17 段，土耳其無法達到。', '修正 Kinu M47 原廠刀盤與 Mazzer Omega／Omega X 分類對位（依官方數據重新對齊到土耳其／espresso／摩卡／手沖／法壓五個區間）。'] },
-    { version: 'v4.2.0', date: '2026.06', changes: ['磨豆機換算新增「Red Clix 模式」切換：選到 Comandante C40 時出現開關，開啟後 C40 格數自動加倍（×2），不需另開一個欄位。', '依 Mazzer 官方研磨對照表修正 Omega／Omega X 格數：Omega espresso 4–7、摩卡 7–9、手沖 9–10、濾泡 10–11、法壓 11–13；Omega X 約為其 2 倍。（Soft／Fast 兩種刀盤粒徑分布相近，官方研磨設定相同，不分開）。'] },
+    { version: 'v4.3.0', date: '2026.06', changes: ['磨豆機資料庫新增「Kinu M47（手沖刀盤 Pour-Over Burr）」：原廠刀盤之外的替換刀盤，專為手沖／批量沖煮設計，不建議用於 espresso。', '修正 Kinu M47 原廠刀盤與 Mazzer Omega／Omega X 分類對位（依官方數據重新對齊到土耳其／espresso／摩卡／手沖／法壓五個區間）。'] },
     ],
 
   },
@@ -242,7 +242,7 @@ const i18n = {
     tool_water_title: 'Mineral Water Calc', tool_water_desc: 'Supports Aquacode, NAIRO DROP, APAX LAB. Calculate ratio of water to concentrate.',
     select_dripper: 'Dripper', select_dripper_placeholder: 'Select a dripper...', no_dripper_title: 'Select a Dripper',
     no_dripper_desc: 'Please select a dripper from the menu above', select_recipe: 'Select a recipe...',
-    current_recipe: 'Current Recipe', available_recipes: 'Available Recipes', filter_all: 'All', filter_hot: 'Hot', filter_iced: 'Iced', share_btn: 'Share this recipe', share_copied: 'Link copied!', search_placeholder: 'Search recipes (e.g. Devil, Cold Brew, 4:6)', search_no_result: 'No matching recipes', share_btn: 'Share this recipe', share_copied: 'Link copied!', card_title: 'Brew Card', card_save: 'Save Image', card_share: 'Share Image', card_saving: 'Rendering…', card_hint: 'Save or long-press the image to share it', card_footer: 'Made with Coffee Village Toolkit', card_scan: 'Scan to open this recipe', card_pours: 'Pours', card_format: 'Size', fmt_auto: 'Auto', fmt_square: 'Square', fmt_story: 'Story', card_theme: 'Theme', theme_cream: 'Cream', theme_night: 'Night', theme_kraft: 'Kraft', no_recipe_title: 'No Recipes Found',
+    current_recipe: 'Current Recipe', available_recipes: 'Available Recipes', filter_all: 'All', filter_hot: 'Hot', filter_iced: 'Iced', select_drink: 'Hot or Iced', select_drink_hint: 'Pick hot/iced first to filter drippers', dripper_none_for_drink: 'No drippers for this type yet', share_btn: 'Share this recipe', share_copied: 'Link copied!', search_placeholder: 'Search recipes (e.g. Devil, Cold Brew, 4:6)', search_no_result: 'No matching recipes', share_btn: 'Share this recipe', share_copied: 'Link copied!', card_title: 'Brew Card', card_save: 'Save Image', card_share: 'Share Image', card_saving: 'Rendering…', card_hint: 'Save or long-press the image to share it', card_footer: 'Made with Coffee Village Toolkit', card_scan: 'Scan to open this recipe', card_pours: 'Pours', card_format: 'Size', fmt_auto: 'Auto', fmt_square: 'Square', fmt_story: 'Story', card_theme: 'Theme', theme_cream: 'Cream', theme_night: 'Night', theme_kraft: 'Kraft', no_recipe_title: 'No Recipes Found',
     no_recipe_desc: 'No recipes registered for this dripper yet.', select_recipe_prompt: '👆 Select a brew recipe above',
     auto_calc_title: 'Adjust coffee weight to auto-calculate', suggest_temp: 'Water Temp', suggest_weight: 'Coffee Wt.',
     base_ratio: 'Base Ratio', brew_steps: 'Brew Steps', converted_ratio: 'Scaled', original_water: 'Orig.',
@@ -265,9 +265,9 @@ const i18n = {
     tweak_reset: 'Reset',
     changelog_title: 'Release Notes',
     changelog: [
+    { version: 'v4.5.0', date: 'Jun 2026', changes: ['Re-calibrated the Varia VS3 scale using Varia\'s official and review data: the dial is stepless 0–10 (0.1 steps). Espresso ~#4, filter/pour-over #9–11, French press/cold brew ~#16. Turkish 1–2.5, espresso 2.5–6, moka/AeroPress 6–9, pour-over 9–12, French press/cold brew 12–18 (never go below 2 — too fine can jam the burrs).'] },
     { version: 'v4.4.0', date: 'Jun 2026', changes: ['Added the "xBloom Studio 2" all-in-one grind-and-brew machine to the grinder database: 48mm conical burr, 80 steps (1–80), 18.75 µm per step. (Brew-band mapping is based on third-party roaster and Basic Barista guides, not an official xBloom table.)'] },
-    { version: 'v4.3.0', date: 'Jun 2026', changes: ['Added "Kinu M47 (Pour-Over Burr)" to the grinder database — a replacement cone burr designed for pour-over/batch brewing, not recommended for espresso.', 'Corrected the Varia VS3 scale (was wrong): espresso ~#4, filter ~#10, ~17 levels total; it can\'t reach Turkish fineness.', 'Re-aligned Kinu M47 (stock) and Mazzer Omega/Omega X to the right brew bands using official data (Turkish / espresso / moka / pour-over / French press).'] },
-    { version: 'v4.2.0', date: 'Jun 2026', changes: ['Grind converter adds a "Red Clix mode" toggle: it appears when Comandante C40 is selected and doubles the C40 click numbers (×2) — no separate C40 entry needed.', 'Corrected Omega/Omega X clicks against Mazzer\'s official grind chart: Omega espresso 4–7, moka 7–9, pour-over 9–10, filter 10–11, French press 11–13; Omega X is roughly 2× those. (Soft and Fast burrs share the same official settings and similar particle distribution, so they are not split.)'] },
+    { version: 'v4.3.0', date: 'Jun 2026', changes: ['Added "Kinu M47 (Pour-Over Burr)" to the grinder database — a replacement cone burr designed for pour-over/batch brewing, not recommended for espresso.', 'Re-aligned Kinu M47 (stock) and Mazzer Omega/Omega X to the right brew bands using official data (Turkish / espresso / moka / pour-over / French press).'] },
     ],
 
   },
@@ -281,7 +281,7 @@ const i18n = {
     tool_water_title: 'ミネラルウォーター計算', tool_water_desc: 'Aquacode、NAIRO DROP、APAX LAB対応。目標TDSに合わせた割合を計算します。',
     select_dripper: 'ドリッパー', select_dripper_placeholder: 'ドリッパーを選択...', no_dripper_title: 'ドリッパーを選択',
     no_dripper_desc: '上のメニューからドリッパーを選択してください', select_recipe: 'レシピを選択...',
-    current_recipe: '現在のレシピ', available_recipes: '利用可能なレシピ', filter_all: '全部', filter_hot: 'ホット', filter_iced: 'アイス', share_btn: 'このレシピを共有', share_copied: 'リンクをコピーしました！', search_placeholder: 'レシピ検索（例：悪魔、水出し、4:6）', search_no_result: '一致するレシピがありません', share_btn: 'このレシピを共有', share_copied: 'リンクをコピーしました！', card_title: '抽出カード', card_save: '画像を保存', card_share: '画像を共有', card_saving: '生成中…', card_hint: '画像を保存または長押しして共有できます', card_footer: 'コーヒー小さな村ツールボックス制作', card_scan: 'スキャンでこのレシピを開く', card_pours: '注湯回数', card_format: 'サイズ', fmt_auto: '自動', fmt_square: '正方形', fmt_story: '縦長', card_theme: '配色', theme_cream: 'クリーム', theme_night: 'ナイト', theme_kraft: 'クラフト', no_recipe_title: 'レシピがありません',
+    current_recipe: '現在のレシピ', available_recipes: '利用可能なレシピ', filter_all: '全部', filter_hot: 'ホット', filter_iced: 'アイス', select_drink: 'ホット / アイス', select_drink_hint: '先にホット/アイスを選ぶとドリッパーを絞り込み', dripper_none_for_drink: 'このタイプのドリッパーはまだありません', share_btn: 'このレシピを共有', share_copied: 'リンクをコピーしました！', search_placeholder: 'レシピ検索（例：悪魔、水出し、4:6）', search_no_result: '一致するレシピがありません', share_btn: 'このレシピを共有', share_copied: 'リンクをコピーしました！', card_title: '抽出カード', card_save: '画像を保存', card_share: '画像を共有', card_saving: '生成中…', card_hint: '画像を保存または長押しして共有できます', card_footer: 'コーヒー小さな村ツールボックス制作', card_scan: 'スキャンでこのレシピを開く', card_pours: '注湯回数', card_format: 'サイズ', fmt_auto: '自動', fmt_square: '正方形', fmt_story: '縦長', card_theme: '配色', theme_cream: 'クリーム', theme_night: 'ナイト', theme_kraft: 'クラフト', no_recipe_title: 'レシピがありません',
     no_recipe_desc: 'このドリッパーのレシピはまだありません', select_recipe_prompt: '👆 上からレシピを選択してください',
     auto_calc_title: '粉量を調整して湯量を自動計算', suggest_temp: '推奨湯温', suggest_weight: '推奨粉量',
     base_ratio: '基本比率', brew_steps: '抽出手順', converted_ratio: '換算済', original_water: '元',
@@ -304,9 +304,9 @@ const i18n = {
     tweak_reset: 'リセット',
     changelog_title: 'リリースノート',
     changelog: [
+    { version: 'v4.5.0', date: '2026年6月', changes: ['Varia公式・レビューデータを基にVaria VS3のスケールを再調整：ダイヤルは無段階0〜10（0.1刻み）。エスプレッソ約#4、フィルター／ドリップ#9〜11、フレンチ／水出し約#16。トルコ1〜2.5、エスプレッソ2.5〜6、モカ／エアロ6〜9、ドリップ9〜12、フレンチ／水出し12〜18（2未満は刀盤を損なうため不可）。'] },
     { version: 'v4.4.0', date: '2026年6月', changes: ['ミルデータベースに「xBloom Studio 2」全自動研磨ハンドドリップマシンを追加：48mmコーニカル刀盤、80段スケール（1〜80）、段あたり18.75µm。（抽出区分の対応は第三者のロースター＆Basic Baristaガイドに基づき、xBloom公式表ではありません）。'] },
-    { version: 'v4.3.0', date: '2026年6月', changes: ['ミルデータベースに「Kinu M47（ポアオーバー刀盤）」を追加—手沖み／バッチ抽出向けの交換コーン刀盤、エスプレッソには非推奨。', 'Varia VS3のスケールを修正（誤りがありました）：エスプレッソ約#4、フィルター約#10、全約17段。トルコの細さには到達しません。', 'Kinu M47（原廠）とMazzer Omega／Omega Xを公式データで正しい抽出区分（トルコ／エスプレッソ／モカ／ドリップ／フレンチ）に再調整。'] },
-    { version: 'v4.2.0', date: '2026年6月', changes: ['ミル換算に「Red Clixモード」切替を追加：Comandante C40選択時に表示され、C40のクリック数を2倍（×2）に。別途C40欄を追加する必要はなし。', 'Mazzer公式研磨表に基づきOmega／Omega Xのクリックを修正：Omegaはエスプレッソ4–7、モカ7–9、ドリップ9–10、フィルター10–11、フレンチ11–13。Omega Xはその約2倍。（Soft／Fastは公式設定・粒度分布がほぼ同じのため分けず）。'] },
+    { version: 'v4.3.0', date: '2026年6月', changes: ['ミルデータベースに「Kinu M47（ポアオーバー刀盤）」を追加—手沖み／バッチ抽出向けの交換コーン刀盤、エスプレッソには非推奨。', 'Kinu M47（原廠）とMazzer Omega／Omega Xを公式データで正しい抽出区分（トルコ／エスプレッソ／モカ／ドリップ／フレンチ）に再調整。'] },
     ],
 
   }
@@ -636,7 +636,7 @@ function useDatabases(lang) {
       "e_p64": mg(g1, "Lagom P64", uN, 0.1, [[0.1, 0.5], [0.5, 1.5], [1.5, 4.5], [4.5, 7], [7, 9.5]]),
       "e_078": mg(g1, "Sculptor 078", uN, 0.1, [[null, null], [null, null], [4, 8], [8, 14], [14, 18]]),
       "e_078s": mg(g1, "Sculptor 078s", uN, 0.1, [[0, 0.5], [0.5, 2.5], [2.5, 6], [6, 10], [10, 14]]),
-      "e_vs3": mg(g1, "Varia VS3", uN, 0.1, [[null, null], [2, 5], [5, 7], [7, 11], [11, 17]]),
+      "e_vs3": mg(g1, "Varia VS3", uN, 0.1, [[1, 2.5], [2.5, 6], [6, 9], [9, 12], [12, 18]]),
       "e_eg1": mg(g1, "Weber EG-1", uN, 0.1, [[0, 0.5], [0.5, 1.5], [1.5, 4], [4, 7], [7, 9]]),
       "e_600n": mg(g1, "Feima 600N", uN, 0.5, [[0.5, 1], [1, 2.5], [2.5, 3.5], [3.5, 5.5], [5.5, 8]]),
       "e_xbloom": mg(g1, "xBloom Studio 2", uN, 1, [[1, 4], [4, 14], [14, 30], [30, 55], [55, 80]]),
@@ -1748,7 +1748,7 @@ function BrewTool({ lang, t, c, initial }) {
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
   const [drinkFilter, setDrinkFilter] = useState('all');
   const [search, setSearch] = useState('');
-  const handleDripperChange = (id) => {setSelectedDripperId(id);setIsSelectorOpen(false);setSelectedRecipeId(null);setDrinkFilter('all');};
+  const handleDripperChange = (id) => {setSelectedDripperId(id);setIsSelectorOpen(false);setSelectedRecipeId(null);};
   const handleSelectRecipe = (recipe) => {setSelectedRecipeId(recipe.id);setCustomWeight(recipe.baseCoffee);setIsSelectorOpen(false);setSearch('');};
   const triggerRef = useRef(null);
   const [dropdownStyle, setDropdownStyle] = useState({});
@@ -1774,8 +1774,27 @@ function BrewTool({ lang, t, c, initial }) {
   const allDripperRecipes = selectedDripperId ? RECIPE_DATABASE.filter((r) => r.dripper === selectedDripperId) : [];
   const hasHot = allDripperRecipes.some((r) => r.drinkType !== 'iced');
   const hasIced = allDripperRecipes.some((r) => r.drinkType === 'iced');
-  const filteredRecipes = allDripperRecipes.filter((r) => drinkFilter === 'all' || (drinkFilter === 'iced' ? r.drinkType === 'iced' : r.drinkType !== 'iced'));
+  const drinkMatches = (r) => drinkFilter === 'all' || (drinkFilter === 'iced' ? r.drinkType === 'iced' : r.drinkType !== 'iced');
+  const filteredRecipes = allDripperRecipes.filter(drinkMatches);
   const selectedRecipe = RECIPE_DATABASE.find((r) => r.id === selectedRecipeId);
+  // 依冰熱篩選只保留「有對應配方」的濾杯
+  const filteredCategories = useMemo(() => {
+    const out = {};
+    Object.entries(DRIPPER_CATEGORIES).forEach(([cat, drippers]) => {
+      const kept = drippers.filter((d) => RECIPE_DATABASE.some((r) => r.dripper === d.id && drinkMatches(r)));
+      if (kept.length) out[cat] = kept;
+    });
+    return out;
+  }, [DRIPPER_CATEGORIES, RECIPE_DATABASE, drinkFilter]);
+  const handleDrinkFilter = (key) => {
+    setDrinkFilter(key);
+    setSelectedRecipeId(null);
+    setIsSelectorOpen(false);
+    if (selectedDripperId) {
+      const stillOk = RECIPE_DATABASE.some((r) => r.dripper === selectedDripperId && (key === 'all' || (key === 'iced' ? r.drinkType === 'iced' : r.drinkType !== 'iced')));
+      if (!stillOk) setSelectedDripperId('');
+    }
+  };
 
   const groupedRecipes = useMemo(() => {
     const groups = [];
@@ -1817,12 +1836,23 @@ searchResults.map((r) =>
 </div>
 }
 </div>
-<div className={`${classes.card} p-4`}>
+<div className={`${classes.card} p-4 space-y-4`}>
+<div>
+<label className={classes.label}><Coffee size={16} className={c.primaryText} /> {t('select_drink')}</label>
+<div className="flex gap-2">
+{[['all', t('filter_all')], ['hot', t('filter_hot')], ['iced', t('filter_iced')]].map(([key, label]) =>
+<button key={key} onClick={() => handleDrinkFilter(key)} className={`flex-1 py-2.5 px-2 text-sm font-bold rounded-xl transition-all outline-none flex items-center justify-center gap-1.5 ${drinkFilter === key ? `${c.primary} text-white shadow-sm` : `${c.inputBg} ${c.textMuted} border ${c.border} hover:${c.textDark}`}`}>
+{key === 'hot' && <Flame size={14} />}{key === 'iced' && <Snowflake size={14} />}{label}
+</button>
+)}
+</div>
+</div>
+<div>
 <label className={classes.label}><Filter size={16} className={c.primaryText} /> {t('select_dripper')}</label>
 <div className="relative">
 <select value={selectedDripperId} onChange={(e) => handleDripperChange(e.target.value)} className={`${classes.select} ${selectedDripperId === '' ? 'text-gray-400' : c.textDark}`}>
 <option value="" disabled>{t('select_dripper_placeholder')}</option>
-{Object.entries(DRIPPER_CATEGORIES).map(([category, drippers]) =>
+{Object.entries(filteredCategories).map(([category, drippers]) =>
             <optgroup key={category} label={category} className={`${c.textMuted} font-bold`}>{drippers.slice().sort((a, b) => {
               const isLatin = (s) => /^[A-Za-z0-9]/.test(s);
               const la = isLatin(a.name), lb = isLatin(b.name);
@@ -1833,15 +1863,7 @@ searchResults.map((r) =>
 </select>
 <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400"><ChevronDown size={20} /></div>
 </div>
-{selectedDripperId && hasHot && hasIced &&
-<div className="flex gap-2 mt-3">
-{[['all', t('filter_all')], ['hot', t('filter_hot')], ['iced', t('filter_iced')]].map(([key, label]) =>
-<button key={key} onClick={() => { setDrinkFilter(key); setSelectedRecipeId(null); }} className={`flex-1 py-2 px-2 text-xs font-bold rounded-xl transition-all outline-none flex items-center justify-center gap-1.5 ${drinkFilter === key ? `${c.primary} text-white shadow-sm` : `${c.inputBg} ${c.textMuted} border ${c.border} hover:${c.textDark}`}`}>
-{key === 'hot' && <Flame size={13} />}{key === 'iced' && <Snowflake size={13} />}{label}
-</button>
-)}
 </div>
-}
 </div>
 {!selectedDripperId ?
       <div className={`${classes.card} p-12 text-center animate-in fade-in duration-300`}><div className={`w-16 h-16 mx-auto ${c.infoBg} rounded-full flex items-center justify-center mb-4 ${c.secondaryText}`}><Filter size={32} /></div><h3 className={`text-lg font-bold ${c.textDark} mb-1`}>{t('no_dripper_title')}</h3><p className={`text-sm ${c.textMuted}`}>{t('no_dripper_desc')}</p></div> :
