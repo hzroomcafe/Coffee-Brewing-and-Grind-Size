@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>咖啡小村莊工具箱 v3.5.0</title>
 <meta property="og:title" content="咖啡小村莊工具箱 v3.4.0">
 <meta property="og:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
@@ -54,6 +54,10 @@ html, body { font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif; 
 input, button, select, textarea { font-family: inherit; }
 /* Numbers always tabular for stability */
 .tabular-nums, [class*="tabular"] { font-variant-numeric: tabular-nums; }
+/* 手機版：內容底部預留底部工具列 + iPhone home indicator 的安全區域 */
+@media (max-width: 639px) {
+  .brew-main-pad { padding-bottom: calc(5.5rem + env(safe-area-inset-bottom)) !important; }
+}
 
 /* Paper grain background — adds warmth without distraction */
 body::before {
@@ -2716,9 +2720,9 @@ function App() {
   return (
     <div className={`min-h-screen ${c.bg} font-sans ${c.textDark} pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
     <div className={`${c.card} ${c.textDark} border-b ${c.border} sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md bg-opacity-90`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className={`p-2 -ml-2 rounded-full hover:${c.inputBg} transition-colors outline-none ${c.textMuted}`}><ArrowLeft size={20} /></button>}<div className={`p-2 rounded-full ${c.primary} text-white`}><Coffee size={18} strokeWidth={2.2} /></div><h1 className={`text-base sm:text-lg font-bold tracking-wide ${c.textDark} hidden sm:block`}>{view === 'home' ? t('app_title') : view === 'brew' ? t('tool_brew_title') : view === 'water' ? t('tool_water_title') : view === 'diag' ? t('tool_diag_title') : t('tool_grind_title')}</h1></div><div className="flex items-center gap-2"><div className={`flex items-center ${c.inputBg} p-1 rounded-full border ${c.border}`}><button onClick={() => setLang('zh')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'zh' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'en' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'ja' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>JA</button></div><button onClick={toggleDark} aria-label="toggle dark mode" className={`p-2 rounded-full ${c.inputBg} border ${c.border} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-200 outline-none`}>{isDark ? <Sun size={17} /> : <Moon size={17} />}</button></div></div></div>
-    <main className="max-w-3xl mx-auto px-4 py-8 sm:py-10 relative pb-24 sm:pb-10">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : view === 'brew' ? <BrewTool lang={lang} t={t} c={c} initial={initialRoute} /> : view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : view === 'diag' ? <BrewDiagnostics lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />}</main>
+    <main className="brew-main-pad max-w-3xl mx-auto px-4 py-8 sm:py-10 relative pb-24 sm:pb-10">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : view === 'brew' ? <BrewTool lang={lang} t={t} c={c} initial={initialRoute} /> : view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : view === 'diag' ? <BrewDiagnostics lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />}</main>
     {/* 手機底部工具列 */}
-    <nav className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 ${c.card} border-t ${c.border} backdrop-blur-md bg-opacity-95`} style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <nav className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 ${c.card} border-t ${c.border} backdrop-blur-md bg-opacity-95`} style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}>
         <div className="grid grid-cols-5 h-16">
             {[
           ['home', Coffee, t('nav_home')],
