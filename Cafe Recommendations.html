@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>咖啡廳推薦 · 咖啡小村</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782577127935&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782577127935&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,11 +102,23 @@ header { padding: 26px 0 14px; }
 #map { height:420px; border-radius:18px; margin-top:16px; border:1px solid var(--line); z-index:2; }
 .leaflet-popup-content-wrapper { border-radius:16px; box-shadow:0 8px 28px rgba(0,0,0,.18); padding:0; overflow:hidden; }
 .leaflet-popup-content { margin:0; font-family:'Noto Sans TC',sans-serif; }
-.cafe-popup .leaflet-popup-content-wrapper { border:none; }
-.popup-card { padding:14px 15px 12px; min-width:200px; max-width:240px; }
-.popup-photo { width:100%; height:100px; object-fit:cover; border-radius:10px; margin-bottom:10px; display:block; }
-.popup-name { font-size:15px; font-weight:900; color:#3A3733; letter-spacing:-.01em; }
-.popup-area { font-size:11.5px; color:#9A9189; margin-top:3px; display:flex; align-items:center; gap:4px; }
+.leaflet-popup-content-wrapper { border-radius:18px!important; box-shadow:0 12px 36px rgba(0,0,0,.22)!important; padding:0!important; overflow:hidden!important; }
+.leaflet-popup-tip-container { display:none; }
+.popup-card { padding:0; min-width:240px; max-width:280px; background:#FBF8F1; overflow:hidden; border-radius:18px; }
+.popup-photo { width:100%; height:120px; object-fit:cover; display:block; }
+.popup-body { padding:13px 14px 12px; }
+.popup-name { font-size:15.5px; font-weight:900; color:#3A3733; letter-spacing:-.01em; line-height:1.2; }
+.popup-area { font-size:11.5px; color:#9A9189; margin-top:4px; display:flex; align-items:center; gap:4px; }
+.popup-area svg { width:12px; height:12px; flex-shrink:0; color:#7E8D85; }
+.popup-dist { font-size:11px; color:#7E8D85; font-weight:700; margin-top:2px; }
+.popup-reason { font-size:12.5px; line-height:1.65; color:#6B6660; margin-top:8px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.popup-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
+.popup-tag { font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:999px; background:rgba(126,141,133,.12); color:#7E8D85; display:inline-flex; align-items:center; gap:3px; }
+.popup-actions { display:flex; gap:6px; margin-top:11px; padding-top:10px; border-top:1px solid #E4DCCC; }
+.popup-act { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:5px; padding:8px 6px; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; border:1px solid #E4DCCC; background:transparent; color:#6B6660; text-decoration:none; transition:.14s; }
+.popup-act:hover { border-color:#7E8D85; color:#3A3733; }
+.popup-act.primary { background:#7E8D85; color:#fff; border-color:#7E8D85; }
+.popup-act.primary:hover { background:#6a7a72; }
 .popup-area svg { color:#7E8D85; }
 .popup-reason { font-size:12px; color:#6B6660; margin-top:8px; line-height:1.6; }
 .popup-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
@@ -311,10 +323,13 @@ function fmtDist(km) {
   if (km < 1) return { n: Math.round(km*1000), u: '公尺' };
   return { n: km.toFixed(km < 10 ? 1 : 0), u: '公里' };
 }
-function mapsUrl(c) {
-  if (c.link) return c.link;
+function googleMapsUrl(c) {
   const q = encodeURIComponent(`${c.name} ${c.address || c.area || ''}`.trim());
   return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+function mapsUrl(c) {
+  if (c.link) return c.link;
+  return googleMapsUrl(c);
 }
 function navUrl(c) {
   if (c.lat && c.lng) return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
@@ -341,7 +356,9 @@ function cityFromAddr(addr){
 function displayLoc(c){
   if(c.area) return c.area;
   const a = String(c.address||'').replace(/^(臺灣|台灣|台湾|日本|大韓民國|韓國|大韩民国|中國|中国)\s*/,'').trim();
-  return a || '—';
+  if(a) return a;
+  if(c.lat && c.lng) return '已標記位置';
+  return '—';
 }
 /* 地區 = 區域第一段；若區域空白，改用地址推算的城市（去掉市/縣等後綴、臺→台） */
 function regionOf(c){
@@ -503,7 +520,8 @@ function buildCard(c) {
       <div class="byline"><span class="av">${esc(initial(c.by))}</span>由 <b>${esc(c.by||'匿名')}</b> 推薦</div>
       <div class="foot-actions">
         <button class="report-btn" onclick="event.stopPropagation();openReport(this)" data-cname="${esc(c.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>回報</button>
-        <a class="act" href="${mapsUrl(c)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>地點</a>
+        ${c.link ? `<a class="act" href="${esc(c.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>連結</a>` : ''}
+        <a class="act" href="${googleMapsUrl(c)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>地點</a>
         <a class="act primary" href="${navUrl(c)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>導航</a>
       </div>
     </div>`;
@@ -569,7 +587,11 @@ function renderMap(data) {
     const m = L.marker([c.lat, c.lng], { icon: pinIcon() }).addTo(map);
     m._cafe = c;
     const dist = (userPos && c._d!=null && c._d!==Infinity) ? (()=>{const d=fmtDist(c._d);return ` · ${d.n}${d.u}`;})() : '';
-    m.bindPopup(`<div class="popup-card">${c.photo?`<img src="${c.photo}" class="popup-photo">`:''}<div class="popup-name">${esc(c.name)}</div><div class="popup-area"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>${esc(displayLoc(c))}${dist}</div>${c.reason?`<div class="popup-reason">${esc(c.reason.slice(0,80))}${c.reason.length>80?'…':''}</div>`:''} ${c.tags.length?`<div class="popup-tags">${c.tags.map(t=>`<span class="popup-tag">${tagIcon(t)} ${esc(t)}</span>`).join('')}</div>`:''}<div class="popup-actions"><a class="popup-btn" href="${mapsUrl(c)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>地點</a><a class="popup-btn primary" href="${navUrl(c)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="#fff" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>導航</a></div></div>`, {maxWidth:240, className:'cafe-popup'});
+    const photo = (() => { const p = Array.isArray(c.photo) ? c.photo[0] : c.photo; return p && p.startsWith('data:') ? `<img src="${p}" class="popup-photo">` : ''; })();
+    const distHtml = (userPos && c._d!=null && c._d!==Infinity) ? (()=>{const d=fmtDist(c._d);return `<div class="popup-dist">📍 距離 ${d.n}${d.u}</div>`;})() : '';
+    const popupTags = c.tags.slice(0,4).map(t=>`<span class="popup-tag">${tagIcon(t)} ${esc(t)}</span>`).join('');
+    const linkBtn = c.link ? `<a class="popup-act" href="${esc(c.link)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>連結</a>` : '';
+    m.bindPopup(`<div class="popup-card">${photo}<div class="popup-body"><div class="popup-name">${esc(c.name)}</div><div class="popup-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>${esc(displayLoc(c))}</div>${distHtml}${c.reason?'<div class="popup-reason">'+esc(c.reason)+'</div>':''}${popupTags?'<div class="popup-tags">'+popupTags+'</div>':''}<div class="popup-actions">${linkBtn}<a class="popup-act" href="${googleMapsUrl(c)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>地點</a><a class="popup-act primary" href="${navUrl(c)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>導航</a></div></div></div>`, { maxWidth:290, className:'cafe-popup' });
     markers.push(m);
     pts.push([c.lat, c.lng]);
   });

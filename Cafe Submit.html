@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>推薦一間咖啡廳</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782577127935&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782577127935&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -531,7 +531,17 @@ async function reverseGeocode(lat, lng) {
   try {
     const d = await (await fetch('https://photon.komoot.io/reverse?lat=' + lat + '&lon=' + lng)).json();
     const p = d.features && d.features[0] && d.features[0].properties;
-    if(p && picked) { const addr = fmtAddr(p); if(addr){ picked.address=addr; document.getElementById('pickAddr').textContent=addr; } }
+    if(p && picked) {
+      const addr = fmtAddr(p);
+      if(addr){ picked.address=addr; document.getElementById('pickAddr').textContent=addr; }
+      // 自動更新區域（城市 · 區）
+      const city = p.city||p.county||p.state||p.country||'';
+      const district = p.district||p.suburb||p.neighbourhood||'';
+      const area = city + (district ? ' · ' + district : '');
+      if(area){ picked.area = area; }
+      const coordEl = document.getElementById('pickCoord');
+      if(coordEl) coordEl.textContent = (picked.area||'') + (picked.area ? ' · ' : '') + lat.toFixed(5) + ', ' + lng.toFixed(5);
+    }
   } catch(e){}
 }
 function useTypedName(name) {
@@ -664,10 +674,14 @@ photoZone.addEventListener('drop', e=>{ e.preventDefault(); photoZone.classList.
           const el = document.createElement('div'); el.className = 'res';
           el.innerHTML = `<div class="rn">${esc(name)}</div><div class="ra">${esc(addr||'—')}</div>`;
           el.onclick = () => {
-            // 地圖跳到這個位置，標記也跟著移
             miniMap.setView([g[1], g[0]], 17);
             updateMarkerPos(g[1], g[0]);
             if (addr && picked) { picked.address = addr; document.getElementById('pickAddr').textContent = addr; }
+            // 自動帶入區域
+            const city = p.city||p.county||p.state||p.country||'';
+            const district = p.district||p.suburb||p.neighbourhood||'';
+            const areaVal = city + (district ? ' · ' + district : '');
+            if (areaVal && picked) { picked.area = areaVal; }
             addrInput.value = name;
             addrResults.classList.remove('on');
           };
