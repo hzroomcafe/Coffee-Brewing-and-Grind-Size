@@ -13,7 +13,7 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script type="text/javascript" nonce="3ea5d2bd5d6f4183a0b356dac64" src="//local.adguard.org?ts=1782137382639&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v5.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3ea5d2bd5d6f4183a0b356dac64" src="//local.adguard.org?ts=1782137382639&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script>
@@ -204,6 +204,7 @@ const i18n = {
     tool_brew_title: '沖煮參數查詢', tool_brew_desc: '內建多款濾杯的經典手沖參數，並可根據粉重自動換算水量。',
     tool_grind_title: '磨豆機刻度轉換', tool_grind_desc: '支援超過 30 款常見磨豆機，輕鬆將別人的刻度換算為您的設備設定。',
     tool_diag_title: '金杯萃取診斷', tool_diag_desc: '結合 SCA 金杯標準與流體力學，診斷沖煎中的深淺萃、通道效應與細粉堵塞。',
+    tool_cafe_title: '咖啡廳推薦', tool_cafe_desc: '大家私藏的好店清單，可看地圖、依地區與標籤篩選，也能推薦你的愛店。',
     tool_water_title: '礦物水調配計算', tool_water_desc: '支援 Aquacode、NAIRO DROP、APAX LAB 等主流配方，快速計算出目標 TDS 的沖煮用水比例。',
     select_dripper: '濾杯款式', select_dripper_placeholder: '請選擇濾杯...', no_dripper_title: '請選擇濾杯',
     no_dripper_desc: '請從上方選單選擇您要使用的濾杯款式', select_recipe: '請選擇沖煮手法...',
@@ -243,6 +244,7 @@ const i18n = {
     tool_brew_title: 'Brew Recipe Guide', tool_brew_desc: 'Classic pour-over recipes. Auto-calculates water volume by coffee weight.',
     tool_grind_title: 'Grind Size Converter', tool_grind_desc: 'Supports 30+ grinders. Easily convert grind settings across devices.',
     tool_diag_title: 'Golden Cup Diagnosis', tool_diag_desc: 'SCA brewing control chart with flow physics: spots channeling, bypass and fines clogging.',
+    tool_cafe_title: 'Café Picks', tool_cafe_desc: 'A shared list of favorite cafés — browse the map, filter by area and tags, and recommend your own.',
     tool_water_title: 'Mineral Water Calc', tool_water_desc: 'Supports Aquacode, NAIRO DROP, APAX LAB. Calculate ratio of water to concentrate.',
     select_dripper: 'Dripper', select_dripper_placeholder: 'Select a dripper...', no_dripper_title: 'Select a Dripper',
     no_dripper_desc: 'Please select a dripper from the menu above', select_recipe: 'Select a recipe...',
@@ -282,6 +284,7 @@ const i18n = {
     tool_brew_title: '抽出レシピガイド', tool_brew_desc: '定番レシピ搭載。粉量から湯量を自動計算します。',
     tool_grind_title: '挽き目コンバーター', tool_grind_desc: '30種類以上のミル対応。挽き目を自分の機材用に変換します。',
     tool_diag_title: 'ゴールドカップ診断', tool_diag_desc: 'SCA金杯基準と流体力学による診断。チャネリング、バイパス、微粉詰まりを検出。',
+    tool_cafe_title: 'カフェのおすすめ', tool_cafe_desc: 'みんなの推しカフェリスト。地図表示、エリア・タグで絞り込み、お気に入りの店も推薦できます。',
     tool_water_title: 'ミネラルウォーター計算', tool_water_desc: 'Aquacode、NAIRO DROP、APAX LAB対応。目標TDSに合わせた割合を計算します。',
     select_dripper: 'ドリッパー', select_dripper_placeholder: 'ドリッパーを選択...', no_dripper_title: 'ドリッパーを選択',
     no_dripper_desc: '上のメニューからドリッパーを選択してください', select_recipe: 'レシピを選択...',
@@ -2814,6 +2817,23 @@ function HomeView({ setView, t, c }) {
 
         })}
     </div>
+
+    {/* 咖啡廳推薦 — 外部獨立網頁 */}
+    <a href="Cafe Recommendations.html" className={`block w-full ${c.card} paper-card border ${c.border} rounded-2xl p-5 sm:p-6 text-left hover:-translate-y-0.5 transition-all duration-300 group outline-none relative overflow-hidden mb-12 no-underline`}>
+        <div className={`absolute top-4 right-5 font-mono text-[10px] tracking-[0.25em] ${c.textMuted} opacity-60`}>05</div>
+        <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl text-white flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:rotate-[-4deg] transition-transform duration-300" style={{ backgroundColor: '#9A8C7A' }}>
+                <Coffee size={22} strokeWidth={2} />
+            </div>
+            <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                    <h3 className={`text-[15px] sm:text-base font-black ${c.textDark} leading-snug`}>{t('tool_cafe_title')}</h3>
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className={`${c.textMuted} group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform`}><path d="M7 17L17 7M7 7h10v10"/></svg>
+                </div>
+                <p className={`text-[12px] ${c.textMuted} leading-relaxed font-medium mt-1`}>{t('tool_cafe_desc')}</p>
+            </div>
+        </div>
+    </a>
 
     {/* Changelog — collapsed by default */}
     <div className="mt-8">
