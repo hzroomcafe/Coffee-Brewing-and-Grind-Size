@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apps Script 程式碼</title>
+<style>
+body { font-family: system-ui, sans-serif; background: #1e2228; color: #d8d2c4; margin: 0; padding: 24px; }
+h2 { color: #9ed99e; font-size: 17px; margin: 0 0 8px; }
+p { font-size: 13px; color: #8a9a8a; margin: 0 0 16px; line-height: 1.6; }
+pre { background: #151a1f; border: 1px solid #333; border-radius: 12px; padding: 18px; font-family: 'JetBrains Mono', 'Menlo', monospace; font-size: 12.5px; line-height: 1.7; overflow-x: auto; white-space: pre; margin: 0; }
+.copy-btn { display: block; margin: 12px 0 24px; padding: 12px 24px; background: #7E8D85; color: #fff; border: 0; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; font-family: inherit; }
+.copy-btn:hover { background: #6a7a72; }
+.steps { background: #2a3038; border-radius: 12px; padding: 16px 18px; font-size: 13px; line-height: 1.8; color: #b0bab0; }
+.steps b { color: #9ed99e; }
+</style>
+</head>
+<body>
+<h2>☕ Apps Script 程式碼 — 直接從這裡複製</h2>
+<p>點下方按鈕複製全部程式碼，再貼到 Apps Script 取代原有內容。這個頁面不會有 HTML 實體問題。</p>
+<button class="copy-btn" id="copyBtn">📋 複製全部程式碼</button>
+<pre id="code">// ===== 只改這三行 =====
+const SHEET_ID   = '1XachRqnXwZ3oaCHv27vjLZ3uwkBKxMMdkDz3ySElhnM';
+const SHEET_NAME = '投稿';
+const NOTIFY_TO  = 'vincelun@gmail.com';
+
+const REPORT_SHEET = '回報';
+const MAX_PER_FP_HOUR = 5;
+
+function doPost(e) {
+  try {
+    const d = JSON.parse(e.postData.contents);
+
+    // ── 回報錯誤 ──
+    if (d._action === 'report') {
+      const ss = SpreadsheetApp.openById(SHEET_ID);
+      let rsh = ss.getSheetByName(REPORT_SHEET);
+      if (!rsh) {
+        rsh = ss.insertSheet(REPORT_SHEET);
+        rsh.appendRow(['時間','店名','錯誤類型','說明','狀態']);
+        rsh.getRange(1,1,1,5).setFontWeight('bold').setBackground('#f0ece4');
+      }
+      rsh.appendRow([new Date(), d.cafeName||'', d.reportType||'', d.desc||'', '待處理']);
+      rsh.getRange(rsh.getLastRow(), 1, 1, 5).setBackground('#FFF3CD');
+      MailApp.sendEmail(NOTIFY_TO,
+        '⚠️ 咖啡廳資料回報：' + (d.cafeName||'未知'),
+        '店家：' + (d.cafeName||'') + '\n類型：' + (d.reportType||'') + '\n說明：' + (d.desc||'') +
+        '\n\n請到試算表「回報」分頁（黃色列）確認並處理。');
+      return ok();
+    }
+
+    // ── 新投稿 ──
+    if (d.website) return ok();
+    if (!d.name || !d.by || !d.reason || !d.tags) return ok();
+    const reason = String(d.reason);
+    if (reason.length < 5 || reason.length > 300) return ok();
+
+    const props = PropertiesService.getScriptProperties();
+    const key = 'rl_' + (d._fp || 'anon');
+    const now = Date.now();
+    const hist = JSON.parse(props.getProperty(key) || '[]').filter(t => now - t < 3600000);
+    if (hist.length >= MAX_PER_FP_HOUR) return ok();
+    hist.push(now); props.setProperty(key, JSON.stringify(hist));
+
+    const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+    const recent = sh.getDataRange().getValues().slice(-60);
+    const dup = recent.some(r => r[1] === d.name && r[6] === d.by &&
+                (now - new Date(r[0]).getTime()) < 86400000);
+    if (dup) return ok();
+
+    sh.appendRow([
+      new Date(), d.name, d.area||'', d.address||'',
+      d.lat||'', d.lng||'', d.by, reason,
+      d.tags, d.link||'', '待審核', d.photos||''
+    ]);
+
+    MailApp.sendEmail(NOTIFY_TO, '☕ 新咖啡廳推薦待審核',
+      '店名：' + d.name + '\n推薦人：' + d.by + '\n原因：' + reason +
+      '\n標籤：' + d.tags + '\n地址：' + (d.address||'(無)') +
+      (d.photos && d.photos !== '[]' ? '\n（附有照片）' : '') +
+      '\n\n到試算表把「狀態」改成「已通過」即可上架。');
+    return ok();
+  } catch (err) { return ok(); }
+}
+
+function ok() {
+  return ContentService.createTextOutput('{"ok":true}')
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+
+<div class="steps" style="margin-top:20px;">
+  <b>部署步驟：</b><br>
+  1. 點上方「複製全部程式碼」<br>
+  2. 打開 Apps Script（試算表 → 擴充功能 → Apps Script）<br>
+  3. 全選（Ctrl+A / ⌘A）→ 刪除 → 貼上（Ctrl+V / ⌘V）<br>
+  4. 按 💾 儲存<br>
+  5. <b>部署 → 管理部署作業 → 鉛筆圖示 → 版本選「建立新版本」→ 部署</b><br>
+  6. 這步是關鍵！不建立新版本的話改動不會生效
+</div>
+
+<script>
+document.getElementById('copyBtn').onclick = function() {
+  const code = document.getElementById('code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    this.textContent = '✅ 已複製！現在貼到 Apps Script';
+    setTimeout(() => { this.textContent = '📋 複製全部程式碼'; }, 3000);
+  });
+};
+</script>
+</body>
+</html>
