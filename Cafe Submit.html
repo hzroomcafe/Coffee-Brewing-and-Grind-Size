@@ -530,18 +530,21 @@ function updateMarkerPos(lat, lng) {
 async function reverseGeocode(lat, lng) {
   try {
     const d = await (await fetch('https://photon.komoot.io/reverse?lat=' + lat + '&lon=' + lng)).json();
-    const p = d.features && d.features[0] && d.features[0].properties;
-    if(p && picked) {
-      const addr = fmtAddr(p);
-      if(addr){ picked.address=addr; document.getElementById('pickAddr').textContent=addr; }
-      // 自動更新區域（城市 · 區）
-      const city = p.city||p.county||p.state||p.country||'';
-      const district = p.district||p.suburb||p.neighbourhood||'';
-      const area = city + (district ? ' · ' + district : '');
-      if(area){ picked.area = area; }
-      const coordEl = document.getElementById('pickCoord');
-      if(coordEl) coordEl.textContent = (picked.area||'') + (picked.area ? ' · ' : '') + lat.toFixed(5) + ', ' + lng.toFixed(5);
-    }
+    const f = (d.features||[])[0];
+    if (!f) return;
+    const p = f.properties;
+    const city = (p.city||p.county||p.town||p.village||p.state||'').replace(/(市|縣|都|府|県|州|省)$/,'');
+    const district = p.district||p.suburb||p.neighbourhood||p.quarter||'';
+    const area = city + (district ? ' · ' + district : '');
+    const street = [p.street, p.housenumber].filter(Boolean).join(' ');
+    const addrParts = [p.country, p.state, p.city||p.county, p.district, street].filter(Boolean);
+    const address = addrParts.join(' ');
+    if (area && picked) { picked.area = area; }
+    if (address && picked && !picked.address) { picked.address = address; }
+    const addrEl = document.getElementById('pickAddr');
+    if (addrEl && address) addrEl.textContent = address;
+    const coordEl = document.getElementById('pickCoord');
+    if (coordEl) coordEl.textContent = (area||'') + (area ? ' · ' : '') + lat.toFixed(5) + ', ' + lng.toFixed(5);
   } catch(e){}
 }
 function useTypedName(name) {
