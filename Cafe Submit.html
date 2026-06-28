@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>推薦一間咖啡廳</title>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782577127935&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782577127935&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,7 +83,7 @@ textarea { resize:vertical; min-height:92px; line-height:1.6; }
 .minimap { height:170px; border-radius:11px; margin-top:12px; border:1px solid color-mix(in srgb,var(--ok) 30%,transparent); overflow:hidden; position:relative; z-index:0; isolation:isolate; }
 .minimap .leaflet-control-attribution { font-size:8.5px; }
 /* 確保搜尋結果 dropdown 永遠在 minimap 上層 */
-#results, #cityResults, #addrResults { z-index:100 !important; }
+#results, #cityResults, #addrResults { z-index:1200 !important; }
 .confirmloc { display:flex; align-items:flex-start; gap:9px; margin-top:11px; font-size:12.5px; color:var(--ink-soft); line-height:1.5; cursor:pointer; }
 .confirmloc input { margin-top:2px; width:16px; height:16px; accent-color:var(--ok); flex-shrink:0; }
 .picked .redo { margin-top:11px; font-size:12px; font-weight:700; color:var(--ok); background:none; border:0; cursor:pointer; text-decoration:underline; padding:0; }
@@ -247,10 +247,10 @@ textarea { resize:vertical; min-height:92px; line-height:1.6; }
         <div id="addrSearchWrap" style="display:none; margin-top:10px;">
           <div class="search-wrap">
             <svg class="search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input type="text" id="addrSearch" placeholder="輸入地址讓地圖快速跳轉…" />
-            <div class="results" id="addrResults"></div>
+            <input type="text" id="addrSearch" placeholder="輸入完整地址後按 Enter 直接跳轉…" />
           </div>
-          <p class="hint" style="margin-top:5px;">📍 選地址後再拖移標記精確定位</p>
+          <p class="hint" id="addrStatus" style="margin-top:6px; display:none;"></p>
+          <p class="hint" style="margin-top:5px;">📍 跳轉後可再拖移標記精確定位</p>
         </div>
         <label class="confirmloc"><input type="checkbox" id="confirmLoc" /><span>我已確認地圖上的位置正確（地點無誤、非錯誤或國外地址）</span></label>
         <p id="mapDragHint" class="hint" style="display:none; color:var(--sage); margin-top:6px;">📍 可拖移標記或點擊地圖任意位置來修正地點</p>
@@ -361,7 +361,7 @@ const TAG_ICON = {'手沖':'☕','義式':'⚡','自家烘焙':'🔥','好坐':'
 
 let picked = null;          // {name, address, lat, lng}
 let selectedTags = new Set();
-let miniMap = null, miniMarker = null;
+let miniMap = null, miniMarker = null, miniTileLayer = null;
 let cityBias = null;  // { lat, lng, countrycode }
 
 /* 裝置指紋：穩定的隨機 ID（存 localStorage），讓伺服器端的每小時限流能認得同一裝置 */
@@ -436,6 +436,17 @@ async function doSearch(q) {
     const lng = cityBias ? cityBias.lng : 121.0;
     const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${lat}&lon=${lng}&limit=10`;
     let feats = (await (await fetch(url)).json()).features || [];
+    // 若 Photon 結果太少（小眾咖啡廳常找不到），用 Nominatim 補強
+    if (feats.length < 3) {
+      try {
+        const nomFeats = await nominatimSearch(q);
+        const seen = new Set(feats.map(f => (f.properties.name||'') + f.geometry.coordinates.join(',')));
+        nomFeats.forEach(nf => {
+          const k = (nf.properties.name||'') + nf.geometry.coordinates.join(',');
+          if (!seen.has(k)) { feats.push(nf); seen.add(k); }
+        });
+      } catch(e) {}
+    }
     const cc = f => (f.properties.countrycode||'').toLowerCase();
     const score = f => {
       let s = 0;
@@ -447,6 +458,26 @@ async function doSearch(q) {
     renderResults(feats);
   } catch(e) { renderResults([]); }
   spinner.classList.remove('on');
+}
+/* Nominatim（OpenStreetMap 官方地理編碼）— 對店名/POI 覆蓋常比 Photon 廣 */
+async function nominatimSearch(q) {
+  const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&accept-language=zh-TW&q=${encodeURIComponent(q)}`;
+  const arr = await (await fetch(url, { headers: { 'Accept':'application/json' } })).json();
+  // 轉成跟 Photon 一致的 GeoJSON feature 形狀
+  return (arr||[]).map(r => {
+    const a = r.address || {};
+    return {
+      geometry: { coordinates: [parseFloat(r.lon), parseFloat(r.lat)] },
+      properties: {
+        name: r.name || (r.display_name||'').split(',')[0],
+        countrycode: (a.country_code||'').toLowerCase(),
+        country: a.country||'', state: a.state||a.region||'',
+        city: a.city||a.town||a.county||a.municipality||'', county: a.county||'',
+        district: a.suburb||a.city_district||a.district||a.neighbourhood||'',
+        street: a.road||'', housenumber: a.house_number||'',
+      }
+    };
+  });
 }
 function fmtAddr(p) {
   const parts = [p.country, p.state, p.city || p.county, p.district, p.street, p.housenumber].filter(Boolean);
@@ -498,7 +529,7 @@ function showMiniMap(p) {
                      : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
   if (!miniMap) {
     miniMap = L.map('minimap', { zoomControl:true, scrollWheelZoom:false, attributionControl:true }).setView([p.lat, p.lng], 16);
-    L.tileLayer(tiles, { maxZoom:19, attribution:'© OSM, © CARTO' }).addTo(miniMap);
+    miniTileLayer = L.tileLayer(tiles, { maxZoom:19, attribution:'© OSM, © CARTO' }).addTo(miniMap);
     // 點地圖更新位置
     miniMap.on('click', async (e) => {
       updateMarkerPos(e.latlng.lat, e.latlng.lng);
@@ -533,11 +564,12 @@ async function reverseGeocode(lat, lng) {
     const f = (d.features||[])[0];
     if (!f) return;
     const p = f.properties;
+    // 亞洲行政層級：日本「市·区·町」、韓國「市·区·洞」都能被推到
     const city = (p.city||p.county||p.town||p.village||p.state||'').replace(/(市|縣|都|府|県|州|省)$/,'');
-    const district = p.district||p.suburb||p.neighbourhood||p.quarter||'';
+    const district = p.district||p.suburb||p.borough||p.city_district||p.neighbourhood||p.quarter||p.locality||p.town||'';
     const area = city + (district ? ' · ' + district : '');
     const street = [p.street, p.housenumber].filter(Boolean).join(' ');
-    const addrParts = [p.country, p.state, p.city||p.county, p.district, street].filter(Boolean);
+    const addrParts = [p.country, p.state, p.city||p.county, p.district||p.borough, street].filter(Boolean);
     const address = addrParts.join(' ');
     if (area && picked) { picked.area = area; }
     if (address && picked && !picked.address) { picked.address = address; }
@@ -653,48 +685,81 @@ photoZone.addEventListener('dragleave', ()=>photoZone.classList.remove('drag'));
 photoZone.addEventListener('drop', e=>{ e.preventDefault(); photoZone.classList.remove('drag'); handlePhotoFile(e.dataTransfer.files[0]); });
 // photoRemove is handled per-thumbnail via renderPhotoGrid delete buttons
 
-/* ---------- 地址快速定位（手動模式用）---------- */
+/* ---------- 地址快速定位（手動模式用）：輸入完整地址直接跳轉，不用下拉 ---------- */
 (function(){
   const addrInput = document.getElementById('addrSearch');
-  const addrResults = document.getElementById('addrResults');
+  const addrStatus = document.getElementById('addrStatus');
   let addrTimer = null;
+
+  async function geocodeOnce(q) {
+    try {
+      const lat = cityBias ? cityBias.lat : 23.5;
+      const lng = cityBias ? cityBias.lng : 121.0;
+      const d = await (await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${lat}&lon=${lng}&lang=default&limit=3`)).json();
+      let feats = d.features || [];
+      if (feats.length < 1) { try { feats = await nominatimSearch(q); } catch(e){} }
+      return feats;
+    } catch(e){ return []; }
+  }
+  // 逐步簡化台灣詳細地址：去 號 → 弄 → 巷 → 留到街/路。OSM 對巷弄號收錄不全，退到街道至少能跳對位置
+  function simplify(q) {
+    const steps = [];
+    let s = q.trim();
+    steps.push(s);
+    s = s.replace(/\d+號.*$/, '').trim(); if (s && !steps.includes(s)) steps.push(s);
+    s = s.replace(/\d+弄.*$/, '').trim(); if (s && !steps.includes(s)) steps.push(s);
+    s = s.replace(/\d+巷.*$/, '').trim(); if (s && !steps.includes(s)) steps.push(s);
+    return steps;
+  }
+  async function jumpToAddress(q) {
+    if (q.length < 2) return;
+    if (addrStatus) { addrStatus.textContent = '搜尋中…'; addrStatus.style.display = 'block'; }
+    try {
+      let feats = [], usedQ = q, simplified = false;
+      const variants = simplify(q);
+      for (let i = 0; i < variants.length; i++) {
+        feats = await geocodeOnce(variants[i]);
+        if (feats.length) { usedQ = variants[i]; simplified = (i > 0); break; }
+      }
+      if (!feats.length) {
+        if (addrStatus) addrStatus.textContent = '找不到這個地址（OpenStreetMap 對巷弄門牌收錄有限）。請直接拖動地圖標記到正確位置。';
+        return;
+      }
+      const f = feats[0];
+      const g = f.geometry.coordinates, p = f.properties;
+      miniMap.setView([g[1], g[0]], simplified ? 16 : 18);
+      updateMarkerPos(g[1], g[0]);
+      const addr = fmtAddr(p);
+      if (addr && picked) { picked.address = addr; document.getElementById('pickAddr').textContent = addr; }
+      const city = p.city||p.county||p.state||p.country||'';
+      const district = p.district||p.suburb||p.neighbourhood||'';
+      const areaVal = city + (district ? ' · ' + district : '');
+      if (areaVal && picked) { picked.area = areaVal; }
+      if (addrStatus) {
+        addrStatus.textContent = simplified
+          ? '已跳到附近的「' + usedQ + '」（找不到完整門牌），請拖動標記到正確位置。'
+          : '已跳到：' + (addr || (g[1].toFixed(4) + ', ' + g[0].toFixed(4))) + '　可再拖動標記微調';
+      }
+    } catch(e) {
+      if (addrStatus) addrStatus.textContent = '搜尋失敗，請稍後再試或直接拖動地圖標記。';
+    }
+  }
+
+  // 停止輸入 900ms 自動跳轉
   addrInput.addEventListener('input', () => {
     clearTimeout(addrTimer);
     const q = addrInput.value.trim();
-    if (q.length < 2) { addrResults.classList.remove('on'); return; }
-    addrTimer = setTimeout(async () => {
-      try {
-        const lat = cityBias ? cityBias.lat : 23.5;
-        const lng = cityBias ? cityBias.lng : 121.0;
-        const d = await (await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${lat}&lon=${lng}&limit=5`)).json();
-        const feats = d.features || [];
-        addrResults.innerHTML = '';
-        if (!feats.length) { addrResults.classList.remove('on'); return; }
-        feats.forEach(f => {
-          const p = f.properties, g = f.geometry.coordinates;
-          const name = p.name || p.street || '未命名';
-          const addr = fmtAddr(p);
-          const el = document.createElement('div'); el.className = 'res';
-          el.innerHTML = `<div class="rn">${esc(name)}</div><div class="ra">${esc(addr||'—')}</div>`;
-          el.onclick = () => {
-            miniMap.setView([g[1], g[0]], 17);
-            updateMarkerPos(g[1], g[0]);
-            if (addr && picked) { picked.address = addr; document.getElementById('pickAddr').textContent = addr; }
-            // 自動帶入區域
-            const city = p.city||p.county||p.state||p.country||'';
-            const district = p.district||p.suburb||p.neighbourhood||'';
-            const areaVal = city + (district ? ' · ' + district : '');
-            if (areaVal && picked) { picked.area = areaVal; }
-            addrInput.value = name;
-            addrResults.classList.remove('on');
-          };
-          addrResults.appendChild(el);
-        });
-        addrResults.classList.add('on');
-      } catch(e) { addrResults.classList.remove('on'); }
-    }, 350);
+    if (q.length < 2) { if(addrStatus) addrStatus.style.display='none'; return; }
+    addrTimer = setTimeout(() => jumpToAddress(q), 900);
   });
-  document.addEventListener('click', e => { if (!e.target.closest('#addrSearch') && !e.target.closest('#addrResults')) addrResults.classList.remove('on'); });
+  // 按 Enter 立即跳轉
+  addrInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      clearTimeout(addrTimer);
+      jumpToAddress(addrInput.value.trim());
+    }
+  });
 })();
 
 /* ---------- 標籤 ---------- */
@@ -860,6 +925,11 @@ document.getElementById('againBtn').onclick = () => location.reload();
 (function(){
   function applyTheme(d){
     document.documentElement.classList.toggle('dark', d);
+    // 地圖圖磚跟著深淺色切換
+    if (miniMap && miniTileLayer) {
+      miniTileLayer.setUrl(d ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+                             : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png');
+    }
     document.getElementById('themeIcon').innerHTML = d
       ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
       : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';

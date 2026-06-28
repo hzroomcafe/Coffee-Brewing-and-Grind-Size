@@ -14,7 +14,7 @@ pre { background: #151a1f; border: 1px solid #333; border-radius: 12px; padding:
 .steps { background: #2a3038; border-radius: 12px; padding: 16px 18px; font-size: 13px; line-height: 1.8; color: #b0bab0; }
 .steps b { color: #9ed99e; }
 </style>
-</head>
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DApps%2520Script%2520Code.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
 <body>
 <h2>☕ Apps Script 程式碼 — 直接從這裡複製</h2>
 <p>點下方按鈕複製全部程式碼，再貼到 Apps Script 取代原有內容。這個頁面不會有 HTML 實體問題。</p>
@@ -22,7 +22,7 @@ pre { background: #151a1f; border: 1px solid #333; border-radius: 12px; padding:
 <pre id="code">// ===== 只改這三行 =====
 const SHEET_ID   = '1XachRqnXwZ3oaCHv27vjLZ3uwkBKxMMdkDz3ySElhnM';
 const SHEET_NAME = '投稿';
-const NOTIFY_TO  = 'vincelun@gmail.com';
+const NOTIFY_TO  = '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bec8d7d0dddbd2cbd0fed9d3dfd7d290ddd1d3">[email&#160;protected]</a>';
 
 const REPORT_SHEET = '回報';
 const MAX_PER_FP_HOUR = 5;
@@ -46,6 +46,22 @@ function doPost(e) {
         '⚠️ 咖啡廳資料回報：' + (d.cafeName||'未知'),
         '店家：' + (d.cafeName||'') + '\n類型：' + (d.reportType||'') + '\n說明：' + (d.desc||'') +
         '\n\n請到試算表「回報」分頁（黃色列）確認並處理。');
+      return ok();
+    }
+
+    // ── 評論 ──
+    if (d._action === 'review') {
+      const ss = SpreadsheetApp.openById(SHEET_ID);
+      let vsh = ss.getSheetByName('評論');
+      if (!vsh) {
+        vsh = ss.insertSheet('評論');
+        vsh.appendRow(['時間','店名','名稱','評論']);
+        vsh.getRange(1,1,1,4).setFontWeight('bold').setBackground('#f0ece4');
+      }
+      const by = String(d.by||'').slice(0,20);
+      const text = String(d.text||'').slice(0,100);
+      if (!d.cafeName || !by || !text) return ok();
+      vsh.appendRow([new Date(), d.cafeName, by, text]);
       return ok();
     }
 
@@ -98,7 +114,7 @@ function ok() {
   6. 這步是關鍵！不建立新版本的話改動不會生效
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 document.getElementById('copyBtn').onclick = function() {
   const code = document.getElementById('code').textContent;
   navigator.clipboard.writeText(code).then(() => {
