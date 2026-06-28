@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>推薦一間咖啡廳</title>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -619,9 +619,9 @@ async function compressImage(file) {
     const img = new Image();
     const url = URL.createObjectURL(file);
     img.onload = () => {
-      // 漸進式壓縮：先試最高畫質，超過 Sheets 50K 上限才降
-      const LIMIT = 47000;
-      const steps = [[700, 0.85], [700, 0.72], [600, 0.72], [500, 0.65], [420, 0.60]];
+      // 漸進式壓縮：先試最高畫質，超過 Sheets 單格上限才降。每張存獨立欄位，可用滿額度
+      const LIMIT = 48000;
+      const steps = [[1280, 0.88], [1100, 0.85], [960, 0.82], [820, 0.78], [680, 0.72], [560, 0.66]];
       let data = '';
       for (const [maxW, q] of steps) {
         const r = Math.min(1, maxW / Math.max(img.width, img.height));
@@ -859,7 +859,7 @@ document.getElementById('form').addEventListener('submit', e => {
     lat: picked.lat, lng: picked.lng,
     by, reason, tags: [...selectedTags].join(','),
     link: document.getElementById('link').value.trim(),
-    photos: JSON.stringify(photosData),
+    photo1: photosData[0]||'', photo2: photosData[1]||'', photo3: photosData[2]||'', photo4: photosData[3]||'',
   });
   resetPerCafe();
   renderCart();

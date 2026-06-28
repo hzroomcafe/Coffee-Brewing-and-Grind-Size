@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>咖啡廳推薦 · 咖啡小村</title>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,6 +153,10 @@ header { padding: 26px 0 14px; }
 .regionbar::-webkit-scrollbar { display:none; }
 .rchip { flex-shrink:0; padding:8px 14px; border-radius:11px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:13px; font-weight:800; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:6px; }
 .rchip svg { width:14px; height:14px; }
+.region-select-wrap { display:flex; align-items:center; gap:8px; background:var(--card); border:1px solid var(--line); border-radius:11px; padding:0 12px; width:100%; }
+.region-select-wrap svg { width:15px; height:15px; color:var(--sage); flex-shrink:0; }
+.region-select { flex:1; border:0; background:transparent; color:var(--ink); font-size:14px; font-weight:800; font-family:inherit; padding:11px 6px; outline:none; cursor:pointer; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239A9189' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 4px center; padding-right:22px; }
+.regionbar-select { overflow:visible; }
 .rchip:hover { border-color:var(--sage); }
 .rchip.on { background:var(--ink); color:var(--cream); border-color:var(--ink); }
 .rchip .ct { font-size:11px; opacity:.7; font-weight:700; }
@@ -210,6 +214,13 @@ header { padding: 26px 0 14px; }
 .rv-list { max-height:42vh; overflow-y:auto; display:flex; flex-direction:column; gap:9px; margin:4px 0 16px; }
 .rv-list .rv-item { background:color-mix(in srgb,var(--sage) 9%,transparent); }
 .rv-empty { font-size:13px; color:var(--muted); text-align:center; padding:18px 0; }
+.rv-head { display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+.rv-stars { font-size:12px; color:#E0A93B; letter-spacing:1px; }
+.rv-avg { font-size:11.5px; color:#E0A93B; font-weight:800; margin-left:4px; letter-spacing:.5px; }
+.rv-star-input { display:flex; align-items:center; gap:3px; margin-bottom:11px; font-size:24px; color:#E0A93B; cursor:pointer; user-select:none; }
+.rv-star-input span[data-v] { transition:transform .1s; }
+.rv-star-input span[data-v]:hover { transform:scale(1.15); }
+.rv-star-label { font-size:12px; color:var(--muted); font-weight:600; margin-left:8px; }
 .rv-form { border-top:1px solid var(--line); padding-top:14px; }
 .rv-form-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:10px; }
 .rv-counter { float:right; font-size:11px; color:var(--muted); font-weight:600; }
@@ -467,7 +478,8 @@ async function loadData() {
       name: findCol('店名','name'), area: findCol('區域','地區','area'),
       address: findCol('地址','address'), lat: findCol('緯度','lat'), lng: findCol('經度','lng','lon'),
       by: findCol('推薦人','by'), reason: findCol('推薦原因','原因','reason'),
-      tags: findCol('標籤','tag'), link: findCol('連結','link','url'), status: findCol('狀態','status'), photo: findCol('圖片','photo','image'),
+      tags: findCol('標籤','tag'), link: findCol('連結','link','url'), status: findCol('狀態','status'),
+      photo: findCol('圖片1','圖片','photo','image'), photo2: findCol('圖片2'), photo3: findCol('圖片3'), photo4: findCol('圖片4'),
     };
     // 若拉不到標題（舊表無標題列），退回原本的固定欄位順序
       const FALLBACK = { name:0, area:1, address:2, lat:3, lng:4, by:5, reason:6, tags:7, link:8, status:9, photo:11 };
@@ -486,7 +498,12 @@ async function loadData() {
         tags: String(g(M.tags)).split(/[,，、\s]+/).filter(Boolean),
         link: String(g(M.link)),
         status: String(g(M.status)),
-        photo: (() => { try { const v=g(M.photo); return JSON.parse(v)||v; } catch(e){ return g(M.photo)||''; } })(),
+        photo: (() => {
+          // 多欄照片（圖片1-4）或舊的單欄 JSON 陣列
+          const cols = [g(M.photo), g(M.photo2), g(M.photo3), g(M.photo4)].filter(v => v && String(v).startsWith('data:'));
+          if (cols.length) return cols;
+          try { const v=g(M.photo); const p=JSON.parse(v); return Array.isArray(p)?p:(v?[v]:[]); } catch(e){ const v=g(M.photo); return v?[v]:[]; }
+        })(),
       };
     }).filter(c => c.name)
       .filter(c => !(CONFIG.ONLY_APPROVED && hasStatusCol) || isApproved(c.status));
@@ -511,15 +528,15 @@ async function loadReviews() {
     const cols = json.table.cols || [];
     const norm = s => String(s||'').trim().toLowerCase();
     const findCol = (...names) => { for(let i=0;i<cols.length;i++){ const l=norm(cols[i]&&cols[i].label); if(names.some(n=>l.includes(norm(n)))) return i; } return -1; };
-    let IX = { ts:findCol('時間','time'), name:findCol('店名','name'), by:findCol('名稱','昵稱','by'), text:findCol('評論','內容','comment','review') };
-    if (IX.name < 0) IX = { ts:0, name:1, by:2, text:3 };  // 無標題列 fallback
+    let IX = { ts:findCol('時間','time'), name:findCol('店名','name'), by:findCol('名稱','昵稱','by'), text:findCol('評論','內容','comment','review'), rating:findCol('評分','星級','rating','star') };
+    if (IX.name < 0) IX = { ts:0, name:1, by:2, text:3, rating:4 };  // 無標題列 fallback
     rows.forEach(r => {
       const c = r.c || [];
       const g = i => (i>=0 && c[i] && c[i].v!=null) ? String(c[i].v) : '';
       const nm = g(IX.name).trim();
       const tx = g(IX.text).trim();
       if (!nm || !tx) return;
-      (REVIEWS[nm] = REVIEWS[nm] || []).push({ by: g(IX.by).trim()||'匿名', text: tx, ts: g(IX.ts) });
+      (REVIEWS[nm] = REVIEWS[nm] || []).push({ by: g(IX.by).trim()||'匿名', text: tx, rating: parseInt(g(IX.rating))||0, ts: g(IX.ts) });
     });
   } catch(e) { /* 沒有評論分頁或讀取失敗，靜默忽略 */ }
 }
@@ -550,25 +567,56 @@ function getFiltered() {
 function renderRegions() {
   const bar = document.getElementById('regionBar');
   const regions = allRegions();
-  // 只有一個地區時不必顯示
   if (regions.length <= 1) { bar.classList.add('hidden'); bar.innerHTML=''; return; }
   bar.classList.remove('hidden');
-  bar.className = 'regionbar';
   bar.innerHTML = '';
   const pin = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>';
-  const all = document.createElement('button');
-  all.className = 'rchip' + (activeRegion==='' ? ' on' : '');
-  all.innerHTML = pin + '全部地區 <span class="ct">' + CAFES.length + '</span>';
-  all.onclick = () => { activeRegion=''; renderRegions(); renderAll(); };
-  bar.appendChild(all);
+  // 地區 ≤ 5：用 chip；> 5：用依國家分組的下拉選單，避免標籤爆版
+  if (regions.length <= 5) {
+    bar.className = 'regionbar';
+    const all = document.createElement('button');
+    all.className = 'rchip' + (activeRegion==='' ? ' on' : '');
+    all.innerHTML = pin + '全部地區 <span class="ct">' + CAFES.length + '</span>';
+    all.onclick = () => { activeRegion=''; renderRegions(); renderAll(); };
+    bar.appendChild(all);
+    regions.forEach(r => {
+      const n = CAFES.filter(c=>regionOf(c)===r).length;
+      const b = document.createElement('button');
+      b.className = 'rchip' + (activeRegion===r ? ' on' : '');
+      b.innerHTML = esc(r) + ' <span class="ct">' + n + '</span>';
+      b.onclick = () => { activeRegion = (activeRegion===r ? '' : r); renderRegions(); renderAll(); };
+      bar.appendChild(b);
+    });
+    return;
+  }
+  // 下拉模式：依國家分組
+  bar.className = 'regionbar regionbar-select';
+  const byCountry = {};
+  const order = [];
   regions.forEach(r => {
-    const n = CAFES.filter(c=>regionOf(c)===r).length;
-    const b = document.createElement('button');
-    b.className = 'rchip' + (activeRegion===r ? ' on' : '');
-    b.innerHTML = esc(r) + ' <span class="ct">' + n + '</span>';
-    b.onclick = () => { activeRegion = (activeRegion===r ? '' : r); renderRegions(); renderAll(); };
-    bar.appendChild(b);
+    const cafe = CAFES.find(c => regionOf(c)===r);
+    const country = (cafe ? countryOf(cafe) : '') || '其他';
+    if (!byCountry[country]) { byCountry[country] = []; order.push(country); }
+    byCountry[country].push(r);
   });
+  const wrap = document.createElement('div');
+  wrap.className = 'region-select-wrap';
+  const sel = document.createElement('select');
+  sel.className = 'region-select';
+  let html = `<option value=""${activeRegion===''?' selected':''}>📍 全部地區（${CAFES.length}）</option>`;
+  order.forEach(country => {
+    html += `<optgroup label="${esc(country)}">`;
+    byCountry[country].forEach(r => {
+      const n = CAFES.filter(c=>regionOf(c)===r).length;
+      html += `<option value="${esc(r)}"${activeRegion===r?' selected':''}>${esc(r)}（${n}）</option>`;
+    });
+    html += `</optgroup>`;
+  });
+  sel.innerHTML = html;
+  sel.onchange = () => { activeRegion = sel.value; renderRegions(); renderAll(); };
+  wrap.innerHTML = pin;
+  wrap.appendChild(sel);
+  bar.appendChild(wrap);
 }
 
 /* ===========================================================
@@ -727,7 +775,8 @@ function toggleLocate() {
     err => {
       btn.classList.remove('loading');
       document.getElementById('locLabel').textContent = '附近';
-      alert('無法取得位置：' + (err.code===1 ? '請允許定位權限' : '請稍後再試') + '。\n（仍可使用每間店的「導航」按鈕，由 Google 地圖計算距離）');
+      showBanner('無法取得位置：' + (err.code===1 ? '請允許定位權限' : '請稍後再試') + '。仍可使用每間店的「導航」按鈕，由 Google 地圖計算距離。');
+      setTimeout(hideBanner, 6000);
     },
     { enableHighAccuracy:true, timeout:10000, maximumAge:60000 }
   );
@@ -784,15 +833,19 @@ function closeReport() { const m=document.getElementById('reportModal'); if(m) m
 function reviewsPreview(c) {
   const rv = REVIEWS[c.name] || [];
   if (!rv.length) return '';
-  const items = rv.map(r=>`<div class="rv-item"><div class="rv-by">${esc(r.by)}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('');
-  return `<details class="rv-collapse"><summary onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>${rv.length} 則評論</span><svg class="rv-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary><div class="reviews-preview" onclick="event.stopPropagation()">${items}</div></details>`;
+  const items = rv.map(r=>`<div class="rv-item"><div class="rv-head"><span class="rv-by">${esc(r.by)}</span>${r.rating?`<span class="rv-stars">${starStr(r.rating)}</span>`:''}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('');
+  const avg = avgRating(rv);
+  const avgHtml = avg ? `<span class="rv-avg">${starStr(Math.round(avg))} ${avg.toFixed(1)}</span>` : '';
+  return `<details class="rv-collapse"><summary onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>${rv.length} 則評論</span>${avgHtml}<svg class="rv-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary><div class="reviews-preview" onclick="event.stopPropagation()">${items}</div></details>`;
 }
+function starStr(n){ n=Math.max(0,Math.min(5,n||0)); return '★★★★★'.slice(0,n) + '☆☆☆☆☆'.slice(0,5-n); }
+function avgRating(rv){ const r=rv.filter(x=>x.rating>0); return r.length ? r.reduce((s,x)=>s+x.rating,0)/r.length : 0; }
 function openReviews(btn) {
   if (document.getElementById('reviewModal')) return;
   const cafeName = btn && btn.dataset ? btn.dataset.cname : String(btn||'');
   const rv = REVIEWS[cafeName] || [];
   const listHtml = rv.length
-    ? rv.map(r=>`<div class="rv-item"><div class="rv-by">${esc(r.by)}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('')
+    ? rv.map(r=>`<div class="rv-item"><div class="rv-head"><span class="rv-by">${esc(r.by)}</span>${r.rating?`<span class="rv-stars">${starStr(r.rating)}</span>`:''}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('')
     : '<div class="rv-empty">還沒有評論，留下第一則吧 ☕</div>';
   const bd = document.createElement('div'); bd.id='reviewModal'; bd.className='modal-backdrop';
   bd.innerHTML=`<div class="modal">
@@ -802,6 +855,11 @@ function openReviews(btn) {
     <div class="rv-form">
       <div class="rv-form-title">寫下你的評論</div>
       <input type="hidden" id="rvCafeName" value="${esc(cafeName)}">
+      <input type="hidden" id="rvRating" value="0">
+      <div class="rv-star-input" id="rvStarInput">
+        ${[1,2,3,4,5].map(i=>`<span data-v="${i}" onclick="setRvRating(${i})">☆</span>`).join('')}
+        <span class="rv-star-label" id="rvStarLabel">點選評分（選填）</span>
+      </div>
       <input type="text" id="rvBy" maxlength="20" placeholder="你的名稱（必填）">
       <textarea id="rvText" maxlength="100" rows="3" placeholder="分享你的心得…（最多 100 字）" oninput="document.getElementById('rvCount').textContent=this.value.length+' / 100'"></textarea>
       <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-4px;"><span id="rvCount">0 / 100</span></div>
@@ -819,17 +877,24 @@ async function sendReview() {
   const name = document.getElementById('rvCafeName').value;
   const by = document.getElementById('rvBy').value.trim();
   const text = document.getElementById('rvText').value.trim();
+  const rating = parseInt(document.getElementById('rvRating').value) || 0;
   if (!by) { document.getElementById('rvBy').focus(); return; }
   if (text.length < 2) { document.getElementById('rvText').focus(); return; }
   // 樂觀更新：立即顯示在前端
-  (REVIEWS[name] = REVIEWS[name] || []).push({ by, text, ts: new Date().toISOString() });
+  (REVIEWS[name] = REVIEWS[name] || []).push({ by, text, rating, ts: new Date().toISOString() });
   closeReviews();
   renderAll();
   if (CONFIG.APPS_SCRIPT_URL) {
     try { await fetch(CONFIG.APPS_SCRIPT_URL, { method:'POST', mode:'no-cors',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body: JSON.stringify({ _action:'review', cafeName:name, by, text }) }); } catch(e) {}
+      body: JSON.stringify({ _action:'review', cafeName:name, by, text, rating }) }); } catch(e) {}
   }
+}
+function setRvRating(v){
+  document.getElementById('rvRating').value = v;
+  const stars = document.querySelectorAll('#rvStarInput span[data-v]');
+  stars.forEach(s => s.textContent = (+s.dataset.v <= v) ? '★' : '☆');
+  document.getElementById('rvStarLabel').textContent = ['','很差','普通','不錯','很好','超棒'][v] || '';
 }
 async function sendReport(name) {
   const type = document.getElementById('reportType').value;
