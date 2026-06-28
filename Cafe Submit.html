@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>推薦一間咖啡廳</title>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782649127375&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782649127375&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782659927614&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782659927614&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -554,7 +554,6 @@ async function doSearch(q) {
 async function nominatimSearch(q) {
   const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=6&accept-language=zh-TW&q=${encodeURIComponent(q)}`;
   const arr = await (await fetch(url, { headers: { 'Accept':'application/json' } })).json();
-  // 轉成跟 Photon 一致的 GeoJSON feature 形狀
   return (arr||[]).map(r => {
     const a = r.address || {};
     return {
@@ -570,6 +569,23 @@ async function nominatimSearch(q) {
     };
   });
 }
+
+/* NLSC（國土測繪中心）台灣政府地址 API — 透過 Apps Script 代理，覆蓋全台門牌 */
+async function nlscSearch(q) {
+  if (!CONFIG.APPS_SCRIPT_URL) return [];
+  const url = CONFIG.APPS_SCRIPT_URL + '?action=twgeo&q=' + encodeURIComponent(q);
+  const arr = await (await fetch(url)).json();
+  return (arr||[]).filter(r=>r.x&&r.y).map(r => ({
+    geometry: { coordinates: [parseFloat(r.x), parseFloat(r.y)] },
+    properties: {
+      name: r.address || q.split(/[0-9]/)[0].trim(),
+      countrycode: 'tw', country: '台灣',
+      state: r.county||'', city: r.town||r.county||'',
+      district: r.village||'', street: r.road||'', housenumber: r.number||'',
+    }
+  }));
+}
+
 function fmtAddr(p) {
   const parts = [p.country, p.state, p.city || p.county, p.district, p.street, p.housenumber].filter(Boolean);
   // 中文地址習慣由大到小，Photon 給的順序大致從國到街，保留即可
@@ -789,6 +805,10 @@ photoZone.addEventListener('drop', e=>{ e.preventDefault(); photoZone.classList.
       const d = await (await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=${lat}&lon=${lng}&lang=default&limit=3`)).json();
       let feats = d.features || [];
       if (feats.length < 1) { try { feats = await nominatimSearch(q); } catch(e){} }
+      // 若地址看起來是台灣（含市/區/路/巷/弄/號）而且還是找不到，上 NLSC
+      if (feats.length < 1 && /[市區鄉鎮路街巷弄號村鄉]/.test(q)) {
+        try { feats = await nlscSearch(q); } catch(e){}
+      }
       return feats;
     } catch(e){ return []; }
   }
@@ -805,15 +825,27 @@ photoZone.addEventListener('drop', e=>{ e.preventDefault(); photoZone.classList.
   async function jumpToAddress(q) {
     if (q.length < 2) return;
     if (addrStatus) { addrStatus.textContent = '搜尋中…'; addrStatus.style.display = 'block'; }
+    // 台灣地址三層搜尋：Photon → Nominatim → NLSC（政府圖資，覆蓋全台門牌）
+    async function tryGeocode(addr) {
+      const lat = cityBias ? cityBias.lat : 23.5;
+      const lng = cityBias ? cityBias.lng : 121.0;
+      let feats = [];
+      try { const d = await (await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(addr)}&lat=${lat}&lon=${lng}&lang=default&limit=3`)).json(); feats = d.features||[]; } catch(e){}
+      if (feats.length < 1) { try { feats = await nominatimSearch(addr); } catch(e){} }
+      if (feats.length < 1 && /[市區鄉鎮路街巷弄號村鄉]/.test(addr)) {
+        try { feats = await nlscSearch(addr); } catch(e){}
+      }
+      return feats;
+    }
     try {
       let feats = [], usedQ = q, simplified = false;
       const variants = simplify(q);
       for (let i = 0; i < variants.length; i++) {
-        feats = await geocodeOnce(variants[i]);
+        feats = await tryGeocode(variants[i]);
         if (feats.length) { usedQ = variants[i]; simplified = (i > 0); break; }
       }
       if (!feats.length) {
-        if (addrStatus) addrStatus.textContent = '找不到這個地址（OpenStreetMap 對巷弄門牌收錄有限）。請直接拖動地圖標記到正確位置。';
+        if (addrStatus) addrStatus.textContent = '找不到這個地址（Photon/Nominatim/國土測繪都查不到）。請直接拖動地圖標記到正確位置。';
         return;
       }
       const f = feats[0];
