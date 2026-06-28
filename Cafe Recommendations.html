@@ -50,6 +50,13 @@ html.dark body::before { opacity:.16; mix-blend-mode:overlay; }
 .report-btn svg { width:13px; height:13px; }
 /* 圖片縮圖 */
 .cafe-photo { width:66px; height:66px; border-radius:12px; object-fit:cover; flex-shrink:0; cursor:pointer; border:1px solid var(--line); }
+.cafe-thumb { transition:transform .12s, box-shadow .12s; }
+.cafe-thumb:hover { transform:scale(1.06); box-shadow:0 4px 14px rgba(0,0,0,.18); }
+/* 滑鼠懸停大圖預覽 */
+#thumbPreview { position:fixed; z-index:95; pointer-events:none; border-radius:14px; overflow:hidden; box-shadow:0 16px 44px rgba(0,0,0,.4); border:3px solid #fff; opacity:0; transform:scale(.94); transition:opacity .12s, transform .12s; }
+#thumbPreview.on { opacity:1; transform:scale(1); }
+#thumbPreview img { display:block; width:280px; height:280px; object-fit:cover; }
+@media (hover:none){ #thumbPreview{ display:none!important; } }
 .photo-lb { position:fixed; inset:0; z-index:99; background:rgba(0,0,0,.92); display:flex; align-items:center; justify-content:center; cursor:zoom-out; touch-action:pan-y; user-select:none; }
 .photo-lb .lb-stage { width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
 .photo-lb .lb-track { display:flex; height:100%; transition:transform .28s cubic-bezier(.4,0,.2,1); }
@@ -185,8 +192,16 @@ header { padding: 26px 0 14px; }
 .byline b { color:var(--ink); font-weight:800; }
 .byline .av { width:26px; height:26px; border-radius:50%; background:var(--sage); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .foot-actions { display:flex; gap:7px; flex-shrink:0; }
-/* 評論預覽 */
-.reviews-preview { margin-top:12px; display:flex; flex-direction:column; gap:7px; }
+/* 評論預覽（可收放，預設關閉） */
+.rv-collapse { margin-top:12px; }
+.rv-collapse summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:800; color:var(--sage-d); background:color-mix(in srgb,var(--sage) 9%,transparent); padding:8px 12px; border-radius:11px; user-select:none; transition:.15s; }
+.rv-collapse summary::-webkit-details-marker { display:none; }
+.rv-collapse summary:hover { background:color-mix(in srgb,var(--sage) 15%,transparent); }
+.rv-collapse summary svg { width:15px; height:15px; flex-shrink:0; }
+.rv-collapse summary span { flex:1; }
+.rv-collapse summary .rv-chev { transition:transform .2s; }
+.rv-collapse[open] summary .rv-chev { transform:rotate(180deg); }
+.reviews-preview { margin-top:9px; display:flex; flex-direction:column; gap:7px; }
 .rv-item { background:color-mix(in srgb,var(--sage) 7%,transparent); border-radius:11px; padding:8px 11px; }
 .rv-item .rv-by { font-size:11.5px; font-weight:800; color:var(--sage-d); margin-bottom:2px; }
 .rv-item .rv-tx { font-size:12.5px; line-height:1.55; color:var(--ink-soft); }
@@ -593,7 +608,7 @@ function buildCard(c) {
       </div>
       ${distHtml}
     </div>
-    ${Array.isArray(c.photo) && c.photo.length ? `<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">${c.photo.map((src,i)=>`<img src="${src}" style="width:56px;height:56px;object-fit:cover;border-radius:9px;cursor:pointer;border:1px solid var(--line);" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},${i})">`).join('')}</div>` : (c.photo && typeof c.photo==='string' && c.photo.startsWith('data:') ? `<img class="cafe-photo" src="${c.photo}" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},0)">` : '')}
+    ${Array.isArray(c.photo) && c.photo.length ? `<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">${c.photo.map((src,i)=>`<img src="${src}" class="cafe-thumb" style="width:56px;height:56px;object-fit:cover;border-radius:9px;cursor:pointer;border:1px solid var(--line);" onmouseenter="thumbHover(this,'${src.startsWith('data:')?'':esc(src)}')" onmouseleave="thumbHoverOut()" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},${i})">`).join('')}</div>` : (c.photo && typeof c.photo==='string' && c.photo.startsWith('data:') ? `<img class="cafe-photo cafe-thumb" src="${c.photo}" onmouseenter="thumbHover(this,'')" onmouseleave="thumbHoverOut()" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},0)">` : '')}
     <div class="reason-wrap"><div class="reason">${esc(c.reason)}</div></div>
     ${c.tags.length ? `<div class="cafe-tags">${c.tags.map(t=>`<span class="tg">${tagIcon(t)} ${esc(t)}</span>`).join('')}</div>` : ''}
     ${reviewsPreview(c)}
@@ -769,9 +784,8 @@ function closeReport() { const m=document.getElementById('reportModal'); if(m) m
 function reviewsPreview(c) {
   const rv = REVIEWS[c.name] || [];
   if (!rv.length) return '';
-  const show = rv.slice(0, 2);
-  const more = rv.length > 2 ? `<div class="rv-more" onclick="event.stopPropagation();openReviews(this)" data-cname="${esc(c.name)}">查看全部 ${rv.length} 則評論 ›</div>` : '';
-  return `<div class="reviews-preview">${show.map(r=>`<div class="rv-item"><div class="rv-by">${esc(r.by)}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('')}${more}</div>`;
+  const items = rv.map(r=>`<div class="rv-item"><div class="rv-by">${esc(r.by)}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('');
+  return `<details class="rv-collapse"><summary onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>${rv.length} 則評論</span><svg class="rv-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></summary><div class="reviews-preview" onclick="event.stopPropagation()">${items}</div></details>`;
 }
 function openReviews(btn) {
   if (document.getElementById('reviewModal')) return;
@@ -872,6 +886,41 @@ function openLightbox(photos, startIdx) {
   stage.addEventListener('touchstart', e=>{ sx=e.touches[0].clientX; dragging=true; track.style.transition='none'; }, {passive:true});
   stage.addEventListener('touchmove', e=>{ if(!dragging) return; dx=e.touches[0].clientX-sx; track.style.transform=`translateX(calc(-${idx*100}vw + ${dx}px))`; }, {passive:true});
   stage.addEventListener('touchend', ()=>{ if(!dragging) return; dragging=false; const th=window.innerWidth*0.18; if(multi && dx<-th) go(idx+1); else if(multi && dx>th) go(idx-1); else render(); dx=0; });
+  // 桌機滑鼠拖曳（也能滑動切換）
+  if (multi) {
+    stage.style.cursor='grab';
+    let mdrag=false;
+    stage.addEventListener('mousedown', e=>{ e.preventDefault(); sx=e.clientX; mdrag=true; dragging=true; dx=0; track.style.transition='none'; stage.style.cursor='grabbing'; });
+    window.addEventListener('mousemove', e=>{ if(!mdrag) return; dx=e.clientX-sx; track.style.transform=`translateX(calc(-${idx*100}vw + ${dx}px))`; });
+    window.addEventListener('mouseup', ()=>{ if(!mdrag) return; mdrag=false; dragging=false; stage.style.cursor='grab'; const th=window.innerWidth*0.12; if(dx<-th) go(idx+1); else if(dx>th) go(idx-1); else render(); dx=0; });
+  }
+}
+/* 滑鼠懸停縮圖 → 浮出大圖預覽（僅桌機） */
+let thumbPrevEl = null, thumbPrevTimer = null;
+function thumbHover(el) {
+  if (window.matchMedia('(hover:none)').matches) return;
+  clearTimeout(thumbPrevTimer);
+  if (!thumbPrevEl) {
+    thumbPrevEl = document.createElement('div');
+    thumbPrevEl.id = 'thumbPreview';
+    thumbPrevEl.innerHTML = '<img>';
+    document.body.appendChild(thumbPrevEl);
+  }
+  thumbPrevEl.querySelector('img').src = el.src;
+  const r = el.getBoundingClientRect();
+  const pw = 280, gap = 12;
+  let left = r.left + r.width/2 - pw/2;
+  left = Math.max(10, Math.min(left, window.innerWidth - pw - 10));
+  let top = r.top - pw - gap;
+  if (top < 10) top = r.bottom + gap;
+  thumbPrevEl.style.left = left + 'px';
+  thumbPrevEl.style.top = top + 'px';
+  requestAnimationFrame(()=>thumbPrevEl.classList.add('on'));
+}
+function thumbHoverOut() {
+  if (!thumbPrevEl) return;
+  thumbPrevEl.classList.remove('on');
+  thumbPrevTimer = setTimeout(()=>{ if(thumbPrevEl){ thumbPrevEl.remove(); thumbPrevEl=null; } }, 200);
 }
 function openLightboxIdx(idx, photoIdx) {
   const c = CAFES[idx];
