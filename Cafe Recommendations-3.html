@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>咖啡廳推薦 · 咖啡小村</title>
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782584327801&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #F2EDE3; --card: #FBF8F1; --ink: #3A3733; --ink-soft: #6B6660; --muted: #9A9189;
+  --line: #E4DCCC; --sage: #7E8D85; --sage-d: #6E7D75; --accent: #B5654A; --chip: #ECE4D6;
+}
+html.dark {
+  --cream: #1B1E22; --card: #262A2E; --ink: #EDE8DD; --ink-soft: #B8B2A7; --muted: #8A857C;
+  --line: #393E43; --sage: #8B9A91; --sage-d: #7E8D85; --accent: #C9785C; --chip: #33383D;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif; font-feature-settings: "palt"; }
+body { background: var(--cream); color: var(--ink); transition: background .3s, color .3s; min-height: 100vh; }
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+/* paper grain */
+body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.21 0 0 0 0 0.18 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.07; mix-blend-mode:multiply; }
+html.dark body::before { opacity:.16; mix-blend-mode:overlay; }
+.modal-backdrop { position:fixed; inset:0; z-index:90; background:rgba(0,0,0,.45); display:flex; align-items:flex-end; justify-content:center; backdrop-filter:blur(3px); }
+@media(min-width:600px){ .modal-backdrop { align-items:center; } }
+.modal { background:var(--card); border-radius:22px 22px 0 0; padding:22px 20px 32px; width:100%; max-width:520px; box-shadow:0 -16px 40px rgba(0,0,0,.18); }
+@media(min-width:600px){ .modal { border-radius:22px; padding:24px; } }
+.modal h3 { font-size:17px; font-weight:900; margin-bottom:4px; }
+.modal .sub { font-size:12.5px; color:var(--muted); margin-bottom:16px; line-height:1.5; }
+.modal select, .modal textarea, .modal input[type=text] { width:100%; padding:11px 13px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14px; font-family:inherit; outline:none; transition:.15s; }
+.modal input[type=text] { margin-bottom:11px; }
+.modal select:focus, .modal textarea:focus, .modal input[type=text]:focus { border-color:var(--sage); }
+.modal select { margin-bottom:11px; }
+.modal textarea { resize:vertical; min-height:80px; line-height:1.6; }
+.modal-btns { display:flex; gap:9px; margin-top:13px; }
+.modal-btns button { flex:1; padding:13px; border-radius:13px; font-size:14px; font-weight:800; border:0; cursor:pointer; font-family:inherit; transition:.15s; }
+.modal-cancel { background:var(--chip); color:var(--ink-soft); }
+.modal-submit { background:var(--sage); color:#fff; }
+.modal-submit:hover { filter:brightness(1.08); }
+.report-btn { background:none; border:1px solid var(--line); border-radius:9px; padding:5px 9px; font-size:11.5px; font-weight:700; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:.15s; }
+.report-btn:hover { border-color:var(--accent); color:var(--accent); }
+.report-btn svg { width:13px; height:13px; }
+/* 圖片縮圖 */
+.cafe-photo { width:66px; height:66px; border-radius:12px; object-fit:cover; flex-shrink:0; cursor:pointer; border:1px solid var(--line); }
+.photo-lb { position:fixed; inset:0; z-index:99; background:rgba(0,0,0,.92); display:flex; align-items:center; justify-content:center; cursor:zoom-out; touch-action:pan-y; user-select:none; }
+.photo-lb .lb-stage { width:100%; height:100%; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+.photo-lb .lb-track { display:flex; height:100%; transition:transform .28s cubic-bezier(.4,0,.2,1); }
+.photo-lb .lb-slide { min-width:100vw; height:100%; display:flex; align-items:center; justify-content:center; }
+.photo-lb .lb-slide img { max-width:92vw; max-height:84vh; border-radius:14px; object-fit:contain; }
+.photo-lb .lb-arrow { position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; border-radius:50%; background:rgba(255,255,255,.16); border:0; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:2; backdrop-filter:blur(4px); }
+.photo-lb .lb-arrow:hover { background:rgba(255,255,255,.28); }
+.photo-lb .lb-arrow.prev { left:14px; } .photo-lb .lb-arrow.next { right:14px; }
+.photo-lb .lb-arrow svg { width:24px; height:24px; }
+.photo-lb .lb-dots { position:absolute; bottom:24px; left:50%; transform:translateX(-50%); display:flex; gap:8px; z-index:2; }
+.photo-lb .lb-dots i { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.4); transition:.2s; }
+.photo-lb .lb-dots i.on { background:#fff; width:22px; border-radius:4px; }
+.photo-lb .lb-close { position:absolute; top:18px; right:18px; width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.16); border:0; color:#fff; font-size:22px; cursor:pointer; z-index:3; backdrop-filter:blur(4px); }
+.photo-lb .lb-count { position:absolute; top:24px; left:50%; transform:translateX(-50%); color:#fff; font-size:13px; font-weight:700; background:rgba(0,0,0,.4); padding:5px 13px; border-radius:999px; z-index:2; }
+
+/* header */
+header { padding: 26px 0 14px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.brand { display:flex; align-items:center; gap:11px; }
+.brand .logo { width:42px; height:42px; border-radius:13px; background:var(--sage); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(126,141,133,.32); flex-shrink:0; }
+.brand .logo svg { width:25px; height:25px; }
+.brand h1 { font-size:19px; font-weight:900; letter-spacing:-.01em; line-height:1.1; }
+.brand p { font-size:11.5px; color:var(--muted); font-weight:600; margin-top:2px; }
+.iconbtn { width:40px; height:40px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s; flex-shrink:0; }
+.iconbtn:hover { color:var(--ink); border-color:var(--sage); }
+.iconbtn svg { width:19px; height:19px; }
+.backlink { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--muted); text-decoration:none; margin-bottom:14px; transition:.15s; }
+.backlink:hover { color:var(--sage); }
+.backlink svg { width:15px; height:15px; }
+
+/* controls */
+.controls { margin-top:16px; display:flex; flex-direction:column; gap:11px; }
+.searchrow { display:flex; gap:9px; }
+.search { flex:1; position:relative; }
+.search svg { position:absolute; left:13px; top:50%; transform:translateY(-50%); width:17px; height:17px; color:var(--muted); pointer-events:none; }
+.search input { width:100%; padding:12px 13px 12px 38px; border-radius:13px; border:1px solid var(--line); background:var(--card); color:var(--ink); font-size:14px; outline:none; transition:.15s; }
+.search input:focus { border-color:var(--sage); }
+.search input::placeholder { color:var(--muted); }
+.locbtn { display:flex; align-items:center; gap:7px; padding:0 15px; border-radius:13px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; transition:.15s; }
+.locbtn:hover { border-color:var(--sage); color:var(--ink); }
+.locbtn.on { background:var(--sage); color:#fff; border-color:var(--sage); }
+.locbtn svg { width:16px; height:16px; }
+.locbtn.loading svg { animation:spin 1s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* tag chips */
+.tags { display:flex; gap:7px; overflow-x:auto; padding-bottom:3px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+.tags::-webkit-scrollbar { display:none; }
+.chip { flex-shrink:0; padding:7px 13px; border-radius:999px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:12.5px; font-weight:700; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:5px; }
+.chip:hover { border-color:var(--sage); }
+.chip.on { background:var(--sage); color:#fff; border-color:var(--sage); }
+.chip .dot { font-size:13px; }
+
+/* view toggle + count */
+.subrow { display:flex; align-items:center; justify-content:space-between; margin-top:4px; }
+.count { font-size:12.5px; color:var(--muted); font-weight:600; }
+.count b { color:var(--ink); font-weight:800; }
+.vtoggle { display:flex; gap:3px; background:var(--chip); padding:3px; border-radius:11px; }
+.vtoggle button { border:0; background:transparent; font:inherit; font-size:12.5px; font-weight:800; color:var(--muted); padding:6px 13px; border-radius:8px; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:.15s; }
+.vtoggle button svg { width:14px; height:14px; }
+.vtoggle button.on { background:var(--card); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.1); }
+
+/* map */
+#map { height:420px; border-radius:18px; margin-top:16px; border:1px solid var(--line); z-index:2; }
+.leaflet-popup-content-wrapper { border-radius:16px; box-shadow:0 8px 28px rgba(0,0,0,.18); padding:0; overflow:hidden; }
+.leaflet-popup-content { margin:0; font-family:'Noto Sans TC',sans-serif; }
+.leaflet-popup-content-wrapper { border-radius:18px!important; box-shadow:0 12px 36px rgba(0,0,0,.22)!important; padding:0!important; overflow:hidden!important; }
+.leaflet-popup-tip-container { display:none; }
+.popup-card { padding:0; min-width:240px; max-width:280px; background:#FBF8F1; overflow:hidden; border-radius:18px; }
+.popup-photo { width:100%; height:120px; object-fit:cover; display:block; }
+.popup-body { padding:13px 14px 12px; }
+.popup-name { font-size:15.5px; font-weight:900; color:#3A3733; letter-spacing:-.01em; line-height:1.2; }
+.popup-area { font-size:11.5px; color:#9A9189; margin-top:4px; display:flex; align-items:center; gap:4px; }
+.popup-area svg { width:12px; height:12px; flex-shrink:0; color:#7E8D85; }
+.popup-dist { font-size:11px; color:#7E8D85; font-weight:700; margin-top:2px; }
+.popup-reason { font-size:12.5px; line-height:1.65; color:#6B6660; margin-top:8px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.popup-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:9px; }
+.popup-tag { font-size:10.5px; font-weight:700; padding:3px 8px; border-radius:999px; background:rgba(126,141,133,.12); color:#7E8D85; display:inline-flex; align-items:center; gap:3px; }
+.popup-actions { display:flex; gap:6px; margin-top:11px; padding-top:10px; border-top:1px solid #E4DCCC; }
+.popup-act { flex:1; display:inline-flex; align-items:center; justify-content:center; gap:5px; padding:8px 6px; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; border:1px solid #E4DCCC; background:transparent; color:#6B6660; text-decoration:none; transition:.14s; }
+.popup-act:hover { border-color:#7E8D85; color:#3A3733; }
+.popup-act.primary { background:#7E8D85; color:#fff; border-color:#7E8D85; }
+.popup-act.primary:hover { background:#6a7a72; }
+.popup-area svg { color:#7E8D85; }
+.popup-reason { font-size:12px; color:#6B6660; margin-top:8px; line-height:1.6; }
+.popup-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+.popup-tag { font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px; background:color-mix(in srgb,#7E8D85 14%,transparent); color:#5a7068; }
+.popup-actions { display:flex; gap:6px; margin-top:10px; }
+.popup-btn { display:inline-flex; align-items:center; gap:5px; padding:7px 12px; border-radius:10px; background:#f0ece4; color:#3A3733; font-size:12px; font-weight:700; text-decoration:none; flex:1; justify-content:center; }
+.popup-btn.primary { background:#7E8D85; color:#fff; }
+
+/* region chips — 比標籤略強調 */
+.regionbar { display:flex; gap:7px; overflow-x:auto; padding-bottom:3px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+.regionbar::-webkit-scrollbar { display:none; }
+.rchip { flex-shrink:0; padding:8px 14px; border-radius:11px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-size:13px; font-weight:800; cursor:pointer; transition:.15s; display:inline-flex; align-items:center; gap:6px; }
+.rchip svg { width:14px; height:14px; }
+.rchip:hover { border-color:var(--sage); }
+.rchip.on { background:var(--ink); color:var(--cream); border-color:var(--ink); }
+.rchip .ct { font-size:11px; opacity:.7; font-weight:700; }
+/* region group header in list */
+.rgroup { margin-top:6px; }
+.rgroup:first-child { margin-top:0; }
+.rhead { display:flex; align-items:center; gap:8px; padding:4px 2px 11px; }
+.rhead svg { width:15px; height:15px; color:var(--sage); }
+.rhead .nm { font-size:13.5px; font-weight:900; letter-spacing:.02em; }
+.rhead .ct { font-size:11.5px; color:var(--muted); font-weight:700; }
+.rhead .ln { flex:1; height:1px; background:var(--line); }
+.rgroup .list-inner { display:flex; flex-direction:column; gap:13px; }
+
+/* list */
+.list { margin-top:16px; display:flex; flex-direction:column; gap:15px; }
+.cafe { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:20px 20px 16px; transition:.18s; cursor:pointer; position:relative; overflow:hidden; }
+.cafe::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--sage); opacity:0; transition:.18s; }
+.cafe:hover { border-color:var(--sage); transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.08); }
+.cafe:hover::before { opacity:1; }
+.cafe-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.cafe-headmain { min-width:0; flex:1; }
+.cafe-name { font-size:18px; font-weight:900; letter-spacing:-.01em; line-height:1.22; }
+.cafe-area { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; margin-top:5px; min-width:0; }
+.cafe-area svg { width:13px; height:13px; flex-shrink:0; color:var(--sage); }
+.cafe-area span { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.region-badge { flex-shrink:0; font-size:11px; font-weight:800; color:var(--sage-d); background:color-mix(in srgb,var(--sage) 16%,transparent); border-radius:999px; padding:5px 11px; white-space:nowrap; }
+.dist { flex-shrink:0; text-align:center; background:color-mix(in srgb,var(--sage) 14%,transparent); border-radius:12px; padding:6px 10px; }
+.dist .n { font-size:15px; font-weight:900; color:var(--sage-d); line-height:1.05; }
+.dist .u { font-size:9.5px; color:var(--sage-d); font-weight:700; opacity:.8; }
+.reason-wrap { margin-top:14px; padding-left:14px; position:relative; }
+.reason-wrap::before { content:'“'; position:absolute; left:-2px; top:-6px; font-family:Georgia,serif; font-size:30px; line-height:1; color:var(--sage); opacity:.4; }
+.reason { font-size:14px; line-height:1.85; color:var(--ink-soft); text-wrap:pretty; }
+.cafe-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
+.tg { font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:999px; background:color-mix(in srgb,var(--sage) 10%,transparent); color:var(--sage-d); border:1px solid color-mix(in srgb,var(--sage) 22%,transparent); display:inline-flex; align-items:center; gap:4px; }
+.cafe-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:16px; padding-top:13px; border-top:1px solid var(--line); }
+.byline { font-size:12px; color:var(--muted); font-weight:600; display:flex; align-items:center; gap:7px; min-width:0; }
+.byline b { color:var(--ink); font-weight:800; }
+.byline .av { width:26px; height:26px; border-radius:50%; background:var(--sage); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.foot-actions { display:flex; gap:7px; flex-shrink:0; }
+/* 評論預覽 */
+.reviews-preview { margin-top:12px; display:flex; flex-direction:column; gap:7px; }
+.rv-item { background:color-mix(in srgb,var(--sage) 7%,transparent); border-radius:11px; padding:8px 11px; }
+.rv-item .rv-by { font-size:11.5px; font-weight:800; color:var(--sage-d); margin-bottom:2px; }
+.rv-item .rv-tx { font-size:12.5px; line-height:1.55; color:var(--ink-soft); }
+.rv-more { font-size:12px; font-weight:700; color:var(--sage-d); cursor:pointer; padding:2px; }
+/* 評論 modal */
+.rv-list { max-height:42vh; overflow-y:auto; display:flex; flex-direction:column; gap:9px; margin:4px 0 16px; }
+.rv-list .rv-item { background:color-mix(in srgb,var(--sage) 9%,transparent); }
+.rv-empty { font-size:13px; color:var(--muted); text-align:center; padding:18px 0; }
+.rv-form { border-top:1px solid var(--line); padding-top:14px; }
+.rv-form-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:10px; }
+.rv-counter { float:right; font-size:11px; color:var(--muted); font-weight:600; }
+@media (max-width:480px) {
+  .cafe-foot { flex-wrap:wrap; }
+  .byline { width:100%; }
+  .foot-actions { width:100%; gap:6px; }
+  .foot-actions .act, .foot-actions .report-btn { flex:1; justify-content:center; padding:9px 4px; font-size:12px; }
+  .reason-wrap { padding-left:12px; }
+}
+.act { display:inline-flex; align-items:center; gap:5px; padding:8px 13px; border-radius:11px; font-size:12.5px; font-weight:800; cursor:pointer; border:1px solid var(--line); background:transparent; color:var(--ink-soft); text-decoration:none; transition:.15s; }
+.act:hover { border-color:var(--sage); color:var(--ink); }
+.act.primary { background:var(--sage); color:#fff; border-color:var(--sage); }
+.act.primary:hover { background:var(--sage-d); color:#fff; }
+.act svg { width:15px; height:15px; }
+
+/* empty / loading */
+.empty { text-align:center; padding:56px 20px; color:var(--muted); }
+.empty svg { width:46px; height:46px; opacity:.5; margin-bottom:14px; }
+.empty p { font-size:14px; font-weight:600; }
+.empty .sm { font-size:12.5px; margin-top:6px; opacity:.8; }
+.skeleton { height:140px; border-radius:18px; background:linear-gradient(90deg,var(--card) 25%,var(--chip) 50%,var(--card) 75%); background-size:200% 100%; animation:sk 1.4s infinite; }
+@keyframes sk { to { background-position:-200% 0; } }
+
+.hidden { display:none !important; }
+footer { text-align:center; padding:30px 0 40px; color:var(--muted); font-size:11.5px; }
+footer a { color:var(--sage); text-decoration:none; font-weight:700; }
+
+/* banner for sheet config */
+.banner { margin-top:14px; padding:12px 15px; border-radius:13px; background:var(--chip); border:1px solid var(--line); font-size:12px; color:var(--ink-soft); line-height:1.6; }
+.banner b { color:var(--ink); }
+</style>
+</head>
+<body>
+<div class="app wrap">
+  <header>
+    <a class="backlink" href="Coffee Tools v5.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      返回工具箱
+    </a>
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>
+        </div>
+        <div>
+          <h1>咖啡廳推薦</h1>
+          <p>大家私藏的好店清單</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:9px;">
+        <a class="iconbtn" href="Cafe Submit.html" title="推薦一間咖啡廳" style="text-decoration:none; width:auto; padding:0 14px; gap:6px; font-size:13px; font-weight:800; color:#fff; background:var(--sage); border-color:var(--sage);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>推薦
+        </a>
+        <button class="iconbtn" id="themeBtn" title="切換深色/淺色">
+          <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="searchrow">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="searchInput" type="text" placeholder="搜尋店名、區域、推薦人…" />
+        </div>
+        <button class="locbtn" id="locBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span id="locLabel">附近</span>
+        </button>
+      </div>
+      <div class="tags" id="regionBar"></div>
+      <div class="tags" id="tagBar"></div>
+      <div class="subrow">
+        <div class="count" id="count"></div>
+        <div class="vtoggle">
+          <button id="vList" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>列表</button>
+          <button id="vMap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l-6 3V6l6-3 6 3 6-3v15l-6 3-6-3z"/><line x1="9" y1="3" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="21"/></svg>地圖</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="banner" class="banner hidden"></div>
+  <div id="map" class="hidden"></div>
+  <div class="list" id="list"></div>
+  <footer>
+    咖啡小村 · 咖啡廳推薦　|　地圖資料 © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> 貢獻者
+  </footer>
+</div>
+
+<script>
+/* ===========================================================
+   設定區 — 之後接 Google Sheet 只要改這裡
+   =========================================================== */
+const CONFIG = {
+  // 接 Google Sheet：把整個試算表設成「知道連結的人可檢視」，
+  // 然後把這裡換成你的 Sheet ID（網址 /d/ 後面那段）；留空則用下方範例資料。
+  SHEET_ID: '1XachRqnXwZ3oaCHv27vjLZ3uwkBKxMMdkDz3ySElhnM',
+  SHEET_NAME: '咖啡廳',   // 工作表分頁名稱
+  // 審核：只顯示「狀態」欄為已通過的店家（防止未審核投稿直接公開）。
+  // 視為已通過的值：已通過 / 通過 / 公開 / approved / yes / true / 1（大小寫不拘）。
+  // 若你的試算表沒有「狀態」這一欄（第 10 欄 J），所有列都會視為已通過。
+  ONLY_APPROVED: true,
+  // 回報錯誤送出導將審核：填入你的 Apps Script 網址（跟投稿表單同一支）
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby3fOPs9RQplbpHfM8TwEfKhtg5e4JI3OR2tTIAk1Yfb2v8Yb8cAqr6sQ2uYttHHBh2/exec',
+  REPORT_EMAIL: '',   // 留空即可，回報途徑由 Apps Script 處理
+  // 預設地圖中心（台北車站），定位成功後會自動移到使用者位置
+  DEFAULT_CENTER: [25.0478, 121.5170],
+  DEFAULT_ZOOM: 12,
+};
+
+/* 固定標籤（含小圖示）— 篩選用 */
+const TAGS = [
+  { key:'手沖', icon:'☕' }, { key:'義式', icon:'⚡' }, { key:'自家烘焙', icon:'🔥' },
+  { key:'好坐', icon:'🛋️' }, { key:'不限時', icon:'⏳' }, { key:'有插座', icon:'🔌' },
+  { key:'甜點', icon:'🍰' }, { key:'輕食', icon:'🥪' }, { key:'寵物友善', icon:'🐾' },
+  { key:'安靜', icon:'🤫' }, { key:'戶外座位', icon:'🌿' },
+];
+
+/* 範例資料（接上 Sheet 前可直接看效果）。座標皆為台北實際地點附近。 */
+const SAMPLE = [
+  { name:'森雨咖啡 Mori Coffee', area:'台北 · 大安區', address:'台北市大安區四維路', lat:25.0335, lng:121.5490,
+    by:'阿哲', reason:'自家烘焙淺焙做得很細緻，手沖單品有水準。空間安靜、座位舒服，適合一個人待一下午看書。', tags:['手沖','自家烘焙','安靜','好坐','不限時'], link:'' },
+  { name:'巷弄家焙所', area:'台北 · 中山區', address:'台北市中山區赤峰街', lat:25.0570, lng:121.5200,
+    by:'小美', reason:'赤峰街的小店，義式做得紮實，拿鐵奶泡綿密。有幾個戶外座位，天氣好時很愜意。甜點是亮點，檸檬塔必點。', tags:['義式','甜點','戶外座位'], link:'' },
+  { name:'晝夜 Day & Night', area:'台北 · 信義區', address:'台北市信義區松仁路', lat:25.0330, lng:121.5670,
+    by:'阿哲', reason:'近信義商圈但意外好坐，插座多、不趕人，很適合帶筆電工作。手沖選擇多，店員願意聊豆子。', tags:['手沖','有插座','不限時','好坐'], link:'' },
+  { name:'木質調 Timbre', area:'台北 · 大同區', address:'台北市大同區迪化街', lat:25.0560, lng:121.5100,
+    by:'Ken', reason:'迪化街老屋改建，氛圍非常好。輕食簡單但用心，貝果三明治推薦。可帶寵物，店狗很親人。', tags:['輕食','寵物友善','戶外座位'], link:'' },
+  { name:'恆温 Constant', area:'台北 · 松山區', address:'台北市松山區民生東路', lat:25.0580, lng:121.5560,
+    by:'小美', reason:'民生社區的安靜角落，淺焙水洗很乾淨。座位間距大、不限時，很多人來這裡讀書工作。', tags:['手沖','自家烘焙','安靜','不限時','有插座'], link:'' },
+  { name:'園道焺焙所', area:'台中 · 西區', address:'台中市西區經國路', lat:24.1490, lng:120.6620,
+    by:'Ken', reason:'國美園道附近的焺焙名店，淺焙豆質穩定。空間寬敞明亮，適合週末慍慍坐一下午。', tags:['手沖','自家烘焙','好坐','甜點'], link:'' },
+  { name:'港邊老屋 Harbor', area:'高雄 · 鹽埕區', address:'高雄市鹽埕區自強三路', lat:22.6210, lng:120.2820,
+    by:'阿哲', reason:'員藹港附近的老屋改建，針軟高但氛圍超棒。面海的戰外座位是亠點，黃昏時來最棒。', tags:['義式','戰外座位','甜點','好坐'], link:'' },
+];
+
+/* ===========================================================
+   狀態
+   =========================================================== */
+let CAFES = [];
+let REVIEWS = {};   // { 店名: [{by, text, ts}] }
+let activeTags = new Set();
+let activeRegion = '';   // '' = 全部地區
+let search = '';
+let userPos = null;       // {lat,lng}
+let view = 'list';        // list | map
+let map = null, markers = [], tileLayer = null, userMarker = null;
+
+/* ===========================================================
+   工具函式
+   =========================================================== */
+function haversine(a, b) {
+  const R = 6371, toR = d => d * Math.PI / 180;
+  const dLat = toR(b.lat - a.lat), dLng = toR(b.lng - a.lng);
+  const x = Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(x), Math.sqrt(1-x)); // km
+}
+function fmtDist(km) {
+  if (km < 1) return { n: Math.round(km*1000), u: '公尺' };
+  return { n: km.toFixed(km < 10 ? 1 : 0), u: '公里' };
+}
+function googleMapsUrl(c) {
+  const q = encodeURIComponent(`${c.name} ${c.address || c.area || ''}`.trim());
+  return `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+function mapsUrl(c) {
+  if (c.link) return c.link;
+  return googleMapsUrl(c);
+}
+function navUrl(c) {
+  if (c.lat && c.lng) return `https://www.google.com/maps/dir/?api=1&destination=${c.lat},${c.lng}`;
+  const q = encodeURIComponent(`${c.name} ${c.address || ''}`.trim());
+  return `https://www.google.com/maps/dir/?api=1&destination=${q}`;
+}
+function initial(s){ return (s||'?').trim().charAt(0); }
+function esc(s){ return (s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+function tagIcon(k){ const t = TAGS.find(x=>x.key===k); return t ? t.icon : '·'; }
+/* 地名正規化：臺↔台、全形空白、大小寫，讓「台北」也能搜到「臺北市」 */
+function normTxt(s){
+  return String(s||'')
+    .replace(/臺/g,'台').replace(/灣/g,'湾')
+    .replace(/[\u3000]/g,' ')
+    .toLowerCase().replace(/\s+/g,'');
+}
+/* 從地址抓出城市詞（結尾為 市/縣/都/府/県/州/省） */
+function cityFromAddr(addr){
+  const toks = String(addr||'').split(/[\s,，、]+/).filter(Boolean);
+  for(const t of toks){ if(/(市|縣|都|府|県|州|省)$/.test(t) && !/^(臺灣|台灣|台湾)$/.test(t)) return t; }
+  return '';
+}
+/* 推斷國家：先看地址首段，否則用座標粗略判斷 */
+function countryOf(c){
+  const addr = String(c.address||'');
+  const m = addr.match(/^\s*(臺灣|台灣|台湾|Taiwan|日本|Japan|大韓民國|韓國|Korea|South Korea|中國|中国|China|香港|Hong Kong|澳門|Macau|新加坡|Singapore|美國|United States|USA|泰國|Thailand|馬來西亞|Malaysia)/i);
+  const map={'台灣':'台灣','臺灣':'台灣','台湾':'台灣','taiwan':'台灣','日本':'日本','japan':'日本','韓國':'韓國','大韓民國':'韓國','korea':'韓國','south korea':'韓國','中國':'中國','中国':'中國','china':'中國','香港':'香港','hong kong':'香港','澳門':'澳門','macau':'澳門','新加坡':'新加坡','singapore':'新加坡','美國':'美國','united states':'美國','usa':'美國','泰國':'泰國','thailand':'泰國','馬來西亞':'馬來西亞','malaysia':'馬來西亞'};
+  if(m){ const k=m[1].toLowerCase(); return map[k]||map[m[1]]||m[1]; }
+  if(c.lat&&c.lng){ const la=+c.lat, ln=+c.lng;
+    if(la>21.8&&la<25.4&&ln>119.3&&ln<122.1) return '台灣';
+    if(la>22&&la<22.6&&ln>113.8&&ln<114.5) return '香港';
+    if(la>24&&la<46&&ln>122.5&&ln<146) return '日本';
+    if(la>33&&la<39&&ln>124&&ln<131) return '韓國';
+  }
+  return '';
+}
+/* 顯示用地點：國家 · 城市 · 區域 */
+function displayLoc(c){
+  const country = countryOf(c);
+  let rest = '';
+  if(c.area) rest = String(c.area);
+  else { rest = String(c.address||'').replace(/^\s*(臺灣|台灣|台湾|Taiwan|日本|Japan|大韓民國|韓國|Korea|South Korea|中國|中国|China|香港|Hong Kong)\s*/i,'').trim(); }
+  // 避免重複：若 rest 已以國家開頭則不重複加
+  const parts = [];
+  if(country && !rest.startsWith(country)) parts.push(country);
+  if(rest) parts.push(rest);
+  if(parts.length) return parts.join(' · ');
+  if(c.lat && c.lng) return '位置查詢中…';
+  return '—';
+}
+/* 地區 = 區域第一段；若區域空白，改用地址推算的城市（去掉市/縣等後綴、臺→台） */
+function regionOf(c){
+  let r = (String(c.area||'').split(/[·｜|、/]/)[0] || '').trim();
+  if(!r){ r = cityFromAddr(c.address).replace(/(市|縣|都|府|県|州|省)$/,''); }
+  r = r.replace(/臺/g,'台');
+  return r || '其他';
+}
+function allRegions(){ const seen=[]; CAFES.forEach(c=>{ const r=regionOf(c); if(!seen.includes(r)) seen.push(r); }); return seen; }
+
+/* ===========================================================
+   資料載入：Google Sheet（gviz JSON）→ 失敗則用範例
+   =========================================================== */
+async function loadData() {
+  if (!CONFIG.SHEET_ID) {
+    CAFES = SAMPLE.slice();
+    showBanner('目前顯示的是<b>範例資料</b>。要接上你自己的 Google Sheet（自己用或多人共筆都行），<a href="Cafe Setup Guide.html" style="color:var(--sage);font-weight:800;text-decoration:underline;">點此看圖解設定指南 →</a>');
+    return;
+  }
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(CONFIG.SHEET_NAME)}`;
+    const txt = await (await fetch(url)).text();
+    const json = JSON.parse(txt.substring(txt.indexOf('{'), txt.lastIndexOf('}')+1));
+    const rows = json.table.rows || [];
+    const cols = json.table.cols || [];
+    // 以「標題列」名稱自動對應欄位（不管有沒有時間欄、順序如何都不會錯位）
+    const norm = s => String(s||'').trim().toLowerCase();
+    const findCol = (...names) => {
+      for (let i = 0; i < cols.length; i++) {
+        const lab = norm(cols[i] && cols[i].label);
+        if (names.some(n => lab.includes(norm(n)))) return i;
+      }
+      return -1;
+    };
+    const IX = {
+      name: findCol('店名','name'), area: findCol('區域','地區','area'),
+      address: findCol('地址','address'), lat: findCol('緯度','lat'), lng: findCol('經度','lng','lon'),
+      by: findCol('推薦人','by'), reason: findCol('推薦原因','原因','reason'),
+      tags: findCol('標籤','tag'), link: findCol('連結','link','url'), status: findCol('狀態','status'), photo: findCol('圖片','photo','image'),
+    };
+    // 若拉不到標題（舊表無標題列），退回原本的固定欄位順序
+      const FALLBACK = { name:0, area:1, address:2, lat:3, lng:4, by:5, reason:6, tags:7, link:8, status:9, photo:11 };
+    const useHeader = IX.name >= 0;
+    const M = useHeader ? IX : FALLBACK;
+    const hasStatusCol = M.status >= 0 && M.status < cols.length;
+    const APPROVED = ['已通過','通過','公開','approved','approve','yes','true','1','ok'];
+    const isApproved = v => { const s = String(v||'').trim().toLowerCase(); return s === '' ? false : APPROVED.includes(s); };
+    CAFES = rows.map(r => {
+      const c = r.c || [];
+      const g = i => (i >= 0 && c[i] && c[i].v != null) ? c[i].v : '';
+      return {
+        name: String(g(M.name)), area: String(g(M.area)), address: String(g(M.address)),
+        lat: parseFloat(g(M.lat)) || null, lng: parseFloat(g(M.lng)) || null,
+        by: String(g(M.by)), reason: String(g(M.reason)),
+        tags: String(g(M.tags)).split(/[,，、\s]+/).filter(Boolean),
+        link: String(g(M.link)),
+        status: String(g(M.status)),
+        photo: (() => { try { const v=g(M.photo); return JSON.parse(v)||v; } catch(e){ return g(M.photo)||''; } })(),
+      };
+    }).filter(c => c.name)
+      .filter(c => !(CONFIG.ONLY_APPROVED && hasStatusCol) || isApproved(c.status));
+    hideBanner();
+  } catch (e) {
+    CAFES = SAMPLE.slice();
+    showBanner('讀取 Google Sheet 失敗，暫時顯示範例資料。請確認試算表已開放「知道連結的人可檢視」。');
+  }
+}
+function showBanner(html){ const b=document.getElementById('banner'); b.innerHTML=html; b.classList.remove('hidden'); }
+function hideBanner(){ document.getElementById('banner').classList.add('hidden'); }
+
+/* 讀取評論分頁（「評論」），依店名分組 */
+async function loadReviews() {
+  REVIEWS = {};
+  if (!CONFIG.SHEET_ID) return;
+  try {
+    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent('評論')}`;
+    const txt = await (await fetch(url)).text();
+    const json = JSON.parse(txt.substring(txt.indexOf('{'), txt.lastIndexOf('}')+1));
+    const rows = json.table.rows || [];
+    const cols = json.table.cols || [];
+    const norm = s => String(s||'').trim().toLowerCase();
+    const findCol = (...names) => { for(let i=0;i<cols.length;i++){ const l=norm(cols[i]&&cols[i].label); if(names.some(n=>l.includes(norm(n)))) return i; } return -1; };
+    let IX = { ts:findCol('時間','time'), name:findCol('店名','name'), by:findCol('名稱','昵稱','by'), text:findCol('評論','內容','comment','review') };
+    if (IX.name < 0) IX = { ts:0, name:1, by:2, text:3 };  // 無標題列 fallback
+    rows.forEach(r => {
+      const c = r.c || [];
+      const g = i => (i>=0 && c[i] && c[i].v!=null) ? String(c[i].v) : '';
+      const nm = g(IX.name).trim();
+      const tx = g(IX.text).trim();
+      if (!nm || !tx) return;
+      (REVIEWS[nm] = REVIEWS[nm] || []).push({ by: g(IX.by).trim()||'匿名', text: tx, ts: g(IX.ts) });
+    });
+  } catch(e) { /* 沒有評論分頁或讀取失敗，靜默忽略 */ }
+}
+
+/* ===========================================================
+   篩選 + 排序
+   =========================================================== */
+function getFiltered() {
+  let out = CAFES.filter(c => {
+    if (activeRegion && regionOf(c) !== activeRegion) return false;
+    if (activeTags.size && ![...activeTags].every(t => c.tags.includes(t))) return false;
+    if (search) {
+      const hay = normTxt(`${c.name} ${c.area} ${c.address} ${c.by} ${regionOf(c)} ${c.tags.join(' ')}`);
+      if (!hay.includes(normTxt(search))) return false;
+    }
+    return true;
+  });
+  if (userPos) {
+    out.forEach(c => c._d = (c.lat && c.lng) ? haversine(userPos, c) : Infinity);
+    out.sort((a,b) => a._d - b._d);
+  }
+  return out;
+}
+
+/* ===========================================================
+   渲染：地區列
+   =========================================================== */
+function renderRegions() {
+  const bar = document.getElementById('regionBar');
+  const regions = allRegions();
+  // 只有一個地區時不必顯示
+  if (regions.length <= 1) { bar.classList.add('hidden'); bar.innerHTML=''; return; }
+  bar.classList.remove('hidden');
+  bar.className = 'regionbar';
+  bar.innerHTML = '';
+  const pin = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>';
+  const all = document.createElement('button');
+  all.className = 'rchip' + (activeRegion==='' ? ' on' : '');
+  all.innerHTML = pin + '全部地區 <span class="ct">' + CAFES.length + '</span>';
+  all.onclick = () => { activeRegion=''; renderRegions(); renderAll(); };
+  bar.appendChild(all);
+  regions.forEach(r => {
+    const n = CAFES.filter(c=>regionOf(c)===r).length;
+    const b = document.createElement('button');
+    b.className = 'rchip' + (activeRegion===r ? ' on' : '');
+    b.innerHTML = esc(r) + ' <span class="ct">' + n + '</span>';
+    b.onclick = () => { activeRegion = (activeRegion===r ? '' : r); renderRegions(); renderAll(); };
+    bar.appendChild(b);
+  });
+}
+
+/* ===========================================================
+   渲染：標籤列
+   =========================================================== */
+function renderTags() {
+  const bar = document.getElementById('tagBar');
+  bar.innerHTML = '';
+  const all = document.createElement('button');
+  all.className = 'chip' + (activeTags.size===0 ? ' on' : '');
+  all.textContent = '全部';
+  all.onclick = () => { activeTags.clear(); renderTags(); renderAll(); };
+  bar.appendChild(all);
+  TAGS.forEach(t => {
+    const b = document.createElement('button');
+    b.className = 'chip' + (activeTags.has(t.key) ? ' on' : '');
+    b.innerHTML = `<span class="dot">${t.icon}</span>${t.key}`;
+    b.onclick = () => { activeTags.has(t.key) ? activeTags.delete(t.key) : activeTags.add(t.key); renderTags(); renderAll(); };
+    bar.appendChild(b);
+  });
+}
+
+/* ===========================================================
+   渲染：列表
+   =========================================================== */
+function buildCard(c) {
+  const el = document.createElement('div');
+  el.className = 'cafe';
+  const distHtml = (userPos && c._d != null && c._d !== Infinity)
+    ? (()=>{ const d=fmtDist(c._d); return `<div class="dist"><div class="n mono">${d.n}</div><div class="u">${d.u}</div></div>`; })()
+    : (()=>{ const r=regionOf(c); return r && r!=='其他' ? `<div class="region-badge">${esc(r)}</div>` : ''; })();
+  el.innerHTML = `
+    <div class="cafe-top">
+      <div class="cafe-headmain">
+        <div class="cafe-name">${esc(c.name)}</div>
+        <div class="cafe-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg><span>${esc(displayLoc(c))}</span></div>
+      </div>
+      ${distHtml}
+    </div>
+    ${Array.isArray(c.photo) && c.photo.length ? `<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">${c.photo.map((src,i)=>`<img src="${src}" style="width:56px;height:56px;object-fit:cover;border-radius:9px;cursor:pointer;border:1px solid var(--line);" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},${i})">`).join('')}</div>` : (c.photo && typeof c.photo==='string' && c.photo.startsWith('data:') ? `<img class="cafe-photo" src="${c.photo}" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},0)">` : '')}
+    <div class="reason-wrap"><div class="reason">${esc(c.reason)}</div></div>
+    ${c.tags.length ? `<div class="cafe-tags">${c.tags.map(t=>`<span class="tg">${tagIcon(t)} ${esc(t)}</span>`).join('')}</div>` : ''}
+    ${reviewsPreview(c)}
+    <div class="cafe-foot">
+      <div class="byline"><span class="av">${esc(initial(c.by))}</span>由 <b>${esc(c.by||'匿名')}</b> 推薦</div>
+      <div class="foot-actions">
+        <button class="report-btn" onclick="event.stopPropagation();openReviews(this)" data-cname="${esc(c.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>評論${(REVIEWS[c.name]&&REVIEWS[c.name].length)?` ${REVIEWS[c.name].length}`:''}</button>
+        <button class="report-btn" onclick="event.stopPropagation();openReport(this)" data-cname="${esc(c.name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>回報</button>
+        ${c.link ? `<a class="act" href="${esc(c.link)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>連結</a>` : ''}
+        <a class="act" href="${googleMapsUrl(c)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>地點</a>
+        <a class="act primary" href="${navUrl(c)}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>導航</a>
+      </div>
+    </div>`;
+  el.onclick = () => { if (c.lat && c.lng) { setView('map'); map.setView([c.lat, c.lng], 16); openMarker(c); } };
+  return el;
+}
+
+function renderList(data) {
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  if (!data.length) {
+    list.innerHTML = `<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><p>找不到符合的咖啡廳</p><p class="sm">試試其他關鍵字或清除地區、標籤篩選</p></div>`;
+    return;
+  }
+  // 「全部地區」且未依距離排序時，用地區標題分組；否則平鋪
+  const grouped = !activeRegion && !userPos && allRegions().length > 1;
+  if (!grouped) {
+    data.forEach(c => list.appendChild(buildCard(c)));
+    return;
+  }
+  const pin = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>';
+  const order = []; const byR = {};
+  data.forEach(c => { const r=regionOf(c); if(!byR[r]){byR[r]=[];order.push(r);} byR[r].push(c); });
+  order.forEach(r => {
+    const g = document.createElement('div'); g.className = 'rgroup';
+    const head = document.createElement('div'); head.className = 'rhead';
+    head.innerHTML = `${pin}<span class="nm">${esc(r)}</span><span class="ct">${byR[r].length}</span><span class="ln"></span>`;
+    g.appendChild(head);
+    const inner = document.createElement('div'); inner.className = 'list-inner';
+    byR[r].forEach(c => inner.appendChild(buildCard(c)));
+    g.appendChild(inner);
+    list.appendChild(g);
+  });
+}
+
+/* ===========================================================
+   渲染：地圖（Leaflet + OSM / CartoDB 深淺色圖磚）
+   =========================================================== */
+function tileUrl() {
+  return document.documentElement.classList.contains('dark')
+    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+}
+function ensureMap() {
+  if (map) return;
+  map = L.map('map', { scrollWheelZoom: false }).setView(CONFIG.DEFAULT_CENTER, CONFIG.DEFAULT_ZOOM);
+  tileLayer = L.tileLayer(tileUrl(), { maxZoom: 19, attribution: '© OpenStreetMap, © CARTO' }).addTo(map);
+}
+function refreshTiles() { if (tileLayer) tileLayer.setUrl(tileUrl()); }
+function pinIcon() {
+  return L.divIcon({ className:'', html:`<div style="width:30px;height:30px;transform:translate(-50%,-100%);"><svg viewBox="0 0 24 24" fill="#7E8D85" stroke="#fff" stroke-width="1.5"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3" fill="#fff" stroke="none"/></svg></div>`, iconSize:[30,30], iconAnchor:[0,0] });
+}
+function openMarker(c) {
+  const m = markers.find(x => x._cafe === c);
+  if (m) m.openPopup();
+}
+function renderMap(data) {
+  ensureMap();
+  markers.forEach(m => map.removeLayer(m));
+  markers = [];
+  const pts = [];
+  data.filter(c=>c.lat&&c.lng).forEach(c => {
+    const m = L.marker([c.lat, c.lng], { icon: pinIcon() }).addTo(map);
+    m._cafe = c;
+    const dist = (userPos && c._d!=null && c._d!==Infinity) ? (()=>{const d=fmtDist(c._d);return ` · ${d.n}${d.u}`;})() : '';
+    const photo = (() => { const p = Array.isArray(c.photo) ? c.photo[0] : c.photo; return p && p.startsWith('data:') ? `<img src="${p}" class="popup-photo">` : ''; })();
+    const distHtml = (userPos && c._d!=null && c._d!==Infinity) ? (()=>{const d=fmtDist(c._d);return `<div class="popup-dist">📍 距離 ${d.n}${d.u}</div>`;})() : '';
+    const popupTags = c.tags.slice(0,4).map(t=>`<span class="popup-tag">${tagIcon(t)} ${esc(t)}</span>`).join('');
+    const linkBtn = c.link ? `<a class="popup-act" href="${esc(c.link)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>連結</a>` : '';
+    m.bindPopup(`<div class="popup-card">${photo}<div class="popup-body"><div class="popup-name">${esc(c.name)}</div><div class="popup-area"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>${esc(displayLoc(c))}</div>${distHtml}${c.reason?'<div class="popup-reason">'+esc(c.reason)+'</div>':''}${popupTags?'<div class="popup-tags">'+popupTags+'</div>':''}<div class="popup-actions">${linkBtn}<a class="popup-act" href="${googleMapsUrl(c)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>地點</a><a class="popup-act primary" href="${navUrl(c)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>導航</a></div></div></div>`, { maxWidth:290, className:'cafe-popup' });
+    markers.push(m);
+    pts.push([c.lat, c.lng]);
+  });
+  if (userPos) pts.push([userPos.lat, userPos.lng]);
+  if (pts.length) { try { map.fitBounds(pts, { padding:[40,40], maxZoom:15 }); } catch(e){} }
+  setTimeout(()=>map.invalidateSize(), 60);
+}
+
+/* ===========================================================
+   定位
+   =========================================================== */
+function toggleLocate() {
+  const btn = document.getElementById('locBtn');
+  if (userPos) { // 關閉定位
+    userPos = null;
+    if (userMarker && map) { map.removeLayer(userMarker); userMarker = null; }
+    btn.classList.remove('on');
+    document.getElementById('locLabel').textContent = '附近';
+    renderAll();
+    return;
+  }
+  if (!navigator.geolocation) { alert('此瀏覽器不支援定位'); return; }
+  btn.classList.add('loading');
+  document.getElementById('locLabel').textContent = '定位中';
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      userPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      btn.classList.remove('loading'); btn.classList.add('on');
+      document.getElementById('locLabel').textContent = '依距離';
+      if (map) {
+        if (userMarker) map.removeLayer(userMarker);
+        userMarker = L.circleMarker([userPos.lat, userPos.lng], { radius:8, color:'#fff', weight:3, fillColor:'#B5654A', fillOpacity:1 }).addTo(map).bindPopup('你的位置');
+      }
+      renderAll();
+    },
+    err => {
+      btn.classList.remove('loading');
+      document.getElementById('locLabel').textContent = '附近';
+      alert('無法取得位置：' + (err.code===1 ? '請允許定位權限' : '請稍後再試') + '。\n（仍可使用每間店的「導航」按鈕，由 Google 地圖計算距離）');
+    },
+    { enableHighAccuracy:true, timeout:10000, maximumAge:60000 }
+  );
+}
+
+/* ===========================================================
+   檢視切換 + 主渲染
+   =========================================================== */
+function setView(v) {
+  view = v;
+  document.getElementById('vList').classList.toggle('on', v==='list');
+  document.getElementById('vMap').classList.toggle('on', v==='map');
+  document.getElementById('map').classList.toggle('hidden', v!=='map');
+  document.getElementById('list').classList.toggle('hidden', v==='map');
+  renderAll();
+}
+function renderAll() {
+  const data = getFiltered();
+  document.getElementById('count').innerHTML = `共 <b>${data.length}</b> 間咖啡廳`;
+  if (view==='list') renderList(data); else renderMap(data);
+}
+
+/* ===========================================================
+   回報錯誤 Modal
+   =========================================================== */
+function openReport(btn) {
+  if (document.getElementById('reportModal')) return;
+  const cafeName = btn && btn.dataset ? btn.dataset.cname : String(btn||'');
+  const bd = document.createElement('div'); bd.id='reportModal'; bd.className='modal-backdrop';
+  bd.innerHTML=`<div class="modal">
+    <h3>回報資料錯誤</h3>
+    <input type="hidden" id="reportCafeName" value="${cafeName}">
+    <p class="sub">將通知管理者確認並修正。<b>店家：${cafeName}</b></p>
+    <select id="reportType">
+      <option value="資訊有誤">資訊有誤（地址、電話、營業時間等）</option>
+      <option value="已歇業">已歇業／永久關閉</option>
+      <option value="內容不適當">內容不適當</option>
+      <option value="其他">其他問題</option>
+    </select>
+    <textarea id="reportDesc" placeholder="請說明哪裡有誤、正確的資料將更好…" rows="3"></textarea>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeReport()">取消</button>
+      <button class="modal-submit" onclick="sendReport(document.getElementById('reportCafeName').value)">送出回報</button>
+    </div>
+  </div>`;
+  bd.addEventListener('click', e=>{ if(e.target===bd) closeReport(); });
+  document.body.appendChild(bd);
+}
+function closeReport() { const m=document.getElementById('reportModal'); if(m) m.remove(); }
+
+/* ===========================================================
+   評論
+   =========================================================== */
+function reviewsPreview(c) {
+  const rv = REVIEWS[c.name] || [];
+  if (!rv.length) return '';
+  const show = rv.slice(0, 2);
+  const more = rv.length > 2 ? `<div class="rv-more" onclick="event.stopPropagation();openReviews(this)" data-cname="${esc(c.name)}">查看全部 ${rv.length} 則評論 ›</div>` : '';
+  return `<div class="reviews-preview">${show.map(r=>`<div class="rv-item"><div class="rv-by">${esc(r.by)}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('')}${more}</div>`;
+}
+function openReviews(btn) {
+  if (document.getElementById('reviewModal')) return;
+  const cafeName = btn && btn.dataset ? btn.dataset.cname : String(btn||'');
+  const rv = REVIEWS[cafeName] || [];
+  const listHtml = rv.length
+    ? rv.map(r=>`<div class="rv-item"><div class="rv-by">${esc(r.by)}</div><div class="rv-tx">${esc(r.text)}</div></div>`).join('')
+    : '<div class="rv-empty">還沒有評論，留下第一則吧 ☕</div>';
+  const bd = document.createElement('div'); bd.id='reviewModal'; bd.className='modal-backdrop';
+  bd.innerHTML=`<div class="modal">
+    <h3>${esc(cafeName)}</h3>
+    <p class="sub">${rv.length ? `共 ${rv.length} 則評論` : '還沒有評論'}</p>
+    <div class="rv-list">${listHtml}</div>
+    <div class="rv-form">
+      <div class="rv-form-title">寫下你的評論</div>
+      <input type="hidden" id="rvCafeName" value="${esc(cafeName)}">
+      <input type="text" id="rvBy" maxlength="20" placeholder="你的名稱（必填）">
+      <textarea id="rvText" maxlength="100" rows="3" placeholder="分享你的心得…（最多 100 字）" oninput="document.getElementById('rvCount').textContent=this.value.length+' / 100'"></textarea>
+      <div style="font-size:11px;color:var(--muted);text-align:right;margin-top:-4px;"><span id="rvCount">0 / 100</span></div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeReviews()">取消</button>
+      <button class="modal-submit" onclick="sendReview()">送出評論</button>
+    </div>
+  </div>`;
+  bd.addEventListener('click', e=>{ if(e.target===bd) closeReviews(); });
+  document.body.appendChild(bd);
+}
+function closeReviews() { const m=document.getElementById('reviewModal'); if(m) m.remove(); }
+async function sendReview() {
+  const name = document.getElementById('rvCafeName').value;
+  const by = document.getElementById('rvBy').value.trim();
+  const text = document.getElementById('rvText').value.trim();
+  if (!by) { document.getElementById('rvBy').focus(); return; }
+  if (text.length < 2) { document.getElementById('rvText').focus(); return; }
+  // 樂觀更新：立即顯示在前端
+  (REVIEWS[name] = REVIEWS[name] || []).push({ by, text, ts: new Date().toISOString() });
+  closeReviews();
+  renderAll();
+  if (CONFIG.APPS_SCRIPT_URL) {
+    try { await fetch(CONFIG.APPS_SCRIPT_URL, { method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({ _action:'review', cafeName:name, by, text }) }); } catch(e) {}
+  }
+}
+async function sendReport(name) {
+  const type = document.getElementById('reportType').value;
+  const desc = document.getElementById('reportDesc').value.trim();
+  if(!desc){ document.getElementById('reportDesc').focus(); return; }
+  closeReport();
+  if (CONFIG.APPS_SCRIPT_URL) {
+    try { await fetch(CONFIG.APPS_SCRIPT_URL, { method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({ _action:'report', cafeName:name, reportType:type, desc }) }); } catch(e) {}
+  }
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--cream);padding:11px 20px;border-radius:11px;font-size:13px;font-weight:700;z-index:99;pointer-events:none;';
+  t.textContent='回報已送出，感謝！管理者會盡快處理。'; document.body.appendChild(t); setTimeout(()=>t.remove(),2500);
+}
+
+/* ===========================================================
+   圖片燈箱
+   =========================================================== */
+function openLightbox(photos, startIdx) {
+  const arr = Array.isArray(photos) ? photos.filter(Boolean) : [photos].filter(Boolean);
+  if (!arr.length) return;
+  let idx = Math.max(0, Math.min(startIdx||0, arr.length-1));
+  const lb = document.createElement('div'); lb.className='photo-lb';
+  const multi = arr.length > 1;
+  lb.innerHTML =
+    `<div class="lb-stage"><div class="lb-track">${arr.map(s=>`<div class="lb-slide"><img src="${s}" alt="" draggable="false"></div>`).join('')}</div></div>` +
+    `<button class="lb-close" aria-label="關閉">✕</button>` +
+    (multi ? `<div class="lb-count"></div><button class="lb-arrow prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><button class="lb-arrow next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button><div class="lb-dots">${arr.map(()=>'<i></i>').join('')}</div>` : '');
+  document.body.appendChild(lb);
+  const track = lb.querySelector('.lb-track');
+  const dots = [...lb.querySelectorAll('.lb-dots i')];
+  const countEl = lb.querySelector('.lb-count');
+  function render(animate){
+    track.style.transition = animate===false ? 'none' : '';
+    track.style.transform = `translateX(-${idx*100}vw)`;
+    dots.forEach((d,i)=>d.classList.toggle('on', i===idx));
+    if (countEl) countEl.textContent = `${idx+1} / ${arr.length}`;
+  }
+  function go(n){ idx = (n+arr.length)%arr.length; render(); }
+  render(false);
+  const close = ()=>{ document.removeEventListener('keydown', onKey); lb.remove(); };
+  lb.querySelector('.lb-close').onclick = (e)=>{ e.stopPropagation(); close(); };
+  if (multi) {
+    lb.querySelector('.lb-arrow.prev').onclick = (e)=>{ e.stopPropagation(); go(idx-1); };
+    lb.querySelector('.lb-arrow.next').onclick = (e)=>{ e.stopPropagation(); go(idx+1); };
+  }
+  lb.onclick = (e)=>{ if (e.target===lb || e.target.classList.contains('lb-stage') || e.target.classList.contains('lb-slide')) close(); };
+  function onKey(e){ if(e.key==='Escape') close(); else if(e.key==='ArrowLeft'&&multi) go(idx-1); else if(e.key==='ArrowRight'&&multi) go(idx+1); }
+  document.addEventListener('keydown', onKey);
+  // 觸控滑動
+  let sx=0, dx=0, dragging=false;
+  const stage = lb.querySelector('.lb-stage');
+  stage.addEventListener('touchstart', e=>{ sx=e.touches[0].clientX; dragging=true; track.style.transition='none'; }, {passive:true});
+  stage.addEventListener('touchmove', e=>{ if(!dragging) return; dx=e.touches[0].clientX-sx; track.style.transform=`translateX(calc(-${idx*100}vw + ${dx}px))`; }, {passive:true});
+  stage.addEventListener('touchend', ()=>{ if(!dragging) return; dragging=false; const th=window.innerWidth*0.18; if(multi && dx<-th) go(idx+1); else if(multi && dx>th) go(idx-1); else render(); dx=0; });
+}
+function openLightboxIdx(idx, photoIdx) {
+  const c = CAFES[idx];
+  if (!c) return;
+  const arr = Array.isArray(c.photo) ? c.photo : (c.photo ? [c.photo] : []);
+  if (arr.length) openLightbox(arr, photoIdx||0);
+}
+
+/* ===========================================================
+   主題
+   =========================================================== */
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  const ic = document.getElementById('themeIcon');
+  ic.innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+  try { localStorage.setItem('cafe_theme', dark ? 'dark' : 'light'); } catch(e){}
+  refreshTiles();
+}
+
+/* ===========================================================
+   啟動
+   =========================================================== */
+async function boot() {
+  // theme: 跟隨系統或記住的選擇
+  let dark;
+  try { const s = localStorage.getItem('cafe_theme'); dark = s ? s==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
+  catch(e){ dark = false; }
+  applyTheme(dark);
+
+  document.getElementById('themeBtn').onclick = () => applyTheme(!document.documentElement.classList.contains('dark'));
+  document.getElementById('locBtn').onclick = toggleLocate;
+  document.getElementById('vList').onclick = () => setView('list');
+  document.getElementById('vMap').onclick = () => setView('map');
+  document.getElementById('searchInput').oninput = e => { search = e.target.value; renderAll(); };
+
+  renderTags();
+  document.getElementById('list').innerHTML = '<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>';
+  await loadData();
+  renderRegions();
+  renderAll();
+  fillMissingRegions();
+  loadReviews().then(()=>renderAll());
+}
+
+/* 對「有座標但沒區域」的店家自動反查國家/城市/區域，統一顯示格式；用 localStorage 快取 */
+async function fillMissingRegions() {
+  // 需反查：有座標 且（沒區域又沒地址）或（區域只有城市、缺「· 區」）
+  const todo = CAFES.filter(c => c.lat && c.lng && (
+    (!c.area && !String(c.address||'').trim()) ||
+    (c.area && c.area.indexOf('·') < 0)
+  ));
+  if (!todo.length) return;
+  let cache = {};
+  try { cache = JSON.parse(localStorage.getItem('cafe_geo_cache_v2') || '{}'); } catch(e){}
+  let changed = false;
+  for (const c of todo) {
+    const key = Number(c.lat).toFixed(4) + ',' + Number(c.lng).toFixed(4);
+    let geo = cache[key];
+    if (!geo) {
+      try {
+        const d = await (await fetch('https://photon.komoot.io/reverse?lat=' + c.lat + '&lon=' + c.lng)).json();
+        const p = ((d.features||[])[0]||{}).properties || {};
+        const city = (p.city||p.county||p.town||p.village||p.state||'').replace(/(市|縣|都|府|県|州|省)$/,'');
+        const district = p.district||p.suburb||p.borough||p.city_district||p.neighbourhood||p.quarter||p.locality||p.town||'';
+        const country = p.country||'';
+        geo = { area: city + (district ? ' · ' + district : ''), country: country };
+        cache[key] = geo;
+        changed = true;
+        await new Promise(r => setTimeout(r, 350)); // 禮貌間隔，避免打太快
+      } catch(e){ continue; }
+    }
+    // 只在新值「更詳細」（含區）時才覆蓋，避免變差
+    if (geo && geo.area && (geo.area.indexOf('·') >= 0 || !c.area)) { c.area = geo.area; }
+    else if (geo && geo.country && !c.area) { c.area = geo.country; }
+  }
+  if (changed) { try { localStorage.setItem('cafe_geo_cache_v2', JSON.stringify(cache)); } catch(e){} }
+  renderRegions();
+  renderAll();
+}
+boot();
+</script>
+</body>
+</html>
