@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>推薦一間咖啡廳</title>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782649127375&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782649127375&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -205,6 +205,15 @@ textarea { resize:vertical; min-height:92px; line-height:1.6; }
         <div class="section-title">找到店家</div>
         <div class="section-sub">搜尋或手動標記</div>
       </div>
+      <div class="field ig-quickadd">
+        <label><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>貼 Instagram 連結快速帶入 <span class="opt">選填</span></label>
+        <div class="search-wrap">
+          <svg class="search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/></svg>
+          <input type="text" id="igInput" placeholder="instagram.com/店家帳號" />
+          <div class="spinner" id="igSpinner"></div>
+        </div>
+        <div class="hint" id="igStatus" style="display:none;margin-top:6px;"></div>
+      </div>
       <div class="field">
         <button type="button" class="city-toggle" id="cityToggle">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
@@ -338,7 +347,10 @@ textarea { resize:vertical; min-height:92px; line-height:1.6; }
     <div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
     <h2>已送出，感謝推薦！</h2>
     <p>你的推薦正在<b>等待管理者審核</b>，通過後就會出現在咖啡廳清單裡。</p>
-    <button class="again" id="againBtn"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>再推薦一間</button>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px;">
+      <a class="again" href="Cafe Recommendations.html" style="text-decoration:none;background:var(--sage);color:#fff;border-color:var(--sage);"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>回到推薦頁</a>
+      <button class="again" id="againBtn" style="margin-top:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>再推薦一間</button>
+    </div>
   </div>
 </div>
 
@@ -380,6 +392,85 @@ cityToggle.addEventListener('click', () => {
   const open = cityBody.classList.toggle('open');
   cityToggle.classList.toggle('open', open);
 });
+
+/* ---------- Instagram 連結快速帶入 ---------- */
+function toTitleCase(s){ return s.split(/[\s_.\-]+/).filter(Boolean).map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' '); }
+function parseIgHandle(url){
+  const m = String(url).match(/instagram\.com\/([A-Za-z0-9._]+)/i);
+  if (m) return m[1].replace(/\/$/,'');
+  const m2 = String(url).trim().match(/^@?([A-Za-z0-9._]+)$/);
+  return m2 ? m2[1] : '';
+}
+(function(){
+  const ig = document.getElementById('igInput');
+  const igStatus = document.getElementById('igStatus');
+  const igSpinner = document.getElementById('igSpinner');
+  let igTimer = null;
+  function setStatus(msg, color){ igStatus.style.display='block'; igStatus.innerHTML=msg; igStatus.style.color=color||'var(--muted)'; }
+  async function handleIg(){
+    const raw = ig.value.trim();
+    if (!raw) { igStatus.style.display='none'; return; }
+    const handle = parseIgHandle(raw);
+    if (!handle) { setStatus('看起來不是有效的 IG 連結', 'var(--accent)'); return; }
+    // A：100% 可靠 — 帳號轉店名、填連結
+    const nameGuess = toTitleCase(handle);
+    const igUrl = 'https://www.instagram.com/' + handle;
+    document.getElementById('link').value = igUrl;
+    if (!picked) {
+      // 還沒選店家：把店名建議填進搜尋框，方便接著搜尋/標記
+      searchInput.value = nameGuess;
+    } else {
+      picked.name = nameGuess;
+      document.getElementById('pickName').textContent = nameGuess;
+    }
+    setStatus(`✓ 已帶入店名「<b>${esc(nameGuess)}</b>」與 IG 連結。<b style="color:var(--sage);cursor:pointer;text-decoration:underline;" onclick="document.getElementById('placeSearch').focus()">接著搜尋或標記位置 →</b>`, 'var(--ok)');
+    // B：盡力抓 og 資訊（透過 Apps Script，成功率中等）
+    if (CONFIG.APPS_SCRIPT_URL) {
+      igSpinner.classList.add('on');
+      try {
+        const r = await fetch(CONFIG.APPS_SCRIPT_URL + '?action=igmeta&url=' + encodeURIComponent(igUrl));
+        const data = await r.json();
+        igSpinner.classList.remove('on');
+        if (data && data.ok && (data.title || data.image)) {
+          if (data.title) {
+            const t = String(data.title).split('•')[0].split('(')[0].trim();
+            if (t && !picked) searchInput.value = t;
+            if (t && picked) { picked.name = t; document.getElementById('pickName').textContent = t; }
+          }
+          if (data.image) {
+            igPreviewImage(data.image);
+          }
+          setStatus(`✓ 已從 IG 帶入資訊${data.image?'（含大頭貼，可當店家照片）':''}。接著標記位置、寫推薦原因即可。`, 'var(--ok)');
+        }
+      } catch(e) { igSpinner.classList.remove('on'); }
+    }
+  }
+  ig.addEventListener('input', ()=>{ clearTimeout(igTimer); igTimer=setTimeout(handleIg, 600); });
+  ig.addEventListener('paste', ()=>{ clearTimeout(igTimer); igTimer=setTimeout(handleIg, 200); });
+})();
+/* IG 大頭貼當照片候選 */
+async function igPreviewImage(imgUrl){
+  try {
+    if (typeof photosData !== 'undefined' && photosData.length >= 4) return;
+    const wrap = document.getElementById('igPhotoSuggest') || (()=>{ 
+      const d=document.createElement('div'); d.id='igPhotoSuggest';
+      d.style.cssText='margin-top:10px;padding:11px;border:1px dashed var(--sage);border-radius:12px;display:flex;align-items:center;gap:11px;';
+      const zone=document.getElementById('photoZone'); if(zone&&zone.parentElement) zone.parentElement.insertBefore(d, zone);
+      return d;
+    })();
+    wrap.innerHTML = `<img src="${imgUrl}" style="width:54px;height:54px;border-radius:9px;object-fit:cover;border:1px solid var(--line);">
+      <div style="flex:1;font-size:12.5px;color:var(--ink-soft);line-height:1.4;">IG 大頭貼，要當店家照片嗎？</div>
+      <button type="button" id="igUseImg" style="background:var(--sage);color:#fff;border:0;border-radius:9px;padding:8px 13px;font-size:12.5px;font-weight:800;cursor:pointer;">採用</button>`;
+    document.getElementById('igUseImg').onclick = async ()=>{
+      try {
+        const blob = await (await fetch(imgUrl)).blob();
+        const file = new File([blob], 'ig.jpg', {type:blob.type||'image/jpeg'});
+        if (typeof handlePhotoFile === 'function') await handlePhotoFile(file);
+        wrap.remove();
+      } catch(e){ wrap.querySelector('div').textContent='無法載入這張圖，請改用手動上傳'; }
+    };
+  } catch(e){}
+}
 
 /* ---------- 城市前置自動完成 ---------- */
 const cityInput = document.getElementById('cityInput');
