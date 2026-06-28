@@ -540,7 +540,11 @@ async function loadReviews() {
       const nm = g(IX.name).trim();
       const tx = g(IX.text).trim();
       if (!nm || !tx) return;
-      (REVIEWS[nm] = REVIEWS[nm] || []).push({ by: g(IX.by).trim()||'匿名', text: tx, rating: parseInt(g(IX.rating))||0, ts: g(IX.ts) });
+      // 評分容錯：純數字直接用；若被存成日期格式 Date(1900,0,N) 取出 N
+      let rawR = g(IX.rating); let rating = parseInt(rawR)||0;
+      if (!rating) { const m = String(rawR).match(/Date\(\d+,\d+,(\d+)/); if (m) rating = parseInt(m[1])||0; }
+      rating = Math.max(0, Math.min(5, rating));
+      (REVIEWS[nm] = REVIEWS[nm] || []).push({ by: g(IX.by).trim()||'匿名', text: tx, rating: rating, ts: g(IX.ts) });
     });
   } catch(e) { /* 沒有評論分頁或讀取失敗，靜默忽略 */ }
 }
