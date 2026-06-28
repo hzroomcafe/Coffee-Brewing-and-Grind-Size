@@ -430,6 +430,10 @@ function countryOf(c){
 /* 顯示用地點：國家 · 城市 · 區域 */
 function displayLoc(c){
   const country = countryOf(c);
+  // 偵測預設座標（23.5, 121 = 台灣正中心）= 投稿時標記未設定
+  if (c.lat && c.lng && Math.abs(+c.lat - 23.5) < 0.01 && Math.abs(+c.lng - 121) < 0.01 && !String(c.address||'').trim()) {
+    return '⚠ 位置未設定（請回報修正）';
+  }
   let rest = '';
   if(c.area) rest = String(c.area);
   else { rest = String(c.address||'').replace(/^\s*(臺灣|台灣|台湾|Taiwan|日本|Japan|大韓民國|韓國|Korea|South Korea|中國|中国|China|香港|Hong Kong)\s*/i,'').trim(); }
@@ -1041,7 +1045,7 @@ async function fillMissingRegions() {
   ));
   if (!todo.length) return;
   let cache = {};
-  try { cache = JSON.parse(localStorage.getItem('cafe_geo_cache_v2') || '{}'); } catch(e){}
+  try { cache = JSON.parse(localStorage.getItem('cafe_geo_cache_v3') || '{}'); } catch(e){}
   let changed = false;
   for (const c of todo) {
     const key = Number(c.lat).toFixed(4) + ',' + Number(c.lng).toFixed(4);
@@ -1050,10 +1054,14 @@ async function fillMissingRegions() {
       try {
         const d = await (await fetch('https://photon.komoot.io/reverse?lat=' + c.lat + '&lon=' + c.lng)).json();
         const p = ((d.features||[])[0]||{}).properties || {};
-        const city = (p.city||p.county||p.town||p.village||p.state||'').replace(/(市|縣|都|府|県|州|省)$/,'');
-        const district = p.district||p.suburb||p.borough||p.city_district||p.neighbourhood||p.quarter||p.locality||p.town||'';
+        // 建立完整階層：縣市 · 區/鄉/鎮 · 里/村（去重、去空）
+        const county = p.county||p.state||'';
+        const cityRaw = p.city||p.town||p.village||'';
+        const district = p.district||p.suburb||p.borough||p.city_district||p.neighbourhood||p.quarter||p.locality||'';
+        const levels = [];
+        [county, cityRaw, district].forEach(v => { v = String(v||'').trim(); if (v && !levels.includes(v)) levels.push(v); });
         const country = p.country||'';
-        geo = { area: city + (district ? ' · ' + district : ''), country: country };
+        geo = { area: levels.join(' · '), country: country };
         cache[key] = geo;
         changed = true;
         await new Promise(r => setTimeout(r, 350)); // 禮貌間隔，避免打太快
@@ -1063,7 +1071,7 @@ async function fillMissingRegions() {
     if (geo && geo.area && (geo.area.indexOf('·') >= 0 || !c.area)) { c.area = geo.area; }
     else if (geo && geo.country && !c.area) { c.area = geo.country; }
   }
-  if (changed) { try { localStorage.setItem('cafe_geo_cache_v2', JSON.stringify(cache)); } catch(e){} }
+  if (changed) { try { localStorage.setItem('cafe_geo_cache_v3', JSON.stringify(cache)); } catch(e){} }
   renderRegions();
   renderAll();
 }
