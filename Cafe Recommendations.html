@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>咖啡廳推薦 · 咖啡小村</title>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782663527129&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782663527129&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -15,10 +15,12 @@
 :root {
   --cream: #F2EDE3; --card: #FBF8F1; --ink: #3A3733; --ink-soft: #6B6660; --muted: #9A9189;
   --line: #E4DCCC; --sage: #7E8D85; --sage-d: #6E7D75; --accent: #B5654A; --chip: #ECE4D6;
+  --mblue: #7E96A8; --mblue-d: #62798B; --msand: #C0A46B; --msand-d: #9A8150; --mrose: #B98A80; --mrose-d: #9C6E64;
 }
 html.dark {
   --cream: #1B1E22; --card: #262A2E; --ink: #EDE8DD; --ink-soft: #B8B2A7; --muted: #8A857C;
   --line: #393E43; --sage: #8B9A91; --sage-d: #7E8D85; --accent: #C9785C; --chip: #33383D;
+  --mblue: #8CA6B8; --mblue-d: #A5BDCD; --msand: #C9B27D; --msand-d: #DBC796; --mrose: #C79A8F; --mrose-d: #D9B0A5;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif; font-feature-settings: "palt"; }
@@ -51,7 +53,7 @@ html.dark body::before { opacity:.16; mix-blend-mode:overlay; }
 .report-btn:hover { border-color:var(--accent); color:var(--accent); }
 .report-btn svg { width:13px; height:13px; }
 /* 圖片縮圖 */
-.cafe-photo { width:66px; height:66px; border-radius:12px; object-fit:cover; flex-shrink:0; cursor:pointer; border:1px solid var(--line); }
+.cafe-photo { width:66px; height:66px; border-radius:12px; object-fit:cover; flex-shrink:0; cursor:pointer; border:1px solid var(--line); margin:14px 20px 0; }
 .cafe-thumb { transition:transform .12s, box-shadow .12s; }
 .cafe-thumb:hover { transform:scale(1.06); box-shadow:0 4px 14px rgba(0,0,0,.18); }
 /* 滑鼠懸停大圖預覽 */
@@ -189,48 +191,49 @@ header { padding: 26px 0 14px; }
 .rgroup .list-inner { display:flex; flex-direction:column; gap:13px; }
 
 /* list */
-.list { margin-top:16px; display:flex; flex-direction:column; gap:15px; }
-.cafe { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:20px 20px 16px; transition:.18s; cursor:pointer; position:relative; overflow:hidden; }
-.cafe::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--sage); opacity:0; transition:.18s; }
+.list { margin-top:16px; display:flex; flex-direction:column; gap:16px; }
+.cafe { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:0 0 16px; transition:.18s; cursor:pointer; position:relative; overflow:hidden; }
+.cafe::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--sage); opacity:.9; transition:.18s; z-index:1; }
 .cafe:hover { border-color:var(--sage); transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.08); }
 .cafe:hover::before { opacity:1; }
-.cafe-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+/* 頂部色帶區：鼠尾草綠→卡片色渐層，左綠邊條強調 */
+.cafe-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:17px 20px 15px; background:linear-gradient(135deg, color-mix(in srgb,var(--mblue) 30%,var(--card)) 0%, color-mix(in srgb,var(--mblue) 16%,var(--card)) 100%); border-bottom:1px solid color-mix(in srgb,var(--mblue) 24%,transparent); }
 .cafe-headmain { min-width:0; flex:1; }
-.cafe-name { font-size:18px; font-weight:900; letter-spacing:-.01em; line-height:1.22; }
-.cafe-area { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; margin-top:5px; min-width:0; }
+.cafe-name { font-size:19px; font-weight:900; letter-spacing:-.01em; line-height:1.22; }
+.cafe-area { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; margin-top:6px; min-width:0; }
 .cafe-area svg { width:13px; height:13px; flex-shrink:0; color:var(--sage); }
 .cafe-area span { overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
-.region-badge { flex-shrink:0; font-size:11px; font-weight:800; color:var(--sage-d); background:color-mix(in srgb,var(--sage) 16%,transparent); border-radius:999px; padding:5px 11px; white-space:nowrap; }
+.region-badge { flex-shrink:0; font-size:11px; font-weight:800; color:#fff; background:var(--msand); border-radius:999px; padding:5px 12px; white-space:nowrap; box-shadow:0 2px 6px color-mix(in srgb,var(--msand) 40%,transparent); }
 .dist { flex-shrink:0; text-align:center; background:color-mix(in srgb,var(--sage) 14%,transparent); border-radius:12px; padding:6px 10px; }
 .dist .n { font-size:15px; font-weight:900; color:var(--sage-d); line-height:1.05; }
 .dist .u { font-size:9.5px; color:var(--sage-d); font-weight:700; opacity:.8; }
-.reason-wrap { margin-top:14px; padding-left:14px; position:relative; }
+.reason-wrap { margin:16px 20px 0; padding-left:15px; position:relative; }
 .reason-wrap::before { content:'“'; position:absolute; left:-2px; top:-6px; font-family:Georgia,serif; font-size:30px; line-height:1; color:var(--sage); opacity:.4; }
 .reason { font-size:14px; line-height:1.85; color:var(--ink-soft); text-wrap:pretty; }
-.cafe-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:14px; }
-.tg { font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:999px; background:color-mix(in srgb,var(--sage) 10%,transparent); color:var(--sage-d); border:1px solid color-mix(in srgb,var(--sage) 22%,transparent); display:inline-flex; align-items:center; gap:4px; }
-.cafe-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:16px; padding-top:13px; border-top:1px solid var(--line); }
+.cafe-tags { display:flex; flex-wrap:wrap; gap:7px; margin:16px 20px 0; padding-top:14px; border-top:1px dashed color-mix(in srgb,var(--mblue) 30%,transparent); }
+.tg { font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:999px; background:color-mix(in srgb,var(--mblue) 14%,transparent); color:var(--mblue-d); border:1px solid color-mix(in srgb,var(--mblue) 30%,transparent); display:inline-flex; align-items:center; gap:4px; }
+.cafe-foot { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:16px 20px 0; padding-top:14px; border-top:1px solid var(--line); }
 .byline { font-size:12px; color:var(--muted); font-weight:600; display:flex; align-items:center; gap:7px; min-width:0; }
 .byline b { color:var(--ink); font-weight:800; }
 .byline .av { width:26px; height:26px; border-radius:50%; background:var(--sage); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
 .foot-actions { display:flex; gap:7px; flex-shrink:0; }
 /* 評論預覽（可收放，預設關閉） */
-.rv-collapse { margin-top:12px; }
-.rv-collapse summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:800; color:var(--sage-d); background:color-mix(in srgb,var(--sage) 9%,transparent); padding:8px 12px; border-radius:11px; user-select:none; transition:.15s; }
+.rv-collapse { margin:14px 20px 0; }
+.rv-collapse summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:800; color:var(--msand-d); background:color-mix(in srgb,var(--msand) 15%,transparent); padding:8px 12px; border-radius:11px; user-select:none; transition:.15s; border:1px solid color-mix(in srgb,var(--msand) 26%,transparent); }
 .rv-collapse summary::-webkit-details-marker { display:none; }
-.rv-collapse summary:hover { background:color-mix(in srgb,var(--sage) 15%,transparent); }
+.rv-collapse summary:hover { background:color-mix(in srgb,var(--msand) 24%,transparent); }
 .rv-collapse summary svg { width:15px; height:15px; flex-shrink:0; }
 .rv-collapse summary span { flex:1; }
 .rv-collapse summary .rv-chev { transition:transform .2s; }
 .rv-collapse[open] summary .rv-chev { transform:rotate(180deg); }
 .reviews-preview { margin-top:9px; display:flex; flex-direction:column; gap:7px; }
-.rv-item { background:color-mix(in srgb,var(--sage) 7%,transparent); border-radius:11px; padding:8px 11px; }
-.rv-item .rv-by { font-size:11.5px; font-weight:800; color:var(--sage-d); margin-bottom:2px; }
+.rv-item { background:color-mix(in srgb,var(--msand) 10%,transparent); border-radius:11px; padding:8px 11px; }
+.rv-item .rv-by { font-size:11.5px; font-weight:800; color:var(--msand-d); margin-bottom:2px; }
 .rv-item .rv-tx { font-size:12.5px; line-height:1.55; color:var(--ink-soft); }
 .rv-more { font-size:12px; font-weight:700; color:var(--sage-d); cursor:pointer; padding:2px; }
 /* 評論 modal */
 .rv-list { max-height:42vh; overflow-y:auto; display:flex; flex-direction:column; gap:9px; margin:4px 0 16px; }
-.rv-list .rv-item { background:color-mix(in srgb,var(--sage) 9%,transparent); }
+.rv-list .rv-item { background:color-mix(in srgb,var(--msand) 12%,transparent); }
 .rv-empty { font-size:13px; color:var(--muted); text-align:center; padding:18px 0; }
 .rv-head { display:flex; align-items:center; gap:8px; margin-bottom:2px; }
 .rv-stars { font-size:12px; color:#E0A93B; letter-spacing:1px; }
@@ -685,7 +688,7 @@ function buildCard(c) {
       </div>
       ${distHtml}
     </div>
-    ${Array.isArray(c.photo) && c.photo.length ? `<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">${c.photo.map((src,i)=>`<img src="${src}" class="cafe-thumb" style="width:56px;height:56px;object-fit:cover;border-radius:9px;cursor:pointer;border:1px solid var(--line);" onmouseenter="thumbHover(this,'')" onmouseleave="thumbHoverOut()" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},${i})">`).join('')}</div>` : (c.photo && typeof c.photo==='string' && (c.photo.startsWith('data:')||c.photo.startsWith('http')) ? `<img class="cafe-photo cafe-thumb" src="${c.photo}" onmouseenter="thumbHover(this,'')" onmouseleave="thumbHoverOut()" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},0)">` : '')}
+    ${Array.isArray(c.photo) && c.photo.length ? `<div style="display:flex;gap:6px;margin:14px 20px 0;flex-wrap:wrap;">${c.photo.map((src,i)=>`<img src="${src}" class="cafe-thumb" style="width:56px;height:56px;object-fit:cover;border-radius:9px;cursor:pointer;border:1px solid var(--line);" onmouseenter="thumbHover(this,'')" onmouseleave="thumbHoverOut()" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},${i})">`).join('')}</div>` : (c.photo && typeof c.photo==='string' && (c.photo.startsWith('data:')||c.photo.startsWith('http')) ? `<img class="cafe-photo cafe-thumb" src="${c.photo}" onmouseenter="thumbHover(this,'')" onmouseleave="thumbHoverOut()" onclick="event.stopPropagation();openLightboxIdx(${CAFES.indexOf(c)},0)">` : '')}
     <div class="reason-wrap"><div class="reason">${esc(c.reason)}</div></div>
     ${c.tags.length ? `<div class="cafe-tags">${c.tags.map(t=>`<span class="tg">${tagIcon(t)} ${esc(t)}</span>`).join('')}</div>` : ''}
     ${reviewsPreview(c)}
