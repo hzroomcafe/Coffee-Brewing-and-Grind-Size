@@ -13,7 +13,7 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script type="text/javascript" nonce="f28e6918bd1f45cd978c27b130e" src="//local.adguard.org?ts=1782960693036&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v6.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="f28e6918bd1f45cd978c27b130e" src="//local.adguard.org?ts=1782960693036&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v6.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script>
@@ -231,10 +231,9 @@ const i18n = {
     tweak_reset: '重置',
     changelog_title: '版本更新紀錄',
     changelog: [
+    { version: 'v6.1.0', date: '2026.06', changes: ['磨豆機資料庫新增「Comandante C60 Baracuda」：以格數計算（無段式歸零刻度），約 0–1090 微米、每格約 20 微米。土耳其 2–6、espresso 6–15、摩卡／愛樂壓 15–22、手沖 22–32、法壓／冷萃 32–50。（沖煮區間對應參考 Honest Coffee Guide 研磨表與 Basic Barista 各沖煮法格數，非 Comandante 官方微米表）。'] },
     { version: 'v6.0.0', date: '2026.06', changes: ['推出「咖啡廳推薦」全新工具：地圖＋清單瀏覽、依冰熱／標籤／地區篩選、距離排序、星級評論、一鍵導航。', '推薦投稿表單：貼 IG 連結快速帶入店名、地圖搜尋或手動標記位置、多張高畫質照片上傳（存入 Google Drive 依店名分資料夾）。', '資料回報機制：可回報資訊有誤或補充照片，經審核後上架並寄信通知。'] },
     { version: 'v4.5.0', date: '2026.06', changes: ['依 Varia 官方與評測資料重新校正 Varia VS3 刻度：刻度為無段式 0–10（0.1 一格）。espresso 約 #4、濾泡／手沖 #9–11、法壓／冷萃約 #16。土耳其 1–2.5、espresso 2.5–6、摩卡／愛樂壓 6–9、手沖 9–12、法壓／冷萃 12–18（切勿低於 2，過細易卡刀盤）。'] },
-    { version: 'v4.4.0', date: '2026.06', changes: ['磨豆機資料庫新增「xBloom Studio 2」全自動研磨手沖機：48mm 錐刀、80 段刻度（1–80）、每段 18.75 微米。（沖煮區間對應參考第三方烘豆商與 Basic Barista 指南，非 xBloom 官方表）。'] },
-    { version: 'v4.3.0', date: '2026.06', changes: ['磨豆機資料庫新增「Kinu M47（手沖刀盤 Pour-Over Burr）」：原廠刀盤之外的替換刀盤，專為手沖／批量沖煮設計，不建議用於 espresso。', '修正 Kinu M47 原廠刀盤與 Mazzer Omega／Omega X 分類對位（依官方數據重新對齊到土耳其／espresso／摩卡／手沖／法壓五個區間）。'] },
     ],
 
   },
@@ -272,9 +271,9 @@ const i18n = {
     tweak_reset: 'Reset',
     changelog_title: 'Release Notes',
     changelog: [
+    { version: 'v6.1.0', date: 'Jun 2026', changes: ['Added the "Comandante C60 Baracuda" to the grinder database: counted in clicks (stepless true-zero), roughly 0–1090 µm at ~20 µm per click. Turkish 2–6, espresso 6–15, moka/AeroPress 15–22, pour-over 22–32, French press/cold brew 32–50. (Brew-band mapping is based on the Honest Coffee Guide grind chart and Basic Barista per-method clicks, not an official Comandante micron table.)'] },
     { version: 'v6.0.0', date: 'Jun 2026', changes: ['Launched the new "Café Recommendations" tool: map + list browsing, hot/iced / tag / region filters, distance sorting, star reviews, one-tap navigation.', 'Recommendation submission form: paste an IG link to auto-fill the shop name, search the map or drop a pin manually, upload multiple high-quality photos (stored in Google Drive, organized by shop).', 'Data report mechanism: report wrong info or add photos; published after review, with an email notification.'] },
     { version: 'v4.5.0', date: 'Jun 2026', changes: ['Re-calibrated the Varia VS3 scale using Varia\'s official and review data: the dial is stepless 0–10 (0.1 steps). Espresso ~#4, filter/pour-over #9–11, French press/cold brew ~#16. Turkish 1–2.5, espresso 2.5–6, moka/AeroPress 6–9, pour-over 9–12, French press/cold brew 12–18 (never go below 2 — too fine can jam the burrs).'] },
-    { version: 'v4.4.0', date: 'Jun 2026', changes: ['Added the "xBloom Studio 2" all-in-one grind-and-brew machine to the grinder database: 48mm conical burr, 80 steps (1–80), 18.75 µm per step. (Brew-band mapping is based on third-party roaster and Basic Barista guides, not an official xBloom table.)'] },
     ],
 
   },
@@ -312,9 +311,9 @@ const i18n = {
     tweak_reset: 'リセット',
     changelog_title: 'リリースノート',
     changelog: [
+    { version: 'v6.1.0', date: '2026年6月', changes: ['ミルデータベースに「Comandante C60 Baracuda」を追加：クリックで表示（無段階ゼロ復帰）、約0〜1090µm、クリックあたり約20µm。トルコ2〜6、エスプレッソ6〜15、モカ／エアロ15〜22、ドリップ22〜32、フレンチ／水出し32〜50。（抽出区分の対応はHonest Coffee Guideの研磨表とBasic Baristaの各抑法クリックに基づき、Comandante公式のミクロン表ではありません）。'] },
     { version: 'v6.0.0', date: '2026年6月', changes: ['「カフェ推薦」新ツールを公開：地図＋リスト閲覧、ホット／アイス・タグ・地域フィルター、距離順ソート、星レビュー、ワンタップナビ。', '推薦投稿フォーム：IGリンクを貼って店名を自動入力、地図検索または手動ピン留め、複数の高画質写真をアップロード（Google Driveに店ごとに保存）。', 'データ報告機能：誤りの報告や写真補充が可能、審査後に公開しメール通知。'] },
     { version: 'v4.5.0', date: '2026年6月', changes: ['Varia公式・レビューデータを基にVaria VS3のスケールを再調整：ダイヤルは無段階0〜10（0.1刻み）。エスプレッソ約#4、フィルター／ドリップ#9〜11、フレンチ／水出し約#16。トルコ1〜2.5、エスプレッソ2.5〜6、モカ／エアロ6〜9、ドリップ9〜12、フレンチ／水出し12〜18（2未満は刀盤を損なうため不可）。'] },
-    { version: 'v4.4.0', date: '2026年6月', changes: ['ミルデータベースに「xBloom Studio 2」全自動研磨ハンドドリップマシンを追加：48mmコーニカル刀盤、80段スケール（1〜80）、段あたり18.75µm。（抽出区分の対応は第三者のロースター＆Basic Baristaガイドに基づき、xBloom公式表ではありません）。'] },
     ],
 
   }
@@ -660,6 +659,7 @@ function useDatabases(lang) {
       "1z_kultra": mg("1Zpresso 系列", "K-Ultra", uN, 0.1, [[2, 3], [3, 4.5], [4.5, 6.5], [6.5, 9], [9, 10]]),
       "1z_zp6": mg("1Zpresso 系列", "ZP6 Special", uN, 0.1, [[null, null], [null, null], [3, 4], [4, 6], [6, 7.5]]),
       "m_c40": mg(g2, "Comandante C40", uC, 1, [[5, 9], [9, 15], [15, 22], [22, 29], [29, 40]]),
+      "m_c60": mg(g2, "Comandante C60 Baracuda", uC, 1, [[2, 6], [6, 15], [15, 22], [22, 32], [32, 50]]),
       "m_k6": mg(g2, "Kingrinder K6", uC, 1, [[28, 40], [40, 60], [60, 90], [90, 120], [120, 150]]),
       "m_kinu": mg(g2, "Kinu M47", uR, 0.1, [[0.5, 1], [1, 1.5], [1.5, 2.5], [2.5, 4.5], [4.5, 6]]),
       "m_kinu_po": mg(g2, "Kinu M47 (Pour-Over Burr)", uR, 0.1, [[null, null], [null, null], [2, 3], [3, 4.5], [4.5, 6.5]]),
