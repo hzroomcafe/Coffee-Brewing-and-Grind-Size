@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>咖啡廳推薦 · 咖啡小村</title>
-<script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="f1341cd7ace04eefb41878c40bb" src="//local.adguard.org?ts=1784295805984&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="f1341cd7ace04eefb41878c40bb" src="//local.adguard.org?ts=1784295805984&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -437,17 +437,27 @@ function cityFromAddr(addr){
   for(const t of toks){ if(/(市|縣|都|府|県|州|省)$/.test(t) && !/^(臺灣|台灣|台湾)$/.test(t)) return t; }
   return '';
 }
+/* 泰文地名→英文（常見府／區），顯示與搜尋都更好讀 */
+const THAI_EN = {'กรุงเทพมหานคร':'Bangkok','กรุงเทพฯ':'Bangkok','กรุงเทพ':'Bangkok','ประเทศไทย':'Thailand','เมืองเชียงใหม่':'Mueang Chiang Mai','เชียงใหม่':'Chiang Mai','เชียงราย':'Chiang Rai','ภูเก็ต':'Phuket','วัฒนา':'Watthana','คลองเตย':'Khlong Toei','ปทุมวัน':'Pathum Wan','บางรัก':'Bang Rak','สาทร':'Sathon','สุขุมวิท':'Sukhumvit','พระนคร':'Phra Nakhon','จตุจักร':'Chatuchak','ห้วยขวาง':'Huai Khwang','ราชเทวี':'Ratchathewi','ธนบุรี':'Thon Buri','ลาดพร้าว':'Lat Phrao','บางนา':'Bang Na','บางกะปิ':'Bang Kapi','ดินแดง':'Din Daeng','พญาไท':'Phaya Thai','สีลม':'Silom','เจริญกรุง':'Charoen Krung','เอกมัย':'Ekkamai','ทองหล่อ':'Thong Lo','อารีย์':'Ari','ศรีภูมิ':'Si Phum','ช้างม่อย':'Chang Moi','สุเทพ':'Suthep','หางดง':'Hang Dong','แม่ริม':'Mae Rim','ชลบุรี':'Chon Buri','พัทยา':'Pattaya','ขอนแก่น':'Khon Kaen','กระบี่':'Krabi'};
+const THAI_EN_KEYS = Object.keys(THAI_EN).sort((a,b)=>b.length-a.length);
+function thaiToEn(s){
+  s = String(s||'');
+  if(!/[\u0E00-\u0E7F]/.test(s)) return s;
+  THAI_EN_KEYS.forEach(k => { s = s.split(k).join(THAI_EN[k]); });
+  return s;
+}
 /* 推斷國家：先看地址首段，否則用座標粗略判斷 */
 function countryOf(c){
   const addr = String(c.address||'');
-  const m = addr.match(/^\s*(臺灣|台灣|台湾|Taiwan|日本|Japan|大韓民國|韓國|Korea|South Korea|中國|中国|China|香港|Hong Kong|澳門|Macau|新加坡|Singapore|美國|United States|USA|泰國|Thailand|馬來西亞|Malaysia)/i);
-  const map={'台灣':'台灣','臺灣':'台灣','台湾':'台灣','taiwan':'台灣','日本':'日本','japan':'日本','韓國':'韓國','大韓民國':'韓國','korea':'韓國','south korea':'韓國','中國':'中國','中国':'中國','china':'中國','香港':'香港','hong kong':'香港','澳門':'澳門','macau':'澳門','新加坡':'新加坡','singapore':'新加坡','美國':'美國','united states':'美國','usa':'美國','泰國':'泰國','thailand':'泰國','馬來西亞':'馬來西亞','malaysia':'馬來西亞'};
+  const m = addr.match(/^\s*(臺灣|台灣|台湾|Taiwan|日本|Japan|大韓民國|韓國|Korea|South Korea|中國|中国|China|香港|Hong Kong|澳門|Macau|新加坡|Singapore|美國|United States|USA|泰國|Thailand|ประเทศไทย|馬來西亞|Malaysia)/i);
+  const map={'台灣':'台灣','臺灣':'台灣','台湾':'台灣','taiwan':'台灣','日本':'日本','japan':'日本','韓國':'韓國','大韓民國':'韓國','korea':'韓國','south korea':'韓國','中國':'中國','中国':'中國','china':'中國','香港':'香港','hong kong':'香港','澳門':'澳門','macau':'澳門','新加坡':'新加坡','singapore':'新加坡','美國':'美國','united states':'美國','usa':'美國','泰國':'泰國','thailand':'泰國','ประเทศไทย':'泰國','馬來西亞':'馬來西亞','malaysia':'馬來西亞'};
   if(m){ const k=m[1].toLowerCase(); return map[k]||map[m[1]]||m[1]; }
   if(c.lat&&c.lng){ const la=+c.lat, ln=+c.lng;
     if(la>21.8&&la<25.4&&ln>119.3&&ln<122.1) return '台灣';
     if(la>22&&la<22.6&&ln>113.8&&ln<114.5) return '香港';
     if(la>24&&la<46&&ln>122.5&&ln<146) return '日本';
     if(la>33&&la<39&&ln>124&&ln<131) return '韓國';
+    if(la>5.5&&la<20.5&&ln>97.3&&ln<105.7) return '泰國';
   }
   return '';
 }
@@ -535,6 +545,7 @@ async function loadData() {
       };
     }).filter(c => c.name)
       .filter(c => !(CONFIG.ONLY_APPROVED && hasStatusCol) || isApproved(c.status));
+    CAFES.forEach(cf => { cf.area = thaiToEn(cf.area); cf.address = thaiToEn(cf.address); });
     hideBanner();
   } catch (e) {
     CAFES = SAMPLE.slice();
@@ -1040,6 +1051,15 @@ async function sendReport(name) {
 /* ===========================================================
    圖片燈箱
    =========================================================== */
+function lbImgFail(img, url) {
+  const slide = img.closest('.lb-slide'); if (!slide) return;
+  slide.innerHTML = `<div style="color:#fff;text-align:center;max-width:80vw;font-family:inherit;">
+    <div style="font-size:40px;margin-bottom:12px;opacity:.55;">🖼️</div>
+    <div style="font-size:15px;font-weight:800;margin-bottom:6px;">圖片載入失敗</div>
+    <div style="font-size:12.5px;opacity:.7;line-height:1.6;margin-bottom:14px;">此圖檔可能未設為公開，或連結已失效。</div>
+    <a href="${url}" target="_blank" rel="noopener" style="display:inline-block;font-size:12.5px;font-weight:700;color:#fff;background:rgba(255,255,255,.16);padding:8px 16px;border-radius:999px;text-decoration:none;" onclick="event.stopPropagation()">在新分頁開啟原圖 →</a>
+  </div>`;
+}
 function openLightbox(photos, startIdx) {
   const arr = Array.isArray(photos) ? photos.filter(Boolean) : [photos].filter(Boolean);
   if (!arr.length) return;
@@ -1047,7 +1067,7 @@ function openLightbox(photos, startIdx) {
   const lb = document.createElement('div'); lb.className='photo-lb';
   const multi = arr.length > 1;
   lb.innerHTML =
-    `<div class="lb-stage"><div class="lb-track">${arr.map(s=>`<div class="lb-slide"><img src="${s}" alt="" draggable="false"></div>`).join('')}</div></div>` +
+    `<div class="lb-stage"><div class="lb-track">${arr.map(s=>`<div class="lb-slide"><img src="${s}" alt="" draggable="false" onerror="lbImgFail(this,'${String(s).replace(/'/g,"\\'")}')"></div>`).join('')}</div></div>` +
     `<button class="lb-close" aria-label="關閉">✕</button>` +
     (multi ? `<div class="lb-count"></div><button class="lb-arrow prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button><button class="lb-arrow next"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button><div class="lb-dots">${arr.map(()=>'<i></i>').join('')}</div>` : '');
   document.body.appendChild(lb);

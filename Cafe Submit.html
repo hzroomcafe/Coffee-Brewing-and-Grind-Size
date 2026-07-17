@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>推薦一間咖啡廳</title>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782659927614&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782659927614&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script type="text/javascript" nonce="f1341cd7ace04eefb41878c40bb" src="//local.adguard.org?ts=1784295805984&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Submit.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="f1341cd7ace04eefb41878c40bb" src="//local.adguard.org?ts=1784295805984&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -260,6 +260,15 @@ textarea { resize:vertical; min-height:92px; line-height:1.6; }
           </div>
           <p class="hint" id="addrStatus" style="margin-top:6px; display:none;"></p>
           <p class="hint" style="margin-top:5px;">📍 跳轉後可再拖移標記精確定位</p>
+          <div style="display:flex; gap:8px; margin-top:10px; align-items:center;">
+            <div class="search-wrap" style="flex:1;">
+              <svg class="search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 20 10.2C20 17.5 12 22 12 22z"/><circle cx="12" cy="10" r="3"/></svg>
+              <input type="text" id="coordInput" placeholder="貼上座標，例：13.75630, 100.50180" inputmode="decimal" />
+            </div>
+            <button type="button" id="coordGo" style="flex-shrink:0; padding:11px 16px; border-radius:12px; border:0; background:var(--sage); color:#fff; font-size:13px; font-weight:800; font-family:inherit; cursor:pointer;">跳轉</button>
+          </div>
+          <p class="hint" id="coordStatus" style="margin-top:5px; display:none;"></p>
+          <p class="hint" style="margin-top:5px;">🗺️ Google 地圖對店家按右鍵 → 點第一行座標即可複製，貼這裡直接跳到正確位置</p>
         </div>
         <label class="confirmloc"><input type="checkbox" id="confirmLoc" /><span>我已確認地圖上的位置正確（地點無誤、非錯誤或國外地址）</span></label>
         <p id="mapDragHint" class="hint" style="display:none; color:var(--sage); margin-top:6px;">📍 可拖移標記或點擊地圖任意位置來修正地點</p>
@@ -791,6 +800,27 @@ photoZone.addEventListener('dragover', e=>{ e.preventDefault(); photoZone.classL
 photoZone.addEventListener('dragleave', ()=>photoZone.classList.remove('drag'));
 photoZone.addEventListener('drop', e=>{ e.preventDefault(); photoZone.classList.remove('drag'); handlePhotoFile(e.dataTransfer.files[0]); });
 // photoRemove is handled per-thumbnail via renderPhotoGrid delete buttons
+
+/* ---------- 手動座標輸入：貼 Google 地圖座標直接跳轉 ---------- */
+(function(){
+  const inp = document.getElementById('coordInput');
+  const btn = document.getElementById('coordGo');
+  const st = document.getElementById('coordStatus');
+  if (!inp || !btn) return;
+  function msg(t, ok){ if(st){ st.textContent = t; st.style.display='block'; st.style.color = ok ? 'var(--sage)' : '#c0655f'; } }
+  async function go(){
+    const m = String(inp.value||'').trim().match(/(-?\d{1,2}(?:\.\d+)?)\s*[,，\s]\s*(-?\d{1,3}(?:\.\d+)?)/);
+    if (!m) { msg('格式看不懂，請貼「緯度, 經度」，例：13.75630, 100.50180', false); return; }
+    const lat = parseFloat(m[1]), lng = parseFloat(m[2]);
+    if (Math.abs(lat) > 90 || Math.abs(lng) > 180) { msg('座標超出範圍：緯度 ±90、經度 ±180', false); return; }
+    if (miniMap) miniMap.setView([lat, lng], 17);
+    updateMarkerPos(lat, lng);
+    msg('✓ 已跳到 ' + lat.toFixed(5) + ', ' + lng.toFixed(5) + '，可再微調標記', true);
+    try { await reverseGeocode(lat, lng); } catch(e){}
+  }
+  btn.onclick = go;
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+})();
 
 /* ---------- 地址快速定位（手動模式用）：輸入完整地址直接跳轉，不用下拉 ---------- */
 (function(){
