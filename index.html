@@ -13,7 +13,7 @@
 <meta name="twitter:title" content="咖啡小村莊工具箱 v3.1.0">
 <meta name="twitter:description" content="專業的咖啡沖煮參數、磨豆機刻度轉換與水質計算工具。">
 <meta name="twitter:image" content="https://hzroomcafe.github.io/Coffee-Brewing-and-Grind-Size/cover.png">
-<script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCoffee%2520Tools%2520v6.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="d10d1676fb7744dab6222aa17f7" src="//local.adguard.org?ts=1783356558614&amp;name=AdGuard%20Extra&amp;type=user-script"></script><script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script>
@@ -520,6 +520,19 @@ function useDatabases(lang) {
       rs('c3', l('流乾', 'Drawdown', '落ちきり'), pAct, l('注水至', 'Pour to', '注ぐ'), 130),
       rs('c4', l('流乾', 'Drawdown', '落ちきり'), pAct, l('注水至', 'Pour to', '注ぐ'), 160),
       rs('c5', dAct, l('倒出', 'Serve', '注ぐ'), l('搖晃後倒出', 'Swirl and serve', '揺らして注ぐ'), null)]
+
+    },
+    {
+      id: 'switch-sherry-hot', name: l('浸泡收尾手沖', 'Immersion Finish', '浸漬フィニッシュ'), author: 'Sherry 徐詩媛', dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 15, temperature: 93,
+      baseGrind: { grinder: 'm_c40', val: 26 },
+      link: 'https://www.instagram.com/chacha.japanlife',
+      description: l('Sherry 徐詩媛 分享的 Hario Switch 手沖手法，在最後用浸泡的方式，容錯率較高，風味柔和，在濾泡跟浸泡的切換增加層次感。\n\n💡 沖煮備註：\n1. 水溫：建議 92-94°C。\n2. 研磨度：中粗，C40 約 26 格，比杯測刻度粗一點點。\n3. 水質：泰山純水 + Aqua Code 調整到 40ppm。\n4. 第一段預浸看排氣狀況，若沒什麼泡泡即可進第二段，時間不固定。\n5. 第三段降到 6、7 分滿後，中心注水至 230g 並關上閥門；從閥門關閉開始判斷香氣變化，在最香的時候把閥門打開。', 'A Hario Switch method shared by Sherry that finishes with immersion — more forgiving, softer in flavour, and the switch between percolation and immersion adds layers.\n\n💡 Notes:\n1. Water: 92-94°C recommended.\n2. Grind: medium-coarse, ~C40 26, a touch coarser than cupping.\n3. Water quality: pure water adjusted to 40ppm with Aqua Code.\n4. Bloom until degassing settles (no fixed timing — move on once bubbles slow).\n5. On the third stage, once the bed drops to ~6-7/10 full, pour at the center to 230g and close the valve; judge the aroma from the moment it closes and open the valve at its peak.', 'Sherry 徐詩媛 が紹介する Hario Switch のレシピ。最後を浸漬で仕上げるため失敗しにくく、味わいは柔らか。透過と浸漬の切り替えが層を生みます。\n\n💡 メモ:\n1. 湯温: 92-94℃推奨。\n2. 挽き目: 中粗、C40 26程度（カッピングよりやや粗め）。\n3. 水質: 純水をAqua Codeで40ppmに調整。\n4. 蒸らしはガス抜けを見て（泡が落ち着いたら次へ、時間は不定）。\n5. 第3投は6〜7分目まで下がったら中心に230gまで注ぎバルブを閉じ、閉じた瞬間から香りを見て一番香った時に開く。'),
+      steps: [
+      rs('sh1', '0:00', mAct, (r) => l(`預浸注水至 ${Math.round(50 * r)}g，觀察排氣狀況`, `Bloom to ${Math.round(50 * r)}g, watch the degassing`, `${Math.round(50 * r)}gまで蒸らし、ガス抜けを観察`), 50),
+      rs('sh2', '0:20', pAct, (r) => l(`繞圈注水至 ${Math.round(140 * r)}g`, `Circular pour to ${Math.round(140 * r)}g`, `円を描いて${Math.round(140 * r)}gまで注ぐ`), 140),
+      rs('sh3', l('6-7分滿', '6-7/10 full', '6〜7分目'), bClose, (r) => l(`中心注水至 ${Math.round(230 * r)}g，關上開關閥門`, `Center pour to ${Math.round(230 * r)}g, close the switch valve`, `中心に${Math.round(230 * r)}gまで注ぎ、バルブを閉じる`), 230),
+      rs('sh4', l('最香時', 'At peak aroma', '一番香る時'), bOpen, l('判斷香氣，最香的時候打開閥門', 'Judge the aroma; open the valve at its peak', '香りを見て、一番香った時にバルブを開く'), null),
+      rs('sh5', dAct, l('流乾', 'Drawdown', '落ちきり'), l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)]
 
     },
     { id: 'switch-devil-single', name: l('惡魔手沖(單人)', 'Devil(Single)', '悪魔(1人用)'), author: '粕谷哲', dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 15, temperature: 92, baseGrind: { grinder: 'm_c40', val: 28 }, description: l('SOP化流程，新手友善。', 'Standardized procedure, beginner friendly.', 'SOP化された手順で初心者向け。'), steps: [rs('s1', '0:00', bOpen, l('打開開關注水', 'Open switch & pour', 'スイッチを開けて注ぐ'), 30), rs('s2', '0:40', '', l('保持滴濾注水至', 'Keep open & pour to', '開けたまま注ぐ'), 90), rs('s3', '1:20', bClose, l('關閉開關注水至目標水量', 'Close switch & pour to target', '閉じて目標量まで注ぐ'), 225), rs('s4', '1:50', '', l('打開開關', 'Open switch', 'スイッチを開く'), null), rs('s5', '2:20', '', l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)] },
