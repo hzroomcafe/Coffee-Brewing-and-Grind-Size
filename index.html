@@ -660,6 +660,7 @@ function useDatabases(lang) {
       "e_eg1": mg(g1, "Weber EG-1", uN, 0.1, [[0, 0.5], [0.5, 1.5], [1.5, 4], [4, 7], [7, 9]]),
       "e_600n": mg(g1, "Feima 600N", uN, 0.5, [[0.5, 1], [1, 2.5], [2.5, 3.5], [3.5, 5.5], [5.5, 8]]),
       "e_xbloom": mg(g1, "xBloom Studio 2", uN, 1, [[1, 4], [4, 14], [14, 30], [30, 55], [55, 80]]),
+      "e_zp1": mg(g1, "WPM ZP-1", uN, 0.25, [[null, null], [2, 4], [4, 8], [11, 20], [20, 30]]),
       "m_s3": mg(g2, "Timemore Chestnut S3", uN, 0.1, [[0.5, 1], [1, 2.5], [2.5, 4], [4, 7], [7, 9]]),
       "1z_q2": mg("1Zpresso 系列", "Q2 / Q Air", uC, 1, [[15, 25], [25, 35], [35, 45], [45, 60], [60, 75]]),
       "1z_jx": mg("1Zpresso 系列", "JX", uC, 1, [[20, 30], [30, 40], [40, 60], [60, 90], [90, 120]]),
@@ -825,6 +826,7 @@ function WaterNairo({ c, l, formatNum }) {
 // ==========================================
 function WaterApax({ c, l, formatNum }) {
   const classes = useClasses(c);
+  const [apaxMode, setApaxMode] = useState('water');
   const [apaxCustomDrops, setApaxCustomDrops] = useState({ t: 0, j: 0, l: 0 });
   const [apaxVolume, setApaxVolume] = useState('250');
   const [apaxSelectedProfile, setApaxSelectedProfile] = useState('standard');
@@ -854,6 +856,11 @@ function WaterApax({ c, l, formatNum }) {
 
   return (
     <div className={`${classes.card} p-5 sm:p-6 space-y-5 animate-in fade-in`}>
+            <div className="flex gap-2">
+                <button onClick={() => setApaxMode('water')} className={`flex-1 py-3 font-bold rounded-xl transition-colors outline-none ${apaxMode === 'water' ? `${c.primary} text-white` : `${c.inputBg} ${c.textMuted}`}`}>{l('沖煮前調水', 'Build brew water', '抽出前の水作り')}</button>
+                <button onClick={() => setApaxMode('tune')} className={`flex-1 py-3 font-bold rounded-xl transition-colors outline-none ${apaxMode === 'tune' ? `${c.primary} text-white` : `${c.inputBg} ${c.textMuted}`}`}>{l('喝到後微調', 'Tune the cup', '飲んでから調整')}</button>
+            </div>
+            {apaxMode === 'tune' ? <WaterApaxTune c={c} l={l} formatNum={formatNum} /> : <>
             <div className={`p-4 sm:p-5 rounded-xl ${c.red} bg-opacity-10 border border-[#C18F8F]/30`}>
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-3">
                     <p className={`text-sm sm:text-base ${c.textDark} leading-relaxed font-black flex items-center gap-2`}>APAX LAB {l('配方換算', 'Recipe Calc', 'レシピ計算')}</p>
@@ -904,7 +911,213 @@ function WaterApax({ c, l, formatNum }) {
                     </div>
                 </div>
       }
+        </>}
         </div>);
+
+}
+
+// ==========================================
+// 6b. 模組：WaterApaxTune — 喝到後的風味微調（官方 post-brew 滴入用量）
+// ==========================================
+const APAX_BOTTLES = {
+  t: { name: 'TONIK [1]', ck: 'red' },
+  j: { name: 'JAMM [2]', ck: 'yellow' },
+  y: { name: 'LYLAC [3]', ck: 'blue' },
+  k: { name: 'KONFLUX [K]', ck: 'secondary' } };
+
+
+function WaterApaxTune({ c, l, formatNum }) {
+  const classes = useClasses(c);
+  const [drink, setDrink] = useState('filter');
+  const [vol, setVol] = useState('200');
+  const [lv, setLv] = useState({ t: 0, j: 0, y: 0, k: 0 });
+
+  const AXES = [
+  { b: 't', label: l('酸亮度 · 多汁感', 'Brightness · juiciness', '明るさ・ジューシーさ'), sub: l('風味強度、清爽酸質', 'Flavour intensity, crisp acidity', '風味の強度、清澄な酸') },
+  { b: 'j', label: l('甜感 · 厚度', 'Sweetness · body', '甘さ・ボディ'), sub: l('也用來壓住過強的酸或苦', 'Also tames overpowering acidity or bitterness', '強すぎる酸・苦味も抑える') },
+  { b: 'y', label: l('花香 · 細緻度', 'Floral · delicacy', '華やかさ・繊細さ'), sub: l('延長餘韻、降低尾韻乾澀', 'Extends the finish, reduces dryness', '余韻を伸ばし乾きを軽減') },
+  { b: 'k', label: l('口感層次 · 滑順度', 'Texture · smoothness', '口当たり・なめらかさ'), sub: l('包覆感與整體和諧感', 'Coating mouthfeel and overall harmony', '包み込む質感と調和') }];
+
+  const WHY = {
+    t: l('官方：咖啡偏重、缺乏明亮度與酸質，或想把既有酸質再突顯時使用。適合水洗、衣索比亞／肯亞、藝妓等花香品種。', 'Official: use when the coffee feels heavy, lacks brightness, or you want to highlight existing acidity. Suits washed, Ethiopian/Kenyan, Geisha-type coffees.', '公式：重く感じる・明るさが足りない、または既存の酸を際立たせたい時。ウォッシュド、エチオピア／ケニア、ゲイシャ系に。'),
+    j: l('官方：甜感不足、口感太薄，或酸／苦過於強勢時使用。適合日曬、南美與東南亞、發酵處理豆。', 'Official: use when sweetness is lacking, the body is thin, or acidity/bitterness is overpowering. Suits naturals, South American and SE Asian, fermented coffees.', '公式：甘さ不足・ボディが薄い、酸や苦味が強すぎる時。ナチュラル、南米・東南アジア、発酵系に。'),
+    y: l('官方：需要更圓潤、花香與柑橘調不夠明顯，或尾韻粗糙乾澀時使用。可延長餘韻、降低乾澀感。', 'Official: use when the cup needs roundness, florals/citrus are not intense enough, or the aftertaste is rough and dry. Extends the finish and reduces dryness.', '公式：丸みが欲しい、華やかさや柑橘感が弱い、後味が粗く乾く時。余韻を伸ばし乾きを軽減。'),
+    k: l('官方：2025 世界手沖冠軍賽開發的配方，專為提升口感厚度、層次與整體和諧感，只需幾滴。獲 SCA 2026 最佳新產品。', 'Official: developed for the 2025 World Brewers Cup to add mouthfeel, depth and harmony — only a few drops needed. SCA Best New Product 2026.', '公式：2025年ワールドブリューワーズカップ向けに開発。口当たり・奥行き・調和を高め、数滴で十分。SCA 2026最優秀新製品。') };
+
+  const OVER = {
+    t: l('過量會出現過強的酸、乾澀感與明顯鹹味。', 'Too much brings overpowering acidity, dryness and a noticeable saltiness.', '入れすぎると酸が強すぎ、乾いた質感と塩味が出ます。'),
+    j: l('過量會壓平酸度，並帶來粉筆般的乾澀與過重的 body。', 'Too much flattens acidity and brings chalky dryness with an overly heavy body.', '入れすぎると酸が平坦になり、チョーキーな乾きと重すぎるボディに。'),
+    y: l('過量會帶出不舒服的苦味。', 'Too much brings an unpleasant bitterness.', '入れすぎると不快な苦味が出ます。'),
+    k: l('官方僅強調「幾滴即可」，建議從最少量開始試。', 'Official guidance is simply "a few drops" — start with the smallest dose.', '公式は「数滴で十分」。最少量から試してください。') };
+
+  const LVNAME = [l('不調整', 'Off', '調整なし'), l('微幅', 'Subtle', 'ごく僅か'), l('輕度', 'Light', '軽め'), l('中等', 'Medium', '中程度'), l('明顯', 'Strong', 'しっかり'), l('最大', 'Max', '最大')];
+
+  const DROP_G = 0.0625;
+  const v = parseFloat(vol) || 0;
+  // 官方 post-brew 是「每杯總量」：手沖 200ml 為 3~12 滴（= 0.94~3.75 g/L，與官方調水 1~4 g/L 同一濃度帶）；
+  // 濃縮為每份 1~3 滴。因此總滴數由最高強度決定，再按各軸強度比例分配，總和不會超過官方上限。
+  const base = drink === 'espresso' ? { s: 1, m: 3, ref: 30 } : { s: 3, m: 12, ref: 200 };
+  const ratio = v > 0 ? v / base.ref : 0;
+  const gramsOf = (d) => formatNum(d * DROP_G);
+  const active = AXES.filter((a) => lv[a.b] > 0);
+  const maxLv = active.reduce((n, a) => Math.max(n, lv[a.b]), 0);
+  const total = maxLv <= 0 ? 0 : Math.max(1, Math.round((base.s + (maxLv - 1) / 4 * (base.m - base.s)) * ratio));
+  // 依強度權重分配總滴數（最大餘數法，確保各瓶相加 = 總量）
+  const alloc = useMemo(() => {
+    const out = {};
+    if (!active.length || total <= 0) return out;
+    // 總滴數就是官方上限，不能被「每軸至少 1 滴」推高：
+    // 因此最多只讓 total 個軸分到滴數（依強度高低排序取前 total 名）。
+    const sorted = [...active].sort((p, q) => lv[q.b] - lv[p.b]);
+    const parts = sorted.slice(0, Math.min(sorted.length, total));
+    const wSum = parts.reduce((n, a) => n + lv[a.b], 0) || 1;
+    const raw = parts.map((a) => ({ b: a.b, x: total * lv[a.b] / wSum }));
+    let used = 0;
+    raw.forEach((r) => { out[r.b] = Math.floor(r.x); used += out[r.b]; });
+    raw.map((r) => ({ b: r.b, f: r.x - Math.floor(r.x) })).sort((p, q) => q.f - p.f)
+      .slice(0, Math.max(0, total - used)).forEach((r) => { out[r.b] += 1; });
+    // 分到 0 滴的參與軸，從最多的軸「借」一滴（不新增，總和不變）
+    parts.forEach((a) => {
+      if (out[a.b] > 0) return;
+      const donor = parts.reduce((best, x) => (out[x.b] || 0) > (out[best.b] || 0) ? x : best, parts[0]);
+      if ((out[donor.b] || 0) > 1) { out[donor.b] -= 1; out[a.b] = 1; }
+    });
+    return out;
+  }, [total, lv.t, lv.j, lv.y, lv.k]);
+  const totalDrops = active.reduce((n, a) => n + (alloc[a.b] || 0), 0);
+  const gPerL = v > 0 ? totalDrops * DROP_G / (v / 1000) : 0;
+  const atMax = maxLv >= 5 && totalDrops > 0;
+  const tooMany = active.length > total && total > 0;
+  const volRange = drink === 'espresso' ? { lo: 15, hi: 100 } : { lo: 60, hi: 600 };
+  const volBad = v > 0 && (v < volRange.lo || v > volRange.hi);
+
+  return (
+    <div className="space-y-5">
+        <div className={`p-4 sm:p-5 rounded-xl ${c.inputBg} border ${c.border}`}>
+            <p className={`text-[12px] sm:text-[13px] ${c.textMuted} leading-relaxed font-medium`}>{l('已經沖好、喝到了不滿意的地方？拉動下方風味強度，就會算出各瓶該滴幾滴。用量依 APAX LAB 官方 post-brew 建議：手沖每杯 3 滴起、最多 12 滴；濃縮 1 滴起、最多 3 滴，並依你的杯量換算。', 'Already brewed and something is off? Drag the intensity sliders and you get the drops per bottle. Amounts follow APAX LAB official post-brew guidance: filter from 3 drops up to 12; espresso from 1 up to 3 — scaled to your cup size.', '淹れた後に気になる点があれば、下の強度スライダーを動かせば各ボトルの滴数が出ます。APAX LAB公式のpost-brew推奨に基づき、ドリップは3滴から最大12滴、エスプレッソは1滴から最大3滴。カップ量に応じて換算します。')}</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label className={classes.label}>{l('咖啡類型', 'Coffee type', 'コーヒーの種類')}</label>
+                <div className="flex gap-2">
+                    <button onClick={() => {setDrink('filter');setVol('200');}} className={`flex-1 py-2.5 text-[12.5px] font-bold rounded-xl transition-colors outline-none ${drink === 'filter' ? `${c.primary} text-white` : `${c.inputBg} ${c.textMuted}`}`}>{l('手沖 / 濾泡', 'Filter', 'ドリップ')}</button>
+                    <button onClick={() => {setDrink('espresso');setVol('30');}} className={`flex-1 py-2.5 text-[12.5px] font-bold rounded-xl transition-colors outline-none ${drink === 'espresso' ? `${c.primary} text-white` : `${c.inputBg} ${c.textMuted}`}`}>{l('義式濃縮', 'Espresso', 'エスプレッソ')}</button>
+                </div>
+            </div>
+            <div><label className={classes.label}>{l('杯中液量 (ml)', 'Liquid in cup (ml)', 'カップ内の液量 (ml)')}</label><input type="number" min="0" value={vol} onChange={(e) => setVol(e.target.value)} className={classes.input} /></div>
+        </div>
+
+        <div className="space-y-3">
+            <div className="flex items-center justify-between">
+                <label className={`${classes.label} !mb-0`}>{l('風味強度調整', 'Flavour intensity', '風味の強度調整')}</label>
+                {active.length > 0 && <button onClick={() => setLv({ t: 0, j: 0, y: 0, k: 0 })} className={`text-[11px] font-bold ${c.textMuted} underline hover:opacity-70`}>{l('全部歸零', 'Reset all', 'すべてリセット')}</button>}
+            </div>
+            {AXES.map((a) => {
+        const b = APAX_BOTTLES[a.b];
+        const level = lv[a.b];
+        const d = alloc[a.b] || 0;
+        return (
+          <div key={a.b} className={`rounded-2xl ${c.inputBg} border ${c.border} overflow-hidden ${level > 0 ? '' : 'opacity-70'}`}>
+                    <div className={`h-1 w-full ${level > 0 ? c[b.ck] : c.accent}`}></div>
+                    <div className="p-4">
+                        <div className="flex items-start justify-between gap-3 mb-1">
+                            <div className="min-w-0">
+                                <p className={`text-[13px] font-black ${c.textDark} leading-snug`}>{a.label}</p>
+                                <p className={`text-[11px] ${c.textMuted} font-medium mt-0.5`}>{a.sub}</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                                <p className={`text-[10px] font-black ${c[b.ck + 'Text']} leading-none mb-1`}>{b.name}</p>
+                                <p className={`text-2xl font-black ${level > 0 ? c.textDark : c.textMuted} leading-none`}>{d > 0 ? d : '—'}<span className="text-[11px] font-bold ml-1">{d > 0 ? l('滴', 'dr', '滴') : ''}</span></p>
+                                <p className={`text-[10px] font-bold ${c.textMuted} mt-0.5`}>{level > 0 ? LVNAME[level] : LVNAME[0]}</p>
+                            </div>
+                        </div>
+                        <input type="range" min="0" max="5" step="1" value={level} onChange={(e) => setLv((s) => ({ ...s, [a.b]: parseInt(e.target.value, 10) }))} className="w-full mt-3 accent-current" style={{ accentColor: level > 0 ? undefined : '#9a9a9a' }} />
+                        <div className="flex justify-between mt-1">
+                            {LVNAME.map((n, k) => <span key={k} className={`text-[9.5px] font-bold ${k === level ? c.textDark : c.textMuted} ${k === level ? '' : 'opacity-50'}`}>{n}</span>)}
+                        </div>
+                    </div>
+                </div>);
+      })}
+        </div>
+
+        {(volBad || tooMany || atMax) &&
+      <div className="space-y-2">
+            {volBad &&
+        <div className={`flex items-start gap-3 p-4 rounded-2xl ${c.red} bg-opacity-15 border-2 border-[#C18F8F]`}>
+                    <span className="text-lg leading-none shrink-0">⚠️</span>
+                    <div className="min-w-0">
+                        <p className={`text-[13px] font-black ${c.textDark} mb-1`}>{l('杯量超出合理範圍', 'Cup volume out of range', 'カップ量が範囲外')}</p>
+                        <p className={`text-[11.5px] ${c.textDark} leading-relaxed font-medium opacity-90`}>{l('目前填 ' + formatNum(v) + ' ml。' + (drink === 'espresso' ? '濃縮通常為 15~100 ml' : '手沖單杯通常為 60~600 ml') + '，超出範圍時換算出的滴數已不在官方驗證過的區間內，請確認數值。', 'You entered ' + formatNum(v) + ' ml. ' + (drink === 'espresso' ? 'Espresso is normally 15-100 ml' : 'A filter cup is normally 60-600 ml') + '; outside that range the calculated drops fall beyond what the official guidance covers. Please check the value.', '入力値は' + formatNum(v) + ' ml。' + (drink === 'espresso' ? 'エスプレッソは通常15〜100 ml' : 'ドリップ1杯は通常60〜600 ml') + 'です。範囲外では換算した滴数が公式の検証範囲を外れます。数値をご確認ください。')}</p>
+                    </div>
+                </div>
+        }
+            {tooMany &&
+        <div className={`flex items-start gap-3 p-4 rounded-2xl ${c.yellow} bg-opacity-20 border-2 border-[#C9B793]`}>
+                    <span className="text-lg leading-none shrink-0">⚠️</span>
+                    <div className="min-w-0">
+                        <p className={`text-[13px] font-black ${c.textDark} mb-1`}>{l('選的風味多於可分配的滴數', 'More attributes than drops available', '風味の数が滴数を超えています')}</p>
+                        <p className={`text-[11.5px] ${c.textDark} leading-relaxed font-medium opacity-90`}>{l('官方單杯上限只有 ' + total + ' 滴，因此只分配給強度最高的 ' + total + ' 項，其餘顯示「—」。請提高強度、加大杯量，或減少同時調整的項目。', 'The official per-cup maximum is only ' + total + ' drops, so only the ' + total + ' strongest attributes get a dose; the rest show "—". Raise the intensity, use a larger cup, or adjust fewer attributes at once.', '公式のカップあたり上限は' + total + '滴のみのため、強度が高い上位' + total + '項目にのみ配分され、残りは「—」表示です。強度を上げる、量を増やす、または項目を減らしてください。')}</p>
+                    </div>
+                </div>
+        }
+            {atMax &&
+        <div className={`flex items-start gap-3 p-4 rounded-2xl ${c.red} bg-opacity-15 border-2 border-[#C18F8F]`}>
+                    <span className="text-lg leading-none shrink-0">🛑</span>
+                    <div className="min-w-0">
+                        <p className={`text-[13px] font-black ${c.textDark} mb-1`}>{l('已達官方建議上限，請勿再加', 'At the official maximum — do not add more', '公式上限に到達しています')}</p>
+                        <p className={`text-[11.5px] ${c.textDark} leading-relaxed font-medium opacity-90`}>{l('目前 ' + totalDrops + ' 滴' + (drink === 'espresso' ? '' : '（' + formatNum(gPerL) + ' g/L）') + '已是官方' + (drink === 'espresso' ? '每份 3 滴' : '每杯 12 滴') + '的上限。再往上加容易出現過酸、乾澀、粉筆感或不悅的苦味，且無法回頭。建議先攪拌試喝，真的不夠再重新沖一杯調整參數。', 'At ' + totalDrops + ' drops' + (drink === 'espresso' ? '' : ' (' + formatNum(gPerL) + ' g/L)') + ' you are at the official maximum of ' + (drink === 'espresso' ? '3 drops per shot' : '12 drops per cup') + '. Going further risks harsh acidity, dryness, chalkiness or unpleasant bitterness — and it cannot be undone. Stir and taste first; if it is still not enough, rebrew with adjusted parameters instead.', '現在' + totalDrops + '滴' + (drink === 'espresso' ? '' : '（' + formatNum(gPerL) + ' g/L）') + 'で、公式上限（' + (drink === 'espresso' ? '1ショット3滴' : '1杯12滴') + '）に達しています。これ以上は過度な酸味・乾き・チョーキーさ・不快な苦味の原因となり、後戻りできません。まず撹拌して試飲し、それでも足りない場合はパラメータを変えて淹れ直してください。')}</p>
+                    </div>
+                </div>
+        }
+        </div>
+      }
+
+        {active.length === 0 ?
+      <div className={`p-6 rounded-2xl ${c.inputBg} border border-dashed ${c.border} text-center`}>
+                <p className={`text-[13px] font-bold ${c.textMuted}`}>{l('把想加強的風味往右拉，下面就會出現配方', 'Drag a slider right and the recipe appears below', 'スライダーを右に動かすとレシピが出ます')}</p>
+            </div> :
+
+      <div className={`rounded-2xl ${c.inputBg} border ${c.border} overflow-hidden`}>
+                <div className="p-4 sm:p-5">
+                    <div className="flex items-center justify-between mb-4">
+                        <p className={`text-[11px] font-bold ${c.textMuted} uppercase tracking-widest`}>{l('滴入杯中', 'Dose into the cup', 'カップに滴下')}</p>
+                        <p className={`text-[11px] font-bold ${atMax ? c.redText : c.textMuted}`}>{l('合計', 'Total', '合計')} {totalDrops} {l('滴', 'drops', '滴')} · {gramsOf(totalDrops)} g{drink === 'espresso' ? '' : ' · ' + formatNum(gPerL) + ' g/L'}{atMax ? ' · ' + l('已達上限', 'at max', '上限') : ''}</p>
+                    </div>
+                    <div className="space-y-2">
+                        {active.filter((a) => (alloc[a.b] || 0) > 0).map((a) => {
+              const b = APAX_BOTTLES[a.b];
+              const d = alloc[a.b] || 0;
+              return (
+                <div key={a.b} className={`flex items-center gap-3 p-3 rounded-xl ${c.card} border ${c.border}`}>
+                                <div className={`w-1.5 h-9 rounded-full ${c[b.ck]} shrink-0`}></div>
+                                <div className="min-w-0 flex-1">
+                                    <p className={`text-[12.5px] font-black ${c[b.ck + 'Text']}`}>{b.name}</p>
+                                    <p className={`text-[10.5px] ${c.textMuted} font-bold`}>{LVNAME[lv[a.b]]}</p>
+                                </div>
+                                <p className={`text-xl font-black ${c.textDark} shrink-0`}>{d}<span className={`text-[10px] font-bold ${c.textMuted} ml-1`}>{l('滴', 'dr', '滴')} · {gramsOf(d)} g</span></p>
+                            </div>);
+            })}
+                    </div>
+                    {drink === 'espresso' ?
+          <p className={`mt-3 text-[11px] ${c.textMuted} font-medium leading-relaxed`}>{l('濃縮的官方建議是以「每份滴數」計（1 滴起、最多 3 滴），濃度本身高於手沖用的 1~4 g/L 帶屬正常，不做濃度帶比較。1 滴 = 0.0625 g。多個風味同時調整時，總量依強度比例分配，不會超過每份上限。', 'For espresso the official guidance is a per-shot drop count (from 1 up to 3 drops); its concentration is intentionally higher than the 1-4 g/L filter band, so no band comparison is made. 1 drop = 0.0625 g. Adjusting several attributes splits the total by intensity rather than stacking it.', 'エスプレッソの公式推奨は「1ショットあたりの滴数」（1滴から最大3滴）。濃度はドリップ用の1〜4 g/L帯より高くなるのが正常なため、帯との比較は行いません。1滴=0.0625g。複数の風味を同時に調整しても合計は加算されず強度比で配分されます。')}</p> :
+          <p className={`mt-3 text-[11px] ${c.textMuted} font-medium leading-relaxed`}>{gPerL >= 1 && gPerL <= 4 ?
+            l('這個總量相當於每公升 ' + formatNum(gPerL) + ' 克，落在官方建議的 1~4 g/L 濃度帶內（1 滴 = 0.0625 g）。多個風味同時調整時，總量不會疊加超標，而是依強度比例分配。', 'This total works out to ' + formatNum(gPerL) + ' g per litre, inside the official 1-4 g/L band (1 drop = 0.0625 g). When you adjust several attributes at once the total is split by intensity rather than stacked.', 'この合計は1リットルあたり' + formatNum(gPerL) + 'グラム相当で、公式の1〜4 g/L帯に収まります（1滴=0.0625g）。複数の風味を同時に調整しても合計は加算されず、強度比で配分されます。') :
+            l('這個總量相當於每公升 ' + formatNum(gPerL) + ' 克，略低於官方常用的 1~4 g/L 濃度帶，屬於最輕微的微調（1 滴 = 0.0625 g）。若感覺不出差異，可把強度往右再拉一級。', 'This total works out to ' + formatNum(gPerL) + ' g per litre, just under the usual official 1-4 g/L band — the lightest possible nudge (1 drop = 0.0625 g). If you cannot taste a difference, move the slider one step further right.', 'この合計は1リットルあたり' + formatNum(gPerL) + 'グラム相当で、公式の1〜4 g/L帯をわずかに下回る最も軽い微調整です（1滴=0.0625g）。違いが分からない場合は強度を1段上げてください。')}</p>
+          }
+                    <div className={`mt-4 pt-4 border-t border-dashed ${c.border} space-y-3`}>
+                        {active.filter((a) => (alloc[a.b] || 0) > 0).map((a) =>
+            <div key={a.b}>
+                                <p className={`text-[11.5px] ${c.textMuted} leading-relaxed font-medium`}><span className={`font-black ${c[APAX_BOTTLES[a.b].ck + 'Text']}`}>{APAX_BOTTLES[a.b].name}</span> {WHY[a.b]}</p>
+                                <p className={`text-[11px] ${c.redText} leading-relaxed font-bold mt-1`}>⚠︎ {OVER[a.b]}</p>
+                            </div>
+            )}
+                    </div>
+                    <p className={`mt-4 pt-4 border-t border-dashed ${c.border} text-[11.5px] ${c.textMuted} leading-relaxed font-medium`}>{l('官方提醒：一次少量慢慢加，每次加完充分搖晃或攪拌讓礦物完全溶解，邊試邊調。礦物液本身不含香料，只是改變味覺對咖啡既有風味的感受。商用義式機請勿直接加入水箱（家用最多 1g/L），濃縮建議萃取後再滴。', 'Official reminders: add gradually, swirl or stir thoroughly so the minerals dissolve fully, and taste as you go. The concentrates contain no flavourings — they change how you perceive what is already in the cup. Do not dose commercial espresso machines directly (home machines 1g/L max); for espresso, dose after extraction.', '公式の注意：少量ずつ加え、しっかり撹拌して溶かし、味を見ながら調整。濃縮液に香料は含まれず、既にある風味の感じ方を変えるだけです。業務用エスプレッソマシンへの直接投入は不可（家庭用は最大1g/L）。エスプレッソは抽出後に滴下を推奨。')}</p>
+                </div>
+            </div>
+      }
+    </div>);
 
 }
 
