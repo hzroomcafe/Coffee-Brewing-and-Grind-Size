@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>咖啡廳推薦 · 咖啡小村</title>
-<script type="text/javascript" nonce="f1341cd7ace04eefb41878c40bb" src="//local.adguard.org?ts=1784295805984&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DCafe%2520Recommendations.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="f1341cd7ace04eefb41878c40bb" src="//local.adguard.org?ts=1784295805984&amp;name=AdGuard%20Extra&amp;type=user-script"></script><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
@@ -35,7 +35,9 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
 html.dark body::before { opacity:.16; mix-blend-mode:overlay; }
 .modal-backdrop { position:fixed; inset:0; z-index:90; background:rgba(0,0,0,.45); display:flex; align-items:flex-end; justify-content:center; backdrop-filter:blur(3px); }
 @media(min-width:600px){ .modal-backdrop { align-items:center; } }
-.modal { background:var(--card); border-radius:22px 22px 0 0; padding:22px 20px 32px; width:100%; max-width:520px; box-shadow:0 -16px 40px rgba(0,0,0,.18); }
+.modal { background:var(--card); border-radius:22px 22px 0 0; padding:22px 20px calc(24px + env(safe-area-inset-bottom)); width:100%; max-width:520px; box-shadow:0 -16px 40px rgba(0,0,0,.18); max-height:calc(100dvh - 24px); overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
+.modal-backdrop { overscroll-behavior:contain; touch-action:pan-y; }
+html.ov-lock, html.ov-lock body { overflow:hidden !important; overscroll-behavior:none; }
 @media(min-width:600px){ .modal { border-radius:22px; padding:24px; } }
 .modal h3 { font-size:17px; font-weight:900; margin-bottom:4px; }
 .modal .sub { font-size:12.5px; color:var(--muted); margin-bottom:16px; line-height:1.5; }
@@ -245,6 +247,16 @@ header { padding: 26px 0 14px; }
 .rv-form { border-top:1px solid var(--line); padding-top:14px; }
 .rv-form-title { font-size:13px; font-weight:800; color:var(--ink); margin-bottom:10px; }
 .rv-counter { float:right; font-size:11px; color:var(--muted); font-weight:600; }
+html { -webkit-text-size-adjust:100%; }
+body { overflow-x:hidden; }
+@media (max-width:639px) {
+  input, select, textarea { font-size:16px; }
+  .tg { min-height:32px; }
+  #regionBar, #tagBar { display:flex; flex-wrap:nowrap; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; scrollbar-width:none; padding-bottom:4px; }
+  #regionBar::-webkit-scrollbar, #tagBar::-webkit-scrollbar { display:none; }
+  #regionBar > *, #tagBar > * { flex:0 0 auto; min-height:36px; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 @media (max-width:480px) {
   .cafe-foot { flex-wrap:wrap; }
   .byline { width:100%; }
@@ -278,7 +290,7 @@ footer a { color:var(--sage); text-decoration:none; font-weight:700; }
 <body>
 <div class="app wrap">
   <header>
-    <a class="backlink" href="Coffee Tools v5.html">
+    <a class="backlink" href="index.html">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       返回工具箱
     </a>
@@ -362,7 +374,7 @@ const TAGS = [
   { key:'手沖', icon:'☕' }, { key:'義式', icon:'⚡' }, { key:'自家烘焙', icon:'🔥' },
   { key:'好坐', icon:'🛋️' }, { key:'不限時', icon:'⏳' }, { key:'有插座', icon:'🔌' },
   { key:'甜點', icon:'🍰' }, { key:'輕食', icon:'🥪' }, { key:'寵物友善', icon:'🐾' },
-  { key:'安靜', icon:'🤫' }, { key:'戶外座位', icon:'🌿' },
+  { key:'安靜', icon:'🤫' }, { key:'戶外座位', icon:'🌿' }, { key:'抹茶', icon:'🍵' },
 ];
 
 /* 範例資料（接上 Sheet 前可直接看效果）。座標皆為台北實際地點附近。 */
@@ -882,6 +894,15 @@ function renderAll() {
 /* ===========================================================
    回報錯誤 Modal
    =========================================================== */
+(function(){
+  const sync = () => document.documentElement.classList.toggle('ov-lock', !!document.querySelector('.modal-backdrop, .photo-lb'));
+  new MutationObserver(sync).observe(document.body, { childList:true });
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const m = document.querySelector('.photo-lb, .modal-backdrop');
+    if (m) { const x = m.querySelector('.lb-close'); x ? x.click() : m.remove(); }
+  });
+})();
 function openReport(btn) {
   if (document.getElementById('reportModal')) return;
   const cafeName = btn && btn.dataset ? btn.dataset.cname : String(btn||'');

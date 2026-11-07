@@ -79,7 +79,13 @@ input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-o
 input[type="number"] { -moz-appearance: textfield; }
 select optgroup { font-weight: 700; color: #7E8D85; background-color: #F9F8F6; }
 select option { font-weight: 400; color: #3A3733; background-color: #ffffff; }
-body { -webkit-tap-highlight-color: transparent; transition: background-color 0.4s ease; }
+body { -webkit-tap-highlight-color: transparent; transition: background-color 0.4s ease; overflow-x: hidden; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+@media (max-width: 639px) {
+  input, select, textarea { font-size: 16px; }
+  input[type=range] { padding: 9px 0; background-clip: content-box; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
 input[type=range] { -webkit-appearance: none; background: transparent; }
@@ -338,6 +344,7 @@ function useDatabases(lang) {
 
       [l('平底濾杯', 'Flat Bottom', '平底ドリッパー')]: [
       { id: 'BEANDY SILK', name: l('BEANDY SILK 絲綢濾杯', 'BEANDY SILK', 'BEANDY SILK') },
+      { id: 'Kalita Wave 155', name: l('Kalita Wave 155 蛋糕濾杯', 'Kalita Wave 155', 'カリタ ウェーブ 155') },
       { id: 'OREA Baby O brewer', name: 'OREA Baby O brewer' },
       { id: 'Orea V3', name: 'Orea V3' },
       { id: 'Orea Z1', name: 'Orea Z1' },
@@ -399,6 +406,49 @@ function useDatabases(lang) {
       rs('o4', '2:00', bOpen, l('打開開關濾出', 'Open switch to drawdown', 'スイッチを開けて抽出'), null),
       rs('o5', '2:30', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)]
 
+    },
+// --- Terraform Coffee Roasters 拓殖：風味 A / B ---
+    {
+      id: 'terraform-v60-a', name: l('Terraform 風味A 酸甜可口', 'Terraform Profile A · Bright & Sweet', 'Terraform 風味A 甘酸っぱい'), author: 'Terraform Coffee Roasters', dripper: 'Hario V60 01', drinkType: 'hot', baseCoffee: 15, temperature: 92,
+      baseGrind: { grinder: 'm_c40', val: 26 },
+      description: l('Terraform Coffee Roasters 拓殖官方萃取建議，主打明亮酸甜。1:17，總萃取時間 2:00-2:30。\n\n💡 沖煮備註：\n1. 水溫：90-93°C。\n2. 研磨度：C40 24-28 格／EK43S 13-16。\n3. 水質：TDS 50-100ppm。\n4. 與「風味B」同一支豆子比較，A 較酸甜明亮。', 'Official extraction guide from Terraform Coffee Roasters, aiming for bright sweetness. 1:17, total time 2:00-2:30.\n\n💡 Notes:\n1. Water: 90-93°C.\n2. Grind: C40 24-28 / EK43S 13-16.\n3. Water quality: TDS 50-100ppm.\n4. Compared with Profile B on the same beans, A is brighter and sweeter.', 'Terraform Coffee Roasters 公式の抽出ガイド。明るい甘酸っぱさが狙い。1:17、抽出時間2:00〜2:30。\n\n💡 メモ:\n1. 湯温: 90-93℃。\n2. 挽き目: C40 24-28 / EK43S 13-16。\n3. 水質: TDS 50-100ppm。\n4. 同じ豆の風味Bと比べ、Aはより明るく甘酸っぱい。'),
+      steps: [
+      rs('tfa1', '0:00', pAct, l('繞圈注水 50g', 'Circular pour 50g', '円を描いて50g注ぐ'), 50),
+      rs('tfa2', '0:30', pAct, l('繞圈注水至 100g', 'Circular pour to 100g', '円を描いて100gまで'), 100),
+      rs('tfa3', '1:00', pAct, l('繞圈注水至 170g', 'Circular pour to 170g', '円を描いて170gまで'), 170),
+      rs('tfa4', '1:30', pAct, l('中心注水至 250g', 'Center pour to 250g', '中心に250gまで'), 250),
+      rs('tfa5', '2:00-2:30', dAct, l('滴完', 'Drawdown', '落ちきり'), null)]
+    },
+    {
+      id: 'terraform-kalita-b', name: l('Terraform 風味B 平衡醇厚', 'Terraform Profile B · Balanced & Full', 'Terraform 風味B バランス・コク'), author: 'Terraform Coffee Roasters', dripper: 'Kalita Wave 155', drinkType: 'hot', baseCoffee: 14, temperature: 90,
+      baseGrind: { grinder: 'm_c40', val: 26 },
+      description: l('Terraform Coffee Roasters 拓殖官方萃取建議，主打平衡醇厚。1:15，總萃取時間 2:00-2:30。\n\n💡 沖煮備註：\n1. 研磨度：C40 24-28 格／EK43S 13-16。\n2. 水質：TDS 50-100ppm。\n3. 這裡的「醇厚」是相對於風味A：同一支淺焙豆、其他條件不變時，B 會比 A 更平衡醇厚，並非中深焙的厚重感。', 'Official extraction guide from Terraform Coffee Roasters, aiming for balance and body. 1:15, total time 2:00-2:30.\n\n💡 Notes:\n1. Grind: C40 24-28 / EK43S 13-16.\n2. Water quality: TDS 50-100ppm.\n3. "Full" is relative to Profile A: with the same light roast and all else equal, B is more balanced and fuller — not the heaviness of a medium-dark roast.', 'Terraform Coffee Roasters 公式の抽出ガイド。バランスとコクが狙い。1:15、抽出時間2:00〜2:30。\n\n💡 メモ:\n1. 挽き目: C40 24-28 / EK43S 13-16。\n2. 水質: TDS 50-100ppm。\n3. 「コク」は風味Aとの比較。同じ浅煎り豆・他の条件が同じ場合にBの方がバランスよくコクがある、という意味で、中深煎りの重さではありません。'),
+      steps: [
+      rs('tfb1', '0:00', pAct, l('繞圈注水 50g', 'Circular pour 50g', '円を描いて50g注ぐ'), 50),
+      rs('tfb2', '0:30', pAct, l('中心注水至 100g', 'Center pour to 100g', '中心に100gまで'), 100),
+      rs('tfb3', '1:00', pAct, l('繞圈注水至 150g', 'Circular pour to 150g', '円を描いて150gまで'), 150),
+      rs('tfb4', '1:30', pAct, l('中心注水至 210g', 'Center pour to 210g', '中心に210gまで'), 210),
+      rs('tfb5', '2:00-2:30', dAct, l('滴完', 'Drawdown', '落ちきり'), null)]
+    },
+    // --- 白鯨豆子店：Switch 浸泡 / ORIGAMI 三段 ---
+    {
+      id: 'baijing-switch', name: l('白鯨 浸泡法', 'White Whale Immersion', '白鯨 浸漬法'), author: l('白鯨豆子店', 'White Whale Beans', '白鯨豆子店'), dripper: 'Hario Switch 02', drinkType: 'hot', baseCoffee: 10, temperature: 98,
+      baseGrind: { grinder: 'm_c40', val: 17 },
+      description: l('白鯨豆子店的 Switch 全浸泡方案：一次注滿、浸泡 3 分鐘再放流。10g 粉、1:17、98°C 高溫。\n\n💡 沖煮備註：\n1. 研磨度：C40 17 格（偏細，靠浸泡時間萃取）。\n2. 水質：80-150ppm 調配水。', 'Full-immersion Switch recipe from White Whale Beans: fill once, steep 3 minutes, then release. 10g, 1:17, 98°C.\n\n💡 Notes:\n1. Grind: C40 17 (on the fine side — extraction comes from steep time).\n2. Water: 80-150ppm remineralised water.', '白鯨豆子店のSwitch完全浸漬レシピ。一度に注ぎ、3分浸漬してから開放。10g、1:17、98℃。\n\n💡 メモ:\n1. 挽き目: C40 17（細め、浸漬時間で抽出）。\n2. 水質: 80-150ppmの調整水。'),
+      steps: [
+      rs('bj1', '0:00', bClose, l('關閥注入 170g 水', 'Valve closed, pour 170g', 'バルブを閉じて170g注ぐ'), 170),
+      rs('bj2', '3:00', bOpen, l('打開閥門', 'Open the valve', 'バルブを開く'), null),
+      rs('bj3', '4:00', dAct, l('移開濾杯', 'Remove the dripper', 'ドリッパーを外す'), null)]
+    },
+    {
+      id: 'baijing-origami', name: l('白鯨 三段法', 'White Whale 3-Pour', '白鯨 3投法'), author: l('白鯨豆子店', 'White Whale Beans', '白鯨豆子店'), dripper: 'ORIGAMI', drinkType: 'hot', baseCoffee: 15, temperature: 98,
+      baseGrind: { grinder: 'm_c40', val: 21 },
+      description: l('白鯨豆子店的 ORIGAMI 三段注水方案。15g 粉、1:17、98°C，總時間約 3 分鐘。\n\n💡 沖煮備註：\n1. 研磨度：C40 21 格。\n2. 水質：80-150ppm 調配水。', 'Three-pour ORIGAMI recipe from White Whale Beans. 15g, 1:17, 98°C, about 3 minutes total.\n\n💡 Notes:\n1. Grind: C40 21.\n2. Water: 80-150ppm remineralised water.', '白鯨豆子店のORIGAMI 3投レシピ。15g、1:17、98℃、合計約3分。\n\n💡 メモ:\n1. 挽き目: C40 21。\n2. 水質: 80-150ppmの調整水。'),
+      steps: [
+      rs('bo1', '0:00', mAct, l('注水至 50g，悶蒸 30 秒', 'Pour to 50g, bloom 30s', '50gまで注ぎ30秒蒸らす'), 50),
+      rs('bo2', '0:30', pAct, l('注水至 150g，等 30 秒', 'Pour to 150g, wait 30s', '150gまで注ぎ30秒待つ'), 150),
+      rs('bo3', '1:00', pAct, l('注水至 255g', 'Pour to 255g', '255gまで注ぐ'), 255),
+      rs('bo4', '3:00', dAct, l('滴完移開濾杯', 'Drawdown, remove dripper', '落ちきったら外す'), null)]
     },
     // --- Glitch Coffee 官方方案 ---
     {
@@ -650,10 +700,11 @@ function useDatabases(lang) {
       "e_x54": mg(g1, "X54", uN, 0.1, [[1, 4], [4, 10], [10, 20], [20, 28], [28, 35]]),
       "e_phi": mg(g1, "Philos", uN, 1, [[0, 10], [10, 25], [25, 45], [45, 65], [65, 80]]),
       "e_nz": mg(g1, "Niche Zero", uN, 1, [[5, 10], [10, 20], [20, 30], [30, 45], [45, 50]]),
-      "e_casa": mg(g1, "Lagom Casa", uN, 0.1, [[0.1, 0.8], [0.8, 2.5], [2.5, 4.5], [4.5, 7.5], [7.5, 9]]),
-      "e_mini": mg(g1, "Lagom Mini", uR, 0.1, [[0.3, 0.7], [0.7, 1.4], [1.4, 1.8], [1.8, 2.6], [2.6, 3.2]]),
-      "e_p100": mg(g1, "Lagom P100/01", uN, 0.1, [[0.1, 0.5], [0.5, 1.5], [1.5, 4], [4, 7], [7, 9.5]]),
+      "e_casa": mg(g1, "Lagom Casa", uN, 0.5, [[2, 6], [6, 10], [10, 13], [13, 17], [17, 30]]),
+      "e_mini": mg(g1, "Lagom Mini", uR, 0.1, [[0.3, 0.6], [0.6, 1.1], [1.1, 1.6], [1.6, 2.3], [2.3, 3.2]]),
+      "e_p100": mg(g1, "Lagom P100 / 01", uN, 0.1, [[0.1, 0.5], [0.5, 1.8], [1.8, 4.5], [4.5, 7.5], [7.5, 10.5]]),
       "e_p64": mg(g1, "Lagom P64", uN, 0.1, [[0.1, 0.5], [0.5, 1.5], [1.5, 4.5], [4.5, 7], [7, 9.5]]),
+      "e_p80": mg(g1, "Lagom P80", uN, 0.1, [[0.1, 0.5], [0.5, 1.5], [1.5, 4], [4, 7], [7, 9.5]]),
       "e_078": mg(g1, "Sculptor 078", uN, 0.1, [[null, null], [null, null], [4, 8], [8, 14], [14, 18]]),
       "e_078s": mg(g1, "Sculptor 078s", uN, 0.1, [[0, 0.5], [0.5, 2.5], [2.5, 6], [6, 10], [10, 14]]),
       "e_vs3": mg(g1, "Varia VS3", uN, 0.1, [[1, 2.5], [2.5, 6], [6, 9], [9, 12], [12, 18]]),
@@ -1986,15 +2037,43 @@ function BrewTool({ lang, t, c, initial }) {
   const handleSelectRecipe = (recipe) => {setSelectedRecipeId(recipe.id);setCustomWeight(recipe.baseCoffee);setIsSelectorOpen(false);setSearch('');};
   const triggerRef = useRef(null);
   const [dropdownStyle, setDropdownStyle] = useState({});
-  const openSelector = () => {
-    if (!isSelectorOpen && triggerRef.current) {
-      const r = triggerRef.current.getBoundingClientRect();
-      const spaceBelow = window.innerHeight - r.bottom - 8;
-      const maxH = Math.min(Math.max(spaceBelow - 8, 200), 520);
-      setDropdownStyle({ top: r.bottom + 8, left: r.left, width: r.width, maxHeight: maxH });
+  const placeSelector = (allowScroll) => {
+    const el = triggerRef.current; if (!el) return;
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const mobile = window.innerWidth < 640;
+    const bottomPad = mobile ? 92 : 16;
+    const hdr = document.querySelector('header');
+    const topPad = (hdr && getComputedStyle(hdr).position === 'sticky' ? hdr.getBoundingClientRect().height : 0) + 12;
+    let r = el.getBoundingClientRect();
+    const want = Math.min(520, vh * 0.62);
+    if (allowScroll && vh - r.bottom - bottomPad < want) {
+      window.scrollTo({ top: Math.max(0, window.scrollY + r.top - topPad), behavior: 'instant' });
+      r = el.getBoundingClientRect();
     }
+    const maxH = Math.max(180, Math.min(520, vh - r.bottom - 8 - bottomPad));
+    setDropdownStyle({ top: r.bottom + 8, left: r.left, width: r.width, maxHeight: maxH });
+  };
+  const openSelector = () => {
+    if (!isSelectorOpen) placeSelector(true);
     setIsSelectorOpen((v) => !v);
   };
+  useEffect(() => {
+    if (!isSelectorOpen) return;
+    const root = document.documentElement, body = document.body;
+    const prev = [root.style.overflow, body.style.overflow, body.style.overscrollBehavior];
+    root.style.overflow = 'hidden'; body.style.overflow = 'hidden'; body.style.overscrollBehavior = 'none';
+    const onResize = () => placeSelector(false);
+    const onKey = (e) => { if (e.key === 'Escape') setIsSelectorOpen(false); };
+    window.addEventListener('resize', onResize);
+    window.visualViewport && window.visualViewport.addEventListener('resize', onResize);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      root.style.overflow = prev[0]; body.style.overflow = prev[1]; body.style.overscrollBehavior = prev[2];
+      window.removeEventListener('resize', onResize);
+      window.visualViewport && window.visualViewport.removeEventListener('resize', onResize);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isSelectorOpen]);
   const dripperNameOf = (id) => { for (const arr of Object.values(DRIPPER_CATEGORIES)) { const d = arr.find((x) => x.id === id); if (d) return d.name; } return id; };
   const searchResults = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -2112,7 +2191,7 @@ searchResults.map((r) =>
 </button>
 {isSelectorOpen && ReactDOM.createPortal(
           <React.Fragment>
-<div className="fixed inset-0 z-[60]" onClick={() => setIsSelectorOpen(false)}></div>
+<div className="fixed inset-0 z-[60] bg-black/10" style={{ touchAction: 'none' }} onClick={() => setIsSelectorOpen(false)} onWheel={(e) => e.preventDefault()}></div>
 <div className={`fixed z-[70] ${c.card} rounded-2xl shadow-2xl border ${c.border} overflow-hidden flex flex-col animate-in slide-in-from-top-2 fade-in duration-200`} style={{ ...dropdownStyle, fontFamily: 'ui-sans-serif' }}>
 <div className={`shrink-0 px-4 pt-3.5 pb-3 border-b ${c.border} flex items-center justify-between`}>
 <p className={`text-sm font-bold ${c.textDark}`}>{t('available_recipes')} <span className={c.textMuted}>({filteredRecipes.length})</span></p>
@@ -3023,7 +3102,7 @@ function App() {
 
   return (
     <div className={`min-h-screen ${c.bg} font-sans ${c.textDark} pb-20 selection:bg-[#B3A394] selection:text-white transition-colors duration-300`}>
-    <div className={`${c.card} ${c.textDark} border-b ${c.border} sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md bg-opacity-90`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className={`p-2 -ml-2 rounded-full hover:${c.inputBg} transition-colors outline-none ${c.textMuted}`}><ArrowLeft size={20} /></button>}<div className={`p-2 rounded-full ${c.primary} text-white`}><Coffee size={18} strokeWidth={2.2} /></div><h1 className={`text-base sm:text-lg font-bold tracking-wide ${c.textDark} hidden sm:block`}>{view === 'home' ? t('app_title') : view === 'brew' ? t('tool_brew_title') : view === 'water' ? t('tool_water_title') : view === 'diag' ? t('tool_diag_title') : t('tool_grind_title')}</h1></div><div className="flex items-center gap-2"><div className={`flex items-center ${c.inputBg} p-1 rounded-full border ${c.border}`}><button onClick={() => setLang('zh')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'zh' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'en' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'ja' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>JA</button></div><button onClick={toggleDark} aria-label="toggle dark mode" className={`p-2 rounded-full ${c.inputBg} border ${c.border} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-200 outline-none`}>{isDark ? <Sun size={17} /> : <Moon size={17} />}</button></div></div></div>
+    <div className={`${c.card} ${c.textDark} border-b ${c.border} sticky top-0 z-40 transition-colors duration-300 backdrop-blur-md bg-opacity-90`}><div className="max-w-3xl mx-auto px-4 h-16 flex items-center justify-between"><div className="flex items-center gap-3">{view !== 'home' && <button onClick={() => setView('home')} className={`p-2.5 -ml-2 rounded-full hover:${c.inputBg} transition-colors outline-none ${c.textMuted}`}><ArrowLeft size={20} /></button>}<div className={`p-2 rounded-full ${c.primary} text-white`}><Coffee size={18} strokeWidth={2.2} /></div><h1 className={`text-base sm:text-lg font-bold tracking-wide ${c.textDark} hidden sm:block`}>{view === 'home' ? t('app_title') : view === 'brew' ? t('tool_brew_title') : view === 'water' ? t('tool_water_title') : view === 'diag' ? t('tool_diag_title') : t('tool_grind_title')}</h1></div><div className="flex items-center gap-2"><div className={`flex items-center ${c.inputBg} p-1 rounded-full border ${c.border}`}><button onClick={() => setLang('zh')} className={`px-3 py-2 sm:py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'zh' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>中</button><button onClick={() => setLang('en')} className={`px-3 py-2 sm:py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'en' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>EN</button><button onClick={() => setLang('ja')} className={`px-3 py-2 sm:py-1 rounded-full text-[11px] font-bold transition-all outline-none ${lang === 'ja' ? `${c.primary} text-white shadow-sm` : `${c.textMuted} hover:${c.textDark}`}`}>JA</button></div><button onClick={toggleDark} aria-label="toggle dark mode" className={`p-2.5 sm:p-2 rounded-full ${c.inputBg} border ${c.border} ${c.textDark} hover:scale-110 active:scale-95 transition-all duration-200 outline-none`}>{isDark ? <Sun size={17} /> : <Moon size={17} />}</button></div></div></div>
     <main className="brew-main-pad max-w-3xl mx-auto px-4 py-8 sm:py-10 relative pb-24 sm:pb-10">{view === 'home' ? <HomeView setView={setView} t={t} c={c} /> : view === 'brew' ? <BrewTool lang={lang} t={t} c={c} initial={initialRoute} /> : view === 'grind' ? <GrindTool lang={lang} t={t} c={c} /> : view === 'diag' ? <BrewDiagnostics lang={lang} t={t} c={c} /> : <WaterTool lang={lang} c={c} />}</main>
     {/* 手機底部工具列 */}
     <nav className={`sm:hidden fixed bottom-0 left-0 right-0 z-40 ${c.card} border-t ${c.border} backdrop-blur-md bg-opacity-95`} style={{ paddingBottom: 'max(env(safe-area-inset-bottom), 8px)' }}>
