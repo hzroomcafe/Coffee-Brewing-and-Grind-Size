@@ -14,7 +14,7 @@ pre { background: #151a1f; border: 1px solid #333; border-radius: 12px; padding:
 .steps { background: #2a3038; border-radius: 12px; padding: 16px 18px; font-size: 13px; line-height: 1.8; color: #b0bab0; }
 .steps b { color: #9ed99e; }
 </style>
-<script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;type=content-script&amp;dmn=claude.ai&amp;url=https%3A%2F%2Fclaude.ai%2Fdesign%2Fv1%2Fdesign%2Fprojects%2F019e0c46-c2e4-7663-8d37-6b94aaa19593%2Fdownload%3Fpath%3DApps%2520Script%2520Code.html&amp;app=com.apple.Safari&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1"></script><script type="text/javascript" nonce="3f4963b6fff84f38961df3176f8" src="//local.adguard.org?ts=1782645527667&amp;name=AdGuard%20Extra&amp;type=user-script"></script></head>
+</head>
 <body>
 <h2>☕ Apps Script 程式碼 — 直接從這裡複製</h2>
 <p>點下方按鈕複製全部程式碼，再貼到 Apps Script 取代原有內容。這個頁面不會有 HTML 實體問題。</p>
@@ -22,10 +22,92 @@ pre { background: #151a1f; border: 1px solid #333; border-radius: 12px; padding:
 <pre id="code">// ===== 只改這三行 =====
 const SHEET_ID   = '1XachRqnXwZ3oaCHv27vjLZ3uwkBKxMMdkDz3ySElhnM';
 const SHEET_NAME = '投稿';
-const NOTIFY_TO  = '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d2b34333e383128331d3a303c3431733e3230">[email&#160;protected]</a>';
+const NOTIFY_TO  = 'vincelun@gmail.com';
 
 const REPORT_SHEET = '回報';
+const PHOTO_FOLDER_ID = '1SyE0u7FlOMXnqNZTZ9aBOzPWkymVB_w0';
 const MAX_PER_FP_HOUR = 5;
+
+// 【授權測試】在 Apps Script 編輯器選這個函式 → 按「執行」→ 跳出授權視窗時全部允許（含 Drive）。
+// 執行後若「執行記錄」顯示資料夾名稱代表 Drive 權限 OK。
+function authorizeDrive() {
+  const folder = DriveApp.getFolderById(PHOTO_FOLDER_ID);
+  Logger.log('資料夾名稱：' + folder.getName());
+  // 順便測試上傳一張 1x1 測試圖
+  const testData = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  const url = uploadPhoto(testData, '_授權測試', 'test_' + Date.now());
+  Logger.log('測試上傳結果：' + (url || '失敗'));
+  return url;
+}
+
+// 把 base64 照片上傳到 Drive（不開子資料夾，避免需要更高權限），檔名含咖啡廳名稱以便分辨
+function uploadPhoto(dataUrl, cafeName, fileName) {
+  if (!dataUrl || String(dataUrl).indexOf('data:') !== 0) return '';
+  try {
+    const parts = String(dataUrl).split(',');
+    const meta = parts[0];
+    const ct = meta.substring(meta.indexOf(':')+1, meta.indexOf(';')) || 'image/jpeg';
+    const ext = (ct.split('/')[1]||'jpg').replace('jpeg','jpg');
+    const safeName = String(cafeName||'').replace(/[\/\\:*?"<>|]/g,'').trim() || '未命名';
+    const blob = Utilities.newBlob(Utilities.base64Decode(parts[1]), ct, fileName + '.' + ext);
+    var file;
+    try {
+      // 找或建以店名命名的子資料夾，照片依店家分類存放
+      const root = DriveApp.getFolderById(PHOTO_FOLDER_ID);
+      const it = root.getFoldersByName(safeName);
+      const sub = it.hasNext() ? it.next() : root.createFolder(safeName);
+      file = sub.createFile(blob);
+    } catch (e1) {
+      Logger.log('子資料夾上傳失敗，改存指定資料夾根層：' + e1);
+      try { file = DriveApp.getFolderById(PHOTO_FOLDER_ID).createFile(blob); }
+      catch (e2) { Logger.log('改存我的雲端硬碟根目錄：' + e2); file = DriveApp.createFile(blob); }
+    }
+    // 公開分享若被帳號政策擋住也不要讓整個上傳失敗
+    try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (e2) { Logger.log('setSharing 失敗（不影響上傳）：' + e2); }
+    return 'https://drive.google.com/thumbnail?id=' + file.getId() + '&sz=w800';
+  } catch (err) {
+    // Drive 上傳失敗（權限等）→ 直接把照片本身存進試算表，保證照片不會遺失
+    Logger.log('uploadPhoto 改存 base64（Drive 失敗）：' + err);
+    return (String(dataUrl).length <= 49500) ? String(dataUrl) : '';
+  }
+}
+
+function doGet(e) {
+  // IG og元資料抓取
+  if (e && e.parameter && e.parameter.action === 'igmeta' && e.parameter.url) {
+    try {
+      const html = UrlFetchApp.fetch(e.parameter.url, {
+        muteHttpExceptions: true, followRedirects: true,
+        headers: { 'User-Agent': 'Mozilla/5.0 (compatible; facebookexternalhit/1.1)' }
+      }).getContentText();
+      const grab = (prop) => {
+        const m = html.match(new RegExp('<meta[^>]+property=["\']og:' + prop + '["\'][^>]+content=["\']([^"\']+)["\']', 'i'))
+                 || html.match(new RegExp('<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:' + prop + '["\']', 'i'));
+        return m ? m[1] : '';
+      };
+      const out = { ok: true, title: grab('title'), description: grab('description'), image: grab('image') };
+      return cors(JSON.stringify(out));
+    } catch (err) {}
+  }
+  // 台灣 NLSC 地址轉座標代理（防止瀏覽器 CORS 封鎖）
+  if (e && e.parameter && e.parameter.action === 'twgeo' && e.parameter.q) {
+    try {
+      const res = UrlFetchApp.fetch(
+        'https://api.nlsc.gov.tw/public/transAddr?q=' + encodeURIComponent(e.parameter.q),
+        { muteHttpExceptions: true }
+      );
+      if (res.getResponseCode() === 200) {
+        return cors(res.getContentText());
+      }
+    } catch (err) {}
+    return cors('[]');
+  }
+  return cors('{"ok":false}');
+}
+function cors(body) {
+  return ContentService.createTextOutput(body)
+    .setMimeType(ContentService.MimeType.JSON);
+}
 
 function doPost(e) {
   try {
@@ -37,14 +119,26 @@ function doPost(e) {
       let rsh = ss.getSheetByName(REPORT_SHEET);
       if (!rsh) {
         rsh = ss.insertSheet(REPORT_SHEET);
-        rsh.appendRow(['時間','店名','錯誤類型','說明','狀態']);
-        rsh.getRange(1,1,1,5).setFontWeight('bold').setBackground('#f0ece4');
+        rsh.appendRow(['時間','店名','錯誤類型','說明','狀態','圖片1','圖片2','圖片3','圖片4']);
+        rsh.getRange(1,1,1,9).setFontWeight('bold').setBackground('#f0ece4');
       }
-      rsh.appendRow([new Date(), d.cafeName||'', d.reportType||'', d.desc||'', '待處理']);
-      rsh.getRange(rsh.getLastRow(), 1, 1, 5).setBackground('#FFF3CD');
+      if (rsh.getRange(1,6).getValue() !== '圖片1') {
+        rsh.getRange(1,6,1,4).setValues([['圖片1','圖片2','圖片3','圖片4']]).setFontWeight('bold').setBackground('#f0ece4');
+      }
+      // 照片上傳到該店資料夾（與投稿同一個咖啡廳子資料夾）
+      const rts = String(Date.now()).slice(-6);
+      const folderName = d.cafeName || '未命名';
+      const r1 = uploadPhoto(d.photo1, folderName, 'report_01_' + rts);
+      const r2 = uploadPhoto(d.photo2, folderName, 'report_02_' + rts);
+      const r3 = uploadPhoto(d.photo3, folderName, 'report_03_' + rts);
+      const r4 = uploadPhoto(d.photo4, folderName, 'report_04_' + rts);
+      rsh.appendRow([new Date(), d.cafeName||'', d.reportType||'', d.desc||'', '待處理', r1, r2, r3, r4]);
+      rsh.getRange(rsh.getLastRow(), 1, 1, 9).setBackground('#FFF3CD');
+      const hasPhoto = !!(r1||r2||r3||r4);
       MailApp.sendEmail(NOTIFY_TO,
         '⚠️ 咖啡廳資料回報：' + (d.cafeName||'未知'),
         '店家：' + (d.cafeName||'') + '\n類型：' + (d.reportType||'') + '\n說明：' + (d.desc||'') +
+        (hasPhoto ? '\n（附有 ' + [r1,r2,r3,r4].filter(Boolean).length + ' 張照片，已存到該店資料夾）' : '') +
         '\n\n請到試算表「回報」分頁（黃色列）確認並處理。');
       return ok();
     }
@@ -58,10 +152,17 @@ function doPost(e) {
         vsh.appendRow(['時間','店名','名稱','評論','評分']);
         vsh.getRange(1,1,1,5).setFontWeight('bold').setBackground('#f0ece4');
       }
+      // 確保 E 欄有「評分」標題（舊表只有 4 欄時補上）
+      if (vsh.getRange(1,5).getValue() !== '評分') {
+        vsh.getRange(1,5).setValue('評分').setFontWeight('bold').setBackground('#f0ece4');
+      }
       const by = String(d.by||'').slice(0,20);
       const text = String(d.text||'').slice(0,100);
       if (!d.cafeName || !by || !text) return ok();
-      vsh.appendRow([new Date(), d.cafeName, by, text, parseInt(d.rating)||'']);
+      const rating = parseInt(d.rating)||'';
+      vsh.appendRow([new Date(), d.cafeName, by, text, rating]);
+      // 強制評分格成純數字格式，避免被當成日期
+      vsh.getRange(vsh.getLastRow(), 5).setNumberFormat('0');
       return ok();
     }
 
@@ -84,11 +185,18 @@ function doPost(e) {
                 (now - new Date(r[0]).getTime()) < 86400000);
     if (dup) return ok();
 
+    // 照片上傳到 Drive，Sheet 只存連結（避免 base64 撐爆試算表）
+    const ts = String(now).slice(-6);
+    const u1 = uploadPhoto(d.photo1 || d.photos, d.name, '01_' + ts);
+    const u2 = uploadPhoto(d.photo2, d.name, '02_' + ts);
+    const u3 = uploadPhoto(d.photo3, d.name, '03_' + ts);
+    const u4 = uploadPhoto(d.photo4, d.name, '04_' + ts);
+
     sh.appendRow([
       new Date(), d.name, d.area||'', d.address||'',
       d.lat||'', d.lng||'', d.by, reason,
       d.tags, d.link||'', '待審核',
-      d.photo1||d.photos||'', d.photo2||'', d.photo3||'', d.photo4||''
+      u1, u2, u3, u4
     ]);
 
     MailApp.sendEmail(NOTIFY_TO, '☕ 新咖啡廳推薦待審核',
@@ -103,6 +211,46 @@ function doPost(e) {
 function ok() {
   return ContentService.createTextOutput('{"ok":true}')
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* 診斷寄信：在 Apps Script 編輯器選這個函式按「執行」，
+   看「執行紀錄」— 會顯示今日剩餘寄信額度並實寄一封測試信。 */
+function testMail() {
+  const quota = MailApp.getRemainingDailyQuota();
+  Logger.log('今日剩餘寄信額度：' + quota);
+  MailApp.sendEmail(NOTIFY_TO, '☕ 測試信：通知功能正常', '收到這封代表 Apps Script 寄信權限與額度都沒問題。');
+  Logger.log('已寄出測試信到 ' + NOTIFY_TO);
+}
+
+/* 一鍵補座標：匯入名單後，在編輯器選「geocodeMissing」按執行。
+   用 Google 內建地理編碼把「地址」轉成緯度／經度，只處理還沒有座標的列。
+   一次最多跑 5 分鐘，若紀錄顯示「尚有未完成」，再按一次執行即可接著做。 */
+function geocodeMissing() {
+  const sh = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+  const data = sh.getDataRange().getValues();
+  const head = data[0].map(String);
+  const col = (n, d) => { const i = head.findIndex(h => h.indexOf(n) >= 0); return i >= 0 ? i : d; };
+  const cAddr = col('地址', 3), cLat = col('緯度', 4), cLng = col('經度', 5), cName = col('店名', 1);
+  const geo = Maps.newGeocoder().setLanguage('zh-TW');
+  const start = Date.now(); let done = 0, fail = [], left = 0;
+  for (let r = 1; r < data.length; r++) {
+    if (data[r][cLat] !== '' && data[r][cLng] !== '') continue;
+    const addr = String(data[r][cAddr] || '').trim();
+    if (!addr) continue;
+    if (Date.now() - start > 270000) { left++; continue; }
+    try {
+      let res = geo.geocode(addr);
+      if (res.status !== 'OK') res = geo.geocode(String(data[r][cName]) + ' ' + addr);
+      if (res.status === 'OK') {
+        const loc = res.results[0].geometry.location;
+        sh.getRange(r + 1, cLat + 1, 1, 2).setValues([[loc.lat, loc.lng]]);
+        done++;
+      } else fail.push((r + 1) + ' ' + data[r][cName]);
+    } catch (e) { fail.push((r + 1) + ' ' + data[r][cName]); }
+    Utilities.sleep(120);
+  }
+  Logger.log('完成 ' + done + ' 筆' + (left ? '；尚有未完成 ' + left + ' 筆，請再執行一次' : ''));
+  if (fail.length) Logger.log('找不到座標（請手動補）：\n' + fail.join('\n'));
 }</pre>
 
 <div class="steps" style="margin-top:20px;">
@@ -115,7 +263,7 @@ function ok() {
   6. 這步是關鍵！不建立新版本的話改動不會生效
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 document.getElementById('copyBtn').onclick = function() {
   const code = document.getElementById('code').textContent;
   navigator.clipboard.writeText(code).then(() => {
