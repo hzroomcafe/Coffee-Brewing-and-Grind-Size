@@ -1652,8 +1652,7 @@ function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio
   // 在 html2canvas 1.4.1 下渲染不一致，導致儲存圖片時版型跑掉。
   const cardEl =
   <div ref={cardRef} style={{ width: CARD_W, background: paper, borderRadius: 28, overflow: 'hidden', boxShadow: `0 24px 60px ${T.shadow}`, fontFamily: cardFont }}>
-      <div style={{ height: 6, background: accent }}></div>
-      <div style={{ padding: '24px 24px 20px' }}>
+      <div style={{ padding: '26px 24px 20px' }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 16 }}>
           <div style={{ width: 44, height: 44, borderRadius: '50%', background: accentBg, color: accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: 13 }}>
