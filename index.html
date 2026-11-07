@@ -349,6 +349,7 @@ function useDatabases(lang) {
       { id: 'OREA Baby O brewer', name: 'OREA Baby O brewer' },
       { id: 'Orea V3', name: 'Orea V3' },
       { id: 'Orea Z1', name: 'Orea Z1' },
+      { id: 'Sherry UD71', name: 'Sherry UD71' },
       { id: '無肋平底濾杯', name: l('無肋平底濾杯（通用）', 'Ribless Flat Bottom (Universal)', 'リブなし平底ドリッパー（汎用）') }],
 
       [l('不使用濾杯', 'No Dripper', 'ドリッパー不使用')]: [
@@ -665,6 +666,17 @@ function useDatabases(lang) {
       rs('tg3', '0:40', pAct, (r) => l(`輕柔繞圈注水至 ${Math.round(120 * r)}g`, `Slow circular pour to ${Math.round(120 * r)}g`, `ゆっくり円を描いて${Math.round(120 * r)}gまで注ぐ`), 120),
       rs('tg4', '1:00', pAct, (r) => l(`中心注水至 ${Math.round(160 * r)}g（完成，可提前至 ${Math.round(150 * r)}g）`, `Center pour to ${Math.round(160 * r)}g (or stop at ${Math.round(150 * r)}g for balanced)`, `センターポアで${Math.round(160 * r)}gまで（${Math.round(150 * r)}gで止めてもOK）`), 160),
       rs('tg5', '~2:00', dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)]
+    },
+    // --- Sherry 徐詩媛：UD71 10g 甜感三段（固定粉量） ---
+    {
+      id: 'sherry-ud71-10g', name: l('Sherry 10克萃', 'Sherry 10g Brew', 'Sherry 10グラム抽出'), author: 'Sherry 徐詩媛', dripper: 'Sherry UD71', drinkType: 'hot', baseCoffee: 10, temperature: 94, lockedDose: true,
+      baseGrind: { grinder: 'm_c40', val: 18 },
+      description: l('10g 小份量配方，粉量固定、不提供放大。1:15、總水量 150g、94°C，成品超級甜、香氣足。\n\n💡 沖煮備註：\n1. 全程小水流注水。\n2. 第一段觀察粉層膨脹程度，約 20 秒後再下第二段。\n3. 第三段要等前一段水流完，再中心注水至 150g。\n4. 研磨度：C40 18 格（原配方 Lagom Option O 5.6）。\n5. 示範豆子：Elida Torre 地塊。', 'A 10g small-batch recipe — the dose is fixed and is not meant to be scaled up. 1:15, 150g total water, 94°C, for a very sweet and aromatic cup.\n\n💡 Notes:\n1. Use a thin, gentle stream for every pour.\n2. After the first pour, watch how much the bed swells; start the second pour at about 20 seconds.\n3. For the third pour, wait until the previous pour has fully drained, then pour at the center to 150g.\n4. Grind: C40 18 (original: Lagom Option O 5.6).\n5. Beans used: Elida Torre lot.', '10gの少量レシピ。粉量は固定で、スケールアップ不可。1:15、総湯量150g、94℃、とても甘く香り高い一杯に。\n\n💡 メモ:\n1. 全工程細い湯で注ぐ。\n2. 1投目は粉の膨らみ具合を見て、約20秒で2投目へ。\n3. 3投目は前の湯が落ちきってから、中心に150gまで注ぐ。\n4. 挽き目: C40 18（元レシピ Lagom Option O 5.6）。\n5. 使用豆: Elida Torre 区画。'),
+      steps: [
+      rs('ud1', '0:00', pAct, l('小水流繞圈注水至 30g，觀察粉層膨脹程度', 'Thin circular pour to 30g, watch the bed swell', '細い湯で円を描きながら30gまで注ぎ、膨らみ具合を見る'), 30),
+      rs('ud2', l('約 0:20', '~0:20', '約0:20'), pAct, l('小水流繞圈注水至 80g', 'Thin circular pour to 80g', '細い湯で円を描きながら80gまで注ぐ'), 80),
+      rs('ud3', l('水流完後', 'After drain', '落ちきったら'), pAct, l('中心小水流注水至 150g', 'Thin center stream to 150g', '中心に細い湯で150gまで注ぐ'), 150),
+      rs('ud4', l('滴完', 'Finish', '完了'), dAct, l('待咖啡液流乾', 'Wait for drawdown', '落ちきるまで待つ'), null)]
     },
     {
       id: 'coldbrew-commander', name: l('冷萃咖啡（ChaCha）', 'Cold Brew (ChaCha)', '水出しコーヒー（ChaCha）'), author: 'ChaCha', dripper: 'No Dripper', drinkType: 'iced', baseCoffee: 20, temperature: 25,
