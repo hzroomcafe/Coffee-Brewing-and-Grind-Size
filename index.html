@@ -339,6 +339,7 @@ function useDatabases(lang) {
       { id: 'Hario V60 02', name: 'Hario V60 02' },
       { id: 'Hario V60 NEO', name: l('Hario Neo', 'Hario Neo', 'Hario Neo') },
       { id: 'ORIGAMI', name: l('ORIGAMI 折紙濾杯', 'ORIGAMI Dripper', 'ORIGAMI ドリッパー') },
+      { id: 'ORIGAMI PINN', name: 'ORIGAMI PINN' },
       { id: 'Stellar Dripper', name: l('星芒濾杯', 'Kadou M1 Dripper', '星芒ドリッパー') },
       { id: 'Tri-Up Flow 01/02', name: 'Tri-Up Flow 01/02' }],
 
@@ -449,6 +450,18 @@ function useDatabases(lang) {
       rs('bo2', '0:30', pAct, l('注水至 150g，等 30 秒', 'Pour to 150g, wait 30s', '150gまで注ぎ30秒待つ'), 150),
       rs('bo3', '1:00', pAct, l('注水至 255g', 'Pour to 255g', '255gまで注ぐ'), 255),
       rs('bo4', '3:00', dAct, l('滴完移開濾杯', 'Drawdown, remove dripper', '落ちきったら外す'), null)]
+    },
+    // --- Leaves Coffee Roasters：ORIGAMI PINN 雙溫度快萃 ---
+    {
+      id: 'leaves-origami-pinn', name: l('Leaves 雙溫度快萃', 'Leaves Dual-Temp Fast Brew', 'Leaves 二段温度クイック抽出'), author: 'Leaves Coffee Roasters', dripper: 'ORIGAMI PINN', drinkType: 'hot', baseCoffee: 13, temperature: 92,
+      baseGrind: { grinder: 'm_c40', val: 25 },
+      description: (r) => l(`Leaves Coffee Roasters 的 ORIGAMI PINN 方案，適合淺焙水洗豆。13g 粉、1:15、總水量 195g，前中段 92°C、後段改 68°C，總時間約 1 分 22 秒（嚴格控制在 90 秒內結束）。\n\n💡 沖煮備註：\n1. 研磨度：C40 25–26 格。\n2. 前兩段用 92°C 高溫快速帶出核心香氣與酸甜感，第三段換 68°C 低溫注水，防止微粉帶出苦澀。\n3. 香氣截斷：不等滴乾，聞到果香轉弱、即將出現草本／高湯味前，立即移走濾杯。\n4. Bypass 微調：在萃取完成的咖啡液中，點滴加入 ${(3.5 * r).toFixed(1)}～${(4 * r).toFixed(1)} ml 的 92°C 熱水並搖勻，平衡酸感、延展尾韻。`, `ORIGAMI PINN recipe from Leaves Coffee Roasters, for light-roast washed beans. 13g, 1:15, 195g total water, 92°C for the first two pours and 68°C for the last, about 1:22 total (finish strictly within 90 seconds).\n\n💡 Notes:\n1. Grind: C40 25–26 clicks.\n2. The first two pours at 92°C quickly pull out the core aroma and sweet acidity; the third switches to 68°C to keep fines from adding bitterness.\n3. Aroma cut-off: don't wait for the bed to drain. Remove the dripper as soon as the fruit aroma fades, before herbal / broth notes appear.\n4. Bypass: add ${(3.5 * r).toFixed(1)}–${(4 * r).toFixed(1)} ml of 92°C water drop by drop to the finished coffee and swirl, to balance acidity and extend the finish.`, `Leaves Coffee RoastersのORIGAMI PINNレシピ。浅煎りウォッシュド向け。13g、1:15、総湯量195g、前半92℃・後半68℃、合計約1分22秒（90秒以内に必ず終える）。\n\n💡 メモ:\n1. 挽き目: C40 25–26。\n2. 前半2投は92℃で香りの核と甘酸っぱさを素早く引き出し、3投目は68℃に切り替えて微粉の苦味を防ぐ。\n3. 香りカット：落ちきりを待たず、果実香が弱まりハーブ／出汁っぽさが出る前にドリッパーを外す。\n4. バイパス：抽出後のコーヒーに92℃の湯を${(3.5 * r).toFixed(1)}〜${(4 * r).toFixed(1)}ml少しずつ加えて混ぜ、酸味を整え余韻を伸ばす。`),
+      steps: [
+      rs('lv1', '0:00', pAct, (r) => l(`92°C 注入 ${Math.round(30 * r)}g，均勻浸潤粉層，不作長時間悶蒸`, `92°C, pour ${Math.round(30 * r)}g to wet the bed evenly — no long bloom`, `92℃で${Math.round(30 * r)}g注ぎ、粉全体を均一に湿らせる（長い蒸らしはしない）`), 30),
+      rs('lv2', '0:18', pAct, (r) => l(`92°C 注入至 ${Math.round(108 * r)}g，大水流、大翻攪，快速帶出核心香氣與酸甜感`, `92°C, pour to ${Math.round(108 * r)}g with a heavy, agitating stream for core aroma and sweet acidity`, `92℃で${Math.round(108 * r)}gまで太く注ぎ、しっかり撹拌して香りと甘酸っぱさを引き出す`), 108),
+      rs('lv3', '0:45', pAct, (r) => l(`換 68°C 注入至 ${Math.round(195 * r)}g，微繞圈後轉中心定點小水流，低擾動淹水，降溫防止微粉苦澀`, `Switch to 68°C, pour to ${Math.round(195 * r)}g: a small circle, then a thin center stream; low agitation to avoid bitterness from fines`, `68℃に切り替え${Math.round(195 * r)}gまで。軽く円を描いた後、中心に細く注ぎ低撹拌で（微粉の苦味を防ぐ）`), 195),
+      rs('lv4', '1:22', dAct, l('香氣截斷：不等滴乾，果香轉弱、草本／高湯味出現前立即移走濾杯', 'Aroma cut-off: remove the dripper before it drains, as the fruit fades and before herbal / broth notes', '香りカット：落ちきる前、果実香が弱まりハーブ／出汁っぽさが出る前にドリッパーを外す'), null),
+      rs('lv5', l('完成後', 'After', '抽出後'), l('Bypass', 'Bypass', 'バイパス'), (r) => l(`點滴加入 ${(3.5 * r).toFixed(1)}～${(4 * r).toFixed(1)} ml 的 92°C 熱水，搖勻`, `Add ${(3.5 * r).toFixed(1)}–${(4 * r).toFixed(1)} ml of 92°C water drop by drop, swirl`, `92℃の湯を${(3.5 * r).toFixed(1)}〜${(4 * r).toFixed(1)}ml少しずつ加えて混ぜる`), null)]
     },
     // --- Glitch Coffee 官方方案 ---
     {
