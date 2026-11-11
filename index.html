@@ -625,6 +625,37 @@ function useDatabases(lang) {
       rs('hn10', '2:30', pAct, l('注水至 300g 注完', 'Pour to 300g (final)', '300gまで注ぎきる'), 300),
       rs('hn11', '3:30', dAct, l('約 3:30 等待咖啡液流乾', 'Done when fully drained ~3:30', '約3:30で落ちきれば完成'), null)]
     },
+    // --- HARIO 官方 Barista's Recommended Recipe（V60 NEO 01） ---
+    {
+      id: 'neo-keyaki-matsuki', name: l('KEYAKI 雙溫 Switch 法', 'KEYAKI Dual-Temp Switch', 'KEYAKI 二段温度スイッチ'), author: 'Yusuke Matsuki · KEYAKI COFFEE', dripper: 'Hario V60 NEO', drinkType: 'hot', baseCoffee: 14, temperature: 90,
+      baseGrind: { grinder: 'm_c40', val: 20 },
+      description: l('HARIO 官方「Barista\'s Recommended Recipe」，KEYAKI COFFEE 松木佑介的配方。V60 NEO 01 搭配 Switch 浸泡式底座（只用底座），總時間約 2 分鐘。\n\n利用 Switch 在悶蒸階段讓整個粉層浸泡，避免萃取不均；第 2 段以高溫帶出風味與甜感，第 3 段關閉開關並降溫，用浸泡帶出口感厚度、同時保持乾淨。開關要在還沒過萃的時間點打開，杯子會比較平衡。\n\n💡 沖煮備註：\n1. 需搭配 Switch 浸泡式底座。\n2. 濾紙：メテオペーパー（Meteor）。\n3. 水溫：第 1、2 段 90°C，第 3 段 60°C。\n4. 研磨度：中細研磨，C40 約 20 格（換算參考）。\n5. 示範豆子：Bolivia Las Alasitas Geisha Natural。', 'From HARIO\'s official "Barista\'s Recommended Recipe" series, by Yusuke Matsuki of KEYAKI COFFEE. V60 NEO 01 on a Switch immersion base (base only), about 2 minutes total.\n\nThe Switch lets the whole bed steep during the bloom to avoid uneven extraction. The second pour uses high heat for flavour and sweetness; the third closes the valve at a lower temperature to build body through immersion while staying clean. Open the valve before it over-extracts for a balanced cup.\n\n💡 Notes:\n1. Requires a Switch immersion base.\n2. Filter: Meteor paper.\n3. Water: 90°C for pours 1–2, 60°C for pour 3.\n4. Grind: medium-fine, ~C40 20 (conversion reference).\n5. Beans used: Bolivia Las Alasitas Geisha Natural.', 'HARIO公式「Barista\'s Recommended Recipe」より、KEYAKI COFFEE 松木佑介さんのレシピ。V60 NEO 01＋浸漬式ドリッパー スイッチ（ホルダーのみ）、総抽出時間約2分。\n\nスイッチを使い蒸らしの段階で粉全体を浸漬させ、抽出ムラを防ぎます。2投目は高い湯温でフレーバーや甘みを引き出し、3投目はスイッチを閉じて湯温を下げ、浸漬させることで質感を出しながらもクリーンな味わいに。過抽出にならないタイミングでスイッチを開くと、バランスの良い一杯に。\n\n💡 メモ:\n1. スイッチのホルダーが必要。\n2. ペーパー: メテオペーパー。\n3. 湯温: 1・2投目90℃、3投目60℃。\n4. 挽き目: 中細挽き、C40 約20（換算の目安）。\n5. 使用豆: Bolivia Las Alasitas Geisha Natural。'),
+      steps: [
+      rs('km1', '0:00-0:40', bClose, (r) => l(`關閉開關，90°C 注水至 ${Math.round(60 * r)}g`, `Close valve, 90°C to ${Math.round(60 * r)}g`, `スイッチを閉じ、90℃で${Math.round(60 * r)}gまで`), 60),
+      rs('km2', '0:40-1:10', bOpen, (r) => l(`打開開關，90°C 注水至 ${Math.round(120 * r)}g`, `Open valve, 90°C to ${Math.round(120 * r)}g`, `スイッチを開け、90℃で${Math.round(120 * r)}gまで`), 120),
+      rs('km3', '1:10-1:30', bClose, (r) => l(`關閉開關，換 60°C 注水至 ${Math.round(220 * r)}g`, `Close valve, switch to 60°C, pour to ${Math.round(220 * r)}g`, `スイッチを閉じ、60℃で${Math.round(220 * r)}gまで`), 220),
+      rs('km4', '1:45', bOpen, l('打開開關濾出', 'Open valve to drain', 'スイッチを開けて抽出'), null)]
+    },
+    {
+      id: 'neo-onibus-sakao', name: l('ONIBUS 三段繞圈法', 'ONIBUS 3-Pour Spiral', 'ONIBUS 3投スパイラル'), author: 'Atsushi Sakao · ONIBUS COFFEE', dripper: 'Hario V60 NEO', drinkType: 'hot', baseCoffee: 13.5, temperature: 95,
+      baseGrind: { grinder: 'm_c40', val: 24 },
+      description: l('HARIO 官方「Barista\'s Recommended Recipe」，ONIBUS COFFEE 坂尾篤史的配方。V60 NEO 01，95°C 高溫，總時間約 2:20–2:40。\n\n讓淺焙的酸味變得協調，保留透明感，同時把甜感拉到最高；特色是風味的延展和餘韻。\n\n💡 沖煮備註：\n1. 第 2、3 段以每秒約 6g 的流速，從中心向外繞圈注滿全體。\n2. 研磨度：中研磨，C40 約 24 格（換算參考）。\n3. 示範豆子：Colombia／Jorge Armando Salazar。', 'From HARIO\'s official "Barista\'s Recommended Recipe" series, by Atsushi Sakao of ONIBUS COFFEE. V60 NEO 01 at 95°C, about 2:20–2:40 total.\n\nHarmonises the acidity of light roasts while keeping clarity and pushing sweetness as far as it goes, with a long, extended finish.\n\n💡 Notes:\n1. Pours 2 and 3 at about 6g per second, spiralling out from the center to cover the whole bed.\n2. Grind: medium, ~C40 24 (conversion reference).\n3. Beans used: Colombia / Jorge Armando Salazar.', 'HARIO公式「Barista\'s Recommended Recipe」より、ONIBUS COFFEE 坂尾篤史さんのレシピ。V60 NEO 01、95℃、総抽出時間約2分20秒〜40秒。\n\n浅煎りコーヒーの酸味と調和させながら、透明感を保ちつつ甘みを最大限に引き出します。フレーバーの伸びと余韻をつくることが特徴です。\n\n💡 メモ:\n1. 2・3投目は6g/秒で中心から円を描いて全体に注ぐ。\n2. 挽き目: 中挽き、C40 約24（換算の目安）。\n3. 使用豆: コロンビア／ホルヘ・アルマンド・サラザール。'),
+      steps: [
+      rs('os1', '0:00-0:35', mAct, (r) => l(`注水至 ${Math.round(45 * r)}g，攪拌一下`, `Pour to ${Math.round(45 * r)}g, stir once`, `${Math.round(45 * r)}gまで注ぎ、一撹拌`), 45),
+      rs('os2', '0:35-1:15', pAct, (r) => l(`每秒約 6g，從中心繞圈注滿全體再回到中心，至 ${Math.round(160 * r)}g`, `~6g/s, spiral out from the center over the bed and back, to ${Math.round(160 * r)}g`, `6g/秒で中心から円を描いて全体に注ぎ中心に戻る、${Math.round(160 * r)}gまで`), 160),
+      rs('os3', '1:15', pAct, (r) => l(`每秒約 6g，從中心繞圈注滿全體，至 ${Math.round(230 * r)}g`, `~6g/s, spiral out from the center over the bed, to ${Math.round(230 * r)}g`, `6g/秒で中心から円を描いて全体に注ぐ、${Math.round(230 * r)}gまで`), 230),
+      rs('os4', '2:20-2:40', dAct, l('滴完', 'Drawdown', '落ちきり'), null)]
+    },
+    {
+      id: 'neo-doutor-hirota', name: l('Doutor 低溫 Switch 法', 'Doutor Low-Temp Switch', 'ドトール 低温スイッチ'), author: 'Maasa Hirota · Doutor Coffee', dripper: 'Hario V60 NEO', drinkType: 'hot', baseCoffee: 15, temperature: 83,
+      baseGrind: { grinder: 'm_c40', val: 24 },
+      description: l('HARIO 官方「Barista\'s Recommended Recipe」，ドトールコーヒー廣田まあさ的配方。V60 NEO 01 搭配 Switch 浸泡式底座（只用底座），83°C，總時間 1:45。\n\n結合 V60 NEO 的流速和 Switch 浸泡的特性，帶出咖啡的甜感和醇厚度。\n\n💡 沖煮備註：\n1. 需搭配 Switch 浸泡式底座。\n2. 研磨度：中研磨，C40 約 24 格（換算參考）。\n3. 示範豆子：神嘗祭（祕魯、巴西中深焙配豆）。', 'From HARIO\'s official "Barista\'s Recommended Recipe" series, by Maasa Hirota of Doutor Coffee. V60 NEO 01 on a Switch immersion base (base only), 83°C, 1:45 total.\n\nCombines the V60 NEO\'s flow with the Switch\'s immersion to draw out sweetness and body.\n\n💡 Notes:\n1. Requires a Switch immersion base.\n2. Grind: medium, ~C40 24 (conversion reference).\n3. Beans used: Kannamesai (Peru / Brazil medium-dark blend).', 'HARIO公式「Barista\'s Recommended Recipe」より、株式会社ドトールコーヒー 廣田まあささんのレシピ。V60 NEO 01＋浸漬式ドリッパー スイッチ（ホルダーのみ）、83℃、総抽出時間1分45秒。\n\nV60 NEOの抽出の速さと、スイッチドリッパーの浸漬式ならではの特徴を組み合わせ、コーヒーの甘みとコクを引き出します。\n\n💡 メモ:\n1. スイッチのホルダーが必要。\n2. 挽き目: 中挽き、C40 約24（換算の目安）。\n3. 使用豆: 神嘗祭（ペルー・ブラジルの中深煎りブレンド）。'),
+      steps: [
+      rs('dh1', '0:00-0:10', bClose, (r) => l(`關閉開關，注水至 ${Math.round(40 * r)}g`, `Valve closed, pour to ${Math.round(40 * r)}g`, `スイッチを閉じ、${Math.round(40 * r)}gまで`), 40),
+      rs('dh2', '0:40-0:50', bClose, (r) => l(`開關維持關閉，邊攪拌邊注水至 ${Math.round(100 * r)}g`, `Keep closed, pour to ${Math.round(100 * r)}g while stirring`, `閉じたまま撹拌しながら${Math.round(100 * r)}gまで`), 100),
+      rs('dh3', '0:55-1:15', bOpen, (r) => l(`打開開關後，減少攪拌注水至 ${Math.round(217 * r)}g`, `Open valve, pour gently to ${Math.round(217 * r)}g`, `スイッチを開けた後、撹拌を抑えて${Math.round(217 * r)}gまで`), 217),
+      rs('dh4', '1:45', dAct, l('完成（大致滴完即可）', 'Done (mostly drained)', '完了（ほぼ落としきり）'), null)]
+    },
     {
       id: 'orea-z1-chacha-bright', name: l('ChaCha VIP(明亮風味)', 'ChaCha VIP(Bright)', 'ChaCha VIP(明るい)'), author: 'ChaCha', dripper: 'Orea Z1', drinkType: 'hot', baseCoffee: 15, temperature: 92,
       baseGrind: { grinder: 'm_c40', val: 28 },
