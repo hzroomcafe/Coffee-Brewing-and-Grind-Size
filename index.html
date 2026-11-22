@@ -204,7 +204,7 @@ html.dark .ck-btn.dark { background: var(--ink); color: var(--paper); border-col
 
 /* ---------- 沖煮清單 ---------- */
 .ck-brew { display: grid; grid-template-columns: 250px minmax(0,1fr); gap: 28px; align-items: start; }
-@media (max-width: 1023px) { .ck-brew { display: block; } .ck-side { display: none; } }
+@media (max-width: 1023px) { .ck-brew { display: block; padding-bottom: 72px; } .ck-side { display: none; } }
 .ck-side { position: sticky; top: 84px; max-height: calc(100vh - 100px); overflow-y: auto; padding: 4px 4px 20px 0; }
 .ck-side .grp { font-size: 12px; font-weight: 800; color: var(--mute); display: flex; align-items: center; gap: 7px; margin: 16px 0 6px; }
 .ck-dr { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 6px 8px; border-radius: 10px; border: 0; background: none; cursor: pointer; color: var(--ink); font-size: 14px; font-weight: 600; }
@@ -266,15 +266,15 @@ html.dark .ck-fbtn { background: var(--ink); color: var(--paper); }
 html.dark .ck-fbtn .n { background: var(--paper); color: var(--ink); }
 
 /* ---------- 底部抽屜 / 側邊面板 ---------- */
-.ck-scrim { position: fixed; inset: 0; z-index: 90; background: rgba(15,18,16,.42); animation: ckfade .18s ease; }
-.ck-sheet { position: fixed; z-index: 91; left: 0; right: 0; bottom: 0; max-height: 88vh; background: var(--card); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; animation: ckup .24s cubic-bezier(.2,.8,.2,1); box-shadow: var(--shadow-lg); padding-bottom: env(safe-area-inset-bottom); }
+.ck-scrim { position: fixed; inset: 0; z-index: 90; touch-action: none; background: rgba(15,18,16,.42); animation: ckfade .18s ease; }
+.ck-sheet { position: fixed; z-index: 91; left: 0; right: 0; bottom: 0; max-height: 88vh; max-height: calc(100dvh - max(env(safe-area-inset-top), 16px) - 12px); background: var(--card); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; animation: ckup .24s cubic-bezier(.2,.8,.2,1); box-shadow: var(--shadow-lg); padding-bottom: env(safe-area-inset-bottom); }
 .ck-sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: var(--line2); margin: 10px auto 2px; flex: none; }
 .ck-sheet-h { display: flex; align-items: center; gap: 10px; padding: 10px 20px 12px; flex: none; }
 .ck-sheet-h h2 { font-size: 19px; font-weight: 800; margin: 0; flex: 1; }
-.ck-sheet-b { overflow-y: auto; padding: 0 20px 16px; flex: 1; min-height: 0; overscroll-behavior: contain; }
+.ck-sheet-b { position: relative; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 20px 16px; flex: 1; min-height: 0; overscroll-behavior: contain; }
 .ck-sheet-f { padding: 10px 16px 14px; border-top: 1px solid var(--line); flex: none; }
 @media (min-width: 768px) {
-  .ck-sheet.side { left: auto; top: 0; bottom: 0; width: 400px; max-height: none; border-radius: 22px 0 0 22px; animation: ckleft .24s cubic-bezier(.2,.8,.2,1); }
+  .ck-sheet.side { left: auto; top: 0; bottom: 0; width: 400px; max-height: none; height: 100dvh; border-radius: 22px 0 0 22px; animation: ckleft .24s cubic-bezier(.2,.8,.2,1); }
   .ck-sheet.side .grab { display: none; }
   .ck-sheet.side .ck-sheet-h { padding-top: 22px; }
   .ck-sheet.center { left: 50%; right: auto; bottom: auto; top: 50%; transform: translate(-50%,-50%); width: 460px; border-radius: 22px; animation: ckfade .2s ease; }
@@ -723,7 +723,7 @@ const I18N_EXTRA = {
     changelog_short: '更新紀錄', version_label: '版本', new_badge: 'NEW', iced_badge: '冰沖', hot_badge: '熱沖', locked_dose: '此配方粉量固定',
     expand_all: '全部展開', collapse_all: '全部收合', custom_um_title: '自訂刻度範圍（μm）', tips_title: '換算小提醒',
     grind_from: '從這台磨豆機', grind_to: '換成這台', grind_scale: '顆粒粗細對照', see_chart: '看圖表',
-    search_results: '搜尋結果', home_meta_brew: '{n} 個配方 · {d} 種濾杯', home_meta_grind: '{n} 款磨豆機', home_cta_brew: '找配方', home_subtitle: '沖煮參數、磨豆機刻度、礦物水調配、萃取診斷與好店推薦，都在這裡。', brewing_now: '沖煮中', conc_needed: '需要的濃縮液', water_needed: '需要的純水'
+    search_results: '搜尋結果', done_btn: '完成', home_meta_brew: '{n} 個配方 · {d} 種濾杯', home_meta_grind: '{n} 款磨豆機', home_cta_brew: '找配方', home_subtitle: '沖煮參數、磨豆機刻度、礦物水調配、萃取診斷與好店推薦，都在這裡。', brewing_now: '沖煮中', conc_needed: '需要的濃縮液', water_needed: '需要的純水'
   },
   en: {
     app_short: 'Coffee Village', nav_cafe: 'Cafés', settings: 'Settings', lang_label: 'Language', theme_label: 'Appearance',
@@ -746,7 +746,7 @@ const I18N_EXTRA = {
     changelog_short: 'Release notes', version_label: 'Version', new_badge: 'NEW', iced_badge: 'Iced', hot_badge: 'Hot', locked_dose: 'This recipe uses a fixed dose',
     expand_all: 'Expand all', collapse_all: 'Collapse all', custom_um_title: 'Custom particle range (μm)', tips_title: 'Input tips',
     grind_from: 'From this grinder', grind_to: 'Convert to', grind_scale: 'Particle size', see_chart: 'Chart',
-    search_results: 'Search results', home_meta_brew: '{n} recipes · {d} drippers', home_meta_grind: '{n} grinders', home_cta_brew: 'Find a recipe', home_subtitle: 'Brew recipes, grinder settings, mineral water, extraction diagnosis and café picks — all in one place.', brewing_now: 'Brewing', conc_needed: 'Concentrate needed', water_needed: 'Pure water needed'
+    search_results: 'Search results', done_btn: 'Done', home_meta_brew: '{n} recipes · {d} drippers', home_meta_grind: '{n} grinders', home_cta_brew: 'Find a recipe', home_subtitle: 'Brew recipes, grinder settings, mineral water, extraction diagnosis and café picks — all in one place.', brewing_now: 'Brewing', conc_needed: 'Concentrate needed', water_needed: 'Pure water needed'
   },
   ja: {
     app_short: 'カフェの小さな村', nav_cafe: 'カフェ', settings: '設定', lang_label: '言語', theme_label: '表示',
@@ -769,7 +769,7 @@ const I18N_EXTRA = {
     changelog_short: '更新履歴', version_label: 'バージョン', new_badge: 'NEW', iced_badge: 'アイス', hot_badge: 'ホット', locked_dose: 'このレシピは粉量固定です',
     expand_all: 'すべて開く', collapse_all: 'すべて閉じる', custom_um_title: 'カスタム粒度範囲（μm）', tips_title: '入力のヒント',
     grind_from: '変換元のミル', grind_to: '変換先', grind_scale: '粒度の目安', see_chart: 'グラフ',
-    search_results: '検索結果', home_meta_brew: '{n} レシピ · {d} 種のドリッパー', home_meta_grind: '{n} 機種のミル', home_cta_brew: 'レシピを探す', home_subtitle: '抽出レシピ、ミルの挽き目、ミネラルウォーター、抽出診断、カフェ探しをひとつに。', brewing_now: '抽出中', conc_needed: '必要な濃縮液', water_needed: '必要な純水'
+    search_results: '検索結果', done_btn: '完了', home_meta_brew: '{n} レシピ · {d} 種のドリッパー', home_meta_grind: '{n} 機種のミル', home_cta_brew: 'レシピを探す', home_subtitle: '抽出レシピ、ミルの挽き目、ミネラルウォーター、抽出診断、カフェ探しをひとつに。', brewing_now: '抽出中', conc_needed: '必要な濃縮液', water_needed: '必要な純水'
   }
 };
 Object.keys(I18N_EXTRA).forEach((k) => Object.assign(i18n[k], I18N_EXTRA[k]));
@@ -2048,6 +2048,8 @@ const FLAVOR_KEYWORDS = {
 
 
 function BrewCard({ recipe, nameEn, dripperName, grindLabel, customWeight, ratio, baseRatio, maxWater, isIced, t, rt, lang, onClose }) {
+  useBackClose(onClose); useScrollLock();
+  useEffect(() => { const k = (ev) => { if (ev.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, []);
   const cardRef = useRef(null);
   const [busy, setBusy] = useState(false);
 
@@ -2414,6 +2416,47 @@ function PourCurve({ plan, total, endSec, elapsed, dark }) {
     </svg>);
 }
 
+
+// ---------- 彈出視窗與返回鍵 ----------
+// 打開設定／篩選／總結等視窗時多推一筆瀏覽紀錄：按手機或瀏覽器的「返回」只會關掉視窗，不會離開頁面。
+const ModalHistory = {
+  stack: [], pendingBack: 0, queue: [],
+  open(entry) {
+    const push = () => { try { history.pushState({ ckModal: true }, ''); } catch (e) {} this.stack.push(entry); };
+    if (this.pendingBack) this.queue.push(push); else push();
+  },
+  closeByUI(entry) {
+    const i = this.stack.indexOf(entry);
+    if (i < 0) { return; }
+    this.stack.splice(i, 1);
+    this.pendingBack++;
+    try { history.back(); } catch (e) { this.pendingBack--; }
+  },
+  onPop() {
+    if (this.pendingBack) { this.pendingBack--; if (!this.pendingBack) { const q = this.queue; this.queue = []; q.forEach((f) => f()); } return; }
+    const top = this.stack.pop();
+    if (top) { top.popped = true; top.close(); }
+  }
+};
+try { window.addEventListener('popstate', () => ModalHistory.onPop()); } catch (e) {}
+function useBackClose(onClose) {
+  const ref = useRef(onClose); ref.current = onClose;
+  useEffect(() => {
+    const entry = { popped: false, close: () => ref.current() };
+    ModalHistory.open(entry);
+    return () => { if (!entry.popped) ModalHistory.closeByUI(entry); };
+  }, []);
+}
+// 視窗打開時鎖住背景捲動（可巢狀）
+let SCROLL_LOCKS = 0;
+function useScrollLock() {
+  useEffect(() => {
+    SCROLL_LOCKS++;
+    if (SCROLL_LOCKS === 1) { document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
+    return () => { SCROLL_LOCKS--; if (SCROLL_LOCKS === 0) { document.documentElement.style.overflow = ''; document.body.style.overflow = ''; } };
+  }, []);
+}
+
 // ---------- 清單元件 ----------
 function RecipeCard({ r, d, sub, fav, onFav, onOpen, t }) {
   return (
@@ -2458,6 +2501,8 @@ function DrinkChips({ drink, setDrink, t, box }) {
 // 手機：濾杯篩選抽屜（草稿 → 按「顯示 N 個配方」才套用）
 function FilterSheet({ dinfo, counts, sel, gear, onApply, onClose, t, recipesFor, openSettings }) {
   const [draft, setDraft] = useState(sel);
+  useBackClose(onClose); useScrollLock();
+  useEffect(() => { const k = (e) => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, []);
   const toggle = (id) => setDraft((v) => v.includes(id) ? v.filter((x) => x !== id) : [...v, id]);
   const n = recipesFor(draft);
   const allIds = Object.keys(dinfo.byId).filter((id) => counts[id]);
@@ -2642,9 +2687,11 @@ function BrewHome({ t, lang, db, store, onOpen, openSettings }) {
 // ---------- 沖煮總結卡（可截圖） ----------
 function SummaryModal({ recipe, dose, ratio, maxWater, baseRatio, elapsed, t, c, onClose }) {
   const isIced = recipe.drinkType === 'iced';
+  useBackClose(onClose); useScrollLock();
+  useEffect(() => { const k = (e) => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, []);
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[95] flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
-      <div className={`${c.card} border ${c.border} rounded-3xl p-6 sm:p-7 max-w-sm w-full shadow-2xl relative`} onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-[95] flex items-center justify-center p-4 bg-black/50 overflow-y-auto" onClick={onClose}>
+      <div className={`${c.card} border ${c.border} rounded-3xl p-6 sm:p-7 max-w-sm w-full shadow-2xl relative my-auto`} onClick={(e) => e.stopPropagation()}>
         <div className={`absolute top-0 left-0 right-0 h-1.5 rounded-t-3xl ${isIced ? c.blue : c.secondary}`}></div>
         <div className="flex items-start justify-between mb-4 mt-1">
           <div className="flex items-center gap-2.5">
@@ -3997,8 +4044,10 @@ function SettingsSheet({ t, lang, setLang, themeMode, setThemeMode, store, focus
   const dinfo = useDripperInfo(db.DRIPPER_CATEGORIES, lang);
   const { gear, setGear, myGrinder, setMyGrinder } = store;
   const [showLog, setShowLog] = useState(focus === 'log');
-  const gearRef = useRef(null);
-  useEffect(() => { if (focus === 'gear' && gearRef.current) setTimeout(() => gearRef.current && gearRef.current.scrollIntoView({ block: 'start', behavior: 'smooth' }), 120); }, [focus]);
+  const gearRef = useRef(null); const bodyRef = useRef(null);
+  useBackClose(onClose); useScrollLock();
+  // 從「選擇濾杯」進來時，只捲動面板內部到「我的器材」（不要捲動整個網頁）
+  useEffect(() => { if (focus === 'gear') setTimeout(() => { const b = bodyRef.current, g = gearRef.current; if (b && g) b.scrollTo({ top: g.offsetTop - 8, behavior: 'smooth' }); }, 150); }, [focus]);
   useEffect(() => { const k = (e) => { if (e.key === 'Escape') onClose(); }; window.addEventListener('keydown', k); return () => window.removeEventListener('keydown', k); }, []);
   const counts = useMemo(() => { const m = {}; db.RECIPE_DATABASE.forEach((r) => { m[r.dripper] = (m[r.dripper] || 0) + 1; }); return m; }, [db]);
   const grinderGroups = useMemo(() => {
@@ -4013,7 +4062,7 @@ function SettingsSheet({ t, lang, setLang, themeMode, setThemeMode, store, focus
       <div className="ck-sheet side" role="dialog" aria-label={t('settings')}>
         <div className="grab"></div>
         <div className="ck-sheet-h"><h2>{t('settings')}</h2><button className="ck-icb" onClick={onClose} aria-label={t('summary_close')}><XIcon size={17} /></button></div>
-        <div className="ck-sheet-b">
+        <div className="ck-sheet-b" ref={bodyRef}>
           <div className="ck-set-sec">
             <h3>{t('lang_label')}</h3>
             <div className="ck-seg wide">{[['zh', '中文'], ['en', 'English'], ['ja', '日本語']].map(([k, lb]) => <button key={k} className={lang === k ? 'on' : ''} onClick={() => setLang(k)}>{lb}</button>)}</div>
@@ -4054,6 +4103,7 @@ function SettingsSheet({ t, lang, setLang, themeMode, setThemeMode, store, focus
             }
           </div>
         </div>
+        <div className="ck-sheet-f"><button className="ck-btn dark block" onClick={onClose}>{t('done_btn')}</button></div>
       </div>
     </React.Fragment>, document.body);
 }

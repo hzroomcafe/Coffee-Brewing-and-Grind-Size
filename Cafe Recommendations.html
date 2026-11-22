@@ -145,7 +145,7 @@ header { padding: 26px 0 14px; }
 .search-area-btn svg { width:15px; height:15px; }
 .search-area-btn:hover { background:var(--sage); color:#fff; border-color:var(--sage); }
 .search-area-btn.on { display:inline-flex; }
-.map-wrap { position:relative; }
+.map-wrap { position:relative; z-index:2; }
 .leaflet-popup-content-wrapper { border-radius:16px; box-shadow:0 8px 28px rgba(0,0,0,.18); padding:0; overflow:hidden; }
 .leaflet-popup-content { margin:0; font-family:'Noto Sans TC',sans-serif; }
 .leaflet-popup-content-wrapper { border-radius:18px!important; box-shadow:0 12px 36px rgba(0,0,0,.22)!important; padding:0!important; overflow:hidden!important; }
@@ -300,7 +300,7 @@ footer a { color:var(--sage); text-decoration:none; font-weight:700; }
 .banner b { color:var(--ink); }
 
 /* ===== v7 共用外框（與工具箱相同的導覽） ===== */
-.ck-top { position:sticky; top:0; z-index:600; background:color-mix(in srgb, var(--card) 92%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+.ck-top { position:sticky; top:0; z-index:80; background:color-mix(in srgb, var(--card) 92%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
 .ck-top-in { max-width:1240px; margin:0 auto; height:60px; display:flex; align-items:center; gap:4px; padding:0 24px; }
 .ck-logo { width:32px; height:32px; border-radius:50%; background:var(--sage); color:#fff; display:flex; align-items:center; justify-content:center; flex:none; }
 html.dark .ck-logo { color:#0F1412; }
@@ -310,7 +310,7 @@ html.dark .ck-logo { color:#0F1412; }
 .ck-tab.on { background:var(--cafe-ink); color:#fff; }
 html.dark .ck-tab.on { color:#101412; }
 .ck-tab svg, .ck-bnav svg { width:16px; height:16px; }
-.ck-bnav { position:fixed; left:0; right:0; bottom:0; z-index:600; background:color-mix(in srgb, var(--card) 96%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid var(--line); padding-bottom:max(env(safe-area-inset-bottom), 6px); }
+.ck-bnav { position:fixed; left:0; right:0; bottom:0; z-index:80; background:color-mix(in srgb, var(--card) 96%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid var(--line); padding-bottom:max(env(safe-area-inset-bottom), 6px); }
 .ck-bnav-in { display:grid; grid-template-columns:repeat(6,1fr); height:58px; }
 .ck-bnav a { position:relative; white-space:nowrap; min-width:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:10.5px; font-weight:700; color:var(--muted); text-decoration:none; }
 .ck-bnav svg { width:21px; height:21px; }
@@ -1357,6 +1357,32 @@ async function fillMissingRegions() {
   renderAll();
 }
 boot();
+</script>
+<script>
+/* 手機／瀏覽器「返回」鍵：有彈出視窗（評論、回報、照片）時只關掉視窗，不離開頁面 */
+(function(){
+  var SEL = '.modal-backdrop, .photo-lb';
+  var last = 0, pushed = 0, pending = 0, popping = false;
+  function count(){ return document.querySelectorAll(SEL).length; }
+  new MutationObserver(function(){
+    var n = count();
+    if (n > last) { for (var i = last; i < n; i++) { try { history.pushState({ ckModal: true }, ''); pushed++; } catch(e){} } }
+    else if (n < last && !popping) { for (var j = n; j < last; j++) { if (pushed > 0) { pushed--; pending++; try { history.back(); } catch(e){ pending--; } } } }
+    last = n;
+  }).observe(document.body, { childList: true });
+  window.addEventListener('popstate', function(){
+    if (pending) { pending--; return; }
+    if (pushed <= 0) return;
+    pushed--;
+    var all = document.querySelectorAll(SEL), m = all[all.length - 1];
+    if (!m) return;
+    popping = true;
+    if (m.id === 'reportModal' && typeof closeReport === 'function') closeReport();
+    else if (m.id === 'reviewModal' && typeof closeReviews === 'function') closeReviews();
+    else { var x = m.querySelector('.lb-close'); if (x) x.click(); else m.remove(); }
+    setTimeout(function(){ popping = false; last = count(); }, 0);
+  });
+})();
 </script>
 </body>
 </html>
