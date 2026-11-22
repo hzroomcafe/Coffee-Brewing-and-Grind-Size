@@ -126,7 +126,7 @@ input[type=range]::-moz-range-track { height: 5px; background: var(--line); bord
 .ck-tab:hover { color: var(--ink); background: var(--inset); }
 .ck-tab.on { color: #fff; }
 html.dark .ck-tab.on { color: #101412; }
-.ck-tab.on.brew { background: var(--brew-ink); } .ck-tab.on.grind { background: var(--grind-ink); } .ck-tab.on.water { background: var(--water-ink); } .ck-tab.on.diag { background: var(--diag-ink); } .ck-tab.on.cafe { background: var(--cafe-ink); }
+.ck-tab.on.home { background: var(--sage); } .ck-tab.on.brew { background: var(--brew-ink); } .ck-tab.on.grind { background: var(--grind-ink); } .ck-tab.on.water { background: var(--water-ink); } .ck-tab.on.diag { background: var(--diag-ink); } .ck-tab.on.cafe { background: var(--cafe-ink); }
 .ck-seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; background: var(--input); }
 .ck-seg button { font-size: 12px; font-weight: 700; color: var(--mute); padding: 5px 11px; border-radius: 999px; border: 0; background: none; cursor: pointer; white-space: nowrap; }
 .ck-seg button.on { background: var(--sage); color: var(--on-sage); }
@@ -138,9 +138,9 @@ html.dark .ck-tab.on { color: #101412; }
 .ck-icb.plain { border-color: transparent; background: transparent; }
 
 .ck-bnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; background: color-mix(in srgb, var(--card) 96%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding-bottom: max(env(safe-area-inset-bottom), 6px); }
-.ck-bnav-in { display: grid; grid-template-columns: repeat(5, 1fr); height: 58px; }
-.ck-bnav a, .ck-bnav button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10.5px; font-weight: 700; color: var(--mute); background: none; border: 0; text-decoration: none; cursor: pointer; }
-.ck-bnav .on.brew { color: var(--brew-ink); } .ck-bnav .on.grind { color: var(--grind-ink); } .ck-bnav .on.water { color: var(--water-ink); } .ck-bnav .on.diag { color: var(--diag-ink); } .ck-bnav .on.cafe { color: var(--cafe-ink); }
+.ck-bnav-in { display: grid; grid-template-columns: repeat(6, 1fr); height: 58px; }
+.ck-bnav a, .ck-bnav button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 10.5px; white-space: nowrap; min-width: 0; font-weight: 700; color: var(--mute); background: none; border: 0; text-decoration: none; cursor: pointer; }
+.ck-bnav .on.home { color: var(--sage-d); } .ck-bnav .on.brew { color: var(--brew-ink); } .ck-bnav .on.grind { color: var(--grind-ink); } .ck-bnav .on.water { color: var(--water-ink); } .ck-bnav .on.diag { color: var(--diag-ink); } .ck-bnav .on.cafe { color: var(--cafe-ink); }
 .ck-bnav .on i { display: block; width: 18px; height: 3px; border-radius: 3px; background: currentColor; position: absolute; top: 0; }
 .ck-bnav-in > * { position: relative; }
 
@@ -442,6 +442,36 @@ html.dark .ck-start { background: var(--brew); color: #15120c; }
 .ck-bm .ck-curve text { fill: #6F7A74; }
 @media (max-width: 1023px) { .ck-donly { display: none !important; } }
 @media (min-width: 1024px) { .ck-monly { display: none !important; } }
+/* ---------- 首頁 ---------- */
+.ck-home { max-width: 1000px; margin: 0 auto; }
+.ck-hero2 { margin: 8px 0 30px; }
+.ck-hero2 .kick { font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase; font-weight: 800; color: var(--mute); }
+.ck-hero2 h1 { font-size: clamp(30px, 4.6vw, 46px); font-weight: 800; letter-spacing: -.025em; line-height: 1.15; margin: 10px 0 10px; }
+.ck-hero2 h1 span { color: var(--sage); }
+.ck-hero2 p { color: var(--mute); font-size: 15px; margin: 0; line-height: 1.6; }
+.ck-tool { position: relative; display: flex; gap: 16px; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 20px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: transform .15s, border-color .15s; }
+.ck-tool:hover { transform: translateY(-2px); border-color: var(--line2); }
+.ck-tool h2 { font-size: 17px; font-weight: 800; margin: 2px 0 6px; letter-spacing: -.01em; padding-right: 26px; }
+.ck-tool p { font-size: 13.5px; color: var(--mute); line-height: 1.65; margin: 0; }
+.ck-tool .meta { font-size: 12px; color: var(--faint); font-weight: 700; margin-top: 10px; }
+.ck-tool .no { position: absolute; right: 18px; top: 16px; font-size: 11px; letter-spacing: .2em; color: var(--faint); font-weight: 700; }
+.ck-tool.big { padding: 26px 28px; margin-bottom: 14px; }
+.ck-tool.big h2 { font-size: 24px; }
+.ck-tool.big p { font-size: 14.5px; max-width: 560px; }
+.ck-tool .cta { display: inline-flex; align-items: center; gap: 4px; margin-top: 16px; font-size: 14px; font-weight: 800; color: #fff; background: var(--brew-ink); border-radius: 99px; padding: 8px 14px 8px 16px; }
+html.dark .ck-tool .cta { color: #15120c; }
+.ck-tools3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.ck-tools3 .ck-tool { flex-direction: column; }
+.ck-logbtn { display: flex; align-items: center; gap: 8px; width: 100%; background: none; border: 0; cursor: pointer; color: var(--mute); font-size: 12px; font-weight: 800; letter-spacing: .06em; padding: 8px 0; }
+.ck-logbtn .ln { flex: 1; height: 1px; background: var(--line); }
+@media (max-width: 767px) {
+  .ck-hero2 { margin: 2px 0 22px; }
+  .ck-tools3 { grid-template-columns: 1fr; gap: 10px; }
+  .ck-tools3 .ck-tool { flex-direction: row; }
+  .ck-tool { padding: 16px; gap: 14px; }
+  .ck-tool.big { padding: 20px; }
+  .ck-tool.big h2 { font-size: 20px; }
+}
 </style>
 </head>
 <body>
@@ -576,7 +606,7 @@ const i18n = {
     tweak_reset: '重置',
     changelog_title: '版本更新紀錄',
     changelog: [
-    { version: 'v7.0.0', date: '2026.11', changes: ['全站改版：五個工具共用同一套外框與設計系統。電腦版上方分頁、手機版底部 5 個分頁（沖煮／研磨／水質／診斷／咖啡廳），語言、深淺色、我的器材、更新紀錄都收進「設定」。', '沖煮首頁不用再先選濾杯：直接看到全部配方，依濾杯分組；可勾選濾杯篩選（不勾＝全部）、冷熱篩選、搜尋。新增「最近沖過」與「我的最愛」（♡），第一次使用會看到「最新新增」與可略過的「你有哪些濾杯？」。', '配方頁重新排版：上一個／下一個切換、粉量加減、參數列、累計水量進度條、注水曲線；設定「我的磨豆機」後研磨度自動換算。', '全新「沖煮模式」：全螢幕深色大計時、目前步驟與即時目標水量、下一步倒數，到點提示音與震動、螢幕常亮。', '研磨、水質、診斷改用同一套版面：研磨 A⇄B 並排、大字結果；診斷電腦版左右兩欄、手機版上方固定顯示 EY／TDS。最近、最愛、我的器材只存在這台裝置的瀏覽器。'] },
+    { version: 'v7.0.0', date: '2026.11', changes: ['全站改版：五個工具共用同一套外框與設計系統。首頁重新設計（工具介紹、最近沖過、更新紀錄），電腦版上方分頁、手機版底部 6 個分頁（首頁／沖煮／研磨／水質／診斷／咖啡廳），語言、深淺色、我的器材都收進「設定」。', '沖煮首頁不用再先選濾杯：直接看到全部配方，依濾杯分組；可勾選濾杯篩選（不勾＝全部）、冷熱篩選、搜尋。新增「最近沖過」與「我的最愛」（♡），第一次使用會看到「最新新增」與可略過的「你有哪些濾杯？」。', '配方頁重新排版：上一個／下一個切換、粉量加減、參數列、累計水量進度條、注水曲線；設定「我的磨豆機」後研磨度自動換算。', '全新「沖煮模式」：全螢幕深色大計時、目前步驟與即時目標水量、下一步倒數，到點提示音與震動、螢幕常亮。', '研磨、水質、診斷改用同一套版面：研磨 A⇄B 並排、大字結果；診斷電腦版左右兩欄、手機版上方固定顯示 EY／TDS。最近、最愛、我的器材只存在這台裝置的瀏覽器。'] },
     { version: 'v6.1.0', date: '2026.06', changes: ['磨豆機資料庫新增「Comandante C60 Baracuda」：以格數計算（無段式歸零刻度），約 0–1090 微米、每格約 20 微米。土耳其 2–6、espresso 6–15、摩卡／愛樂壓 15–22、手沖 22–32、法壓／冷萃 32–50。（沖煮區間對應參考 Honest Coffee Guide 研磨表與 Basic Barista 各沖煮法格數，非 Comandante 官方微米表）。'] },
     { version: 'v6.0.0', date: '2026.06', changes: ['推出「咖啡廳推薦」全新工具：地圖＋清單瀏覽、依冰熱／標籤／地區篩選、距離排序、星級評論、一鍵導航。', '推薦投稿表單：貼 IG 連結快速帶入店名、地圖搜尋或手動標記位置、多張高畫質照片上傳（存入 Google Drive 依店名分資料夾）。', '資料回報機制：可回報資訊有誤或補充照片，經審核後上架並寄信通知。'] },
     { version: 'v4.5.0', date: '2026.06', changes: ['依 Varia 官方與評測資料重新校正 Varia VS3 刻度：刻度為無段式 0–10（0.1 一格）。espresso 約 #4、濾泡／手沖 #9–11、法壓／冷萃約 #16。土耳其 1–2.5、espresso 2.5–6、摩卡／愛樂壓 6–9、手沖 9–12、法壓／冷萃 12–18（切勿低於 2，過細易卡刀盤）。'] },
@@ -617,7 +647,7 @@ const i18n = {
     tweak_reset: 'Reset',
     changelog_title: 'Release Notes',
     changelog: [
-    { version: 'v7.0.0', date: 'Nov 2026', changes: ['Full redesign: all five tools now share one shell and design system — top tabs on desktop, five bottom tabs on phones (Brew / Grind / Water / Diagnose / Cafés). Language, theme, My gear and release notes live in Settings.', 'Brew no longer asks you to pick a dripper first: every recipe is listed, grouped by dripper, with dripper checkboxes (none ticked = all), hot/iced filter and search. New Recently brewed and Favorites (♡); first-time visitors see Just added and a skippable “Which drippers do you have?”.', 'New recipe page: previous/next, dose stepper, parameter strip, cumulative water bars and pour curve; set My grinder and the grind setting converts automatically.', 'New Brew mode: full-screen dark timer, current step with live target water, next-step countdown, chime + vibration, screen kept awake.', 'Grind, Water and Diagnose use the same layout: grinders A⇄B side by side with a big result; Diagnose is two columns on desktop with EY/TDS pinned on phones. Recents, favorites and gear are stored only in this browser.'] },
+    { version: 'v7.0.0', date: 'Nov 2026', changes: ['Full redesign: all five tools now share one shell and design system — a redesigned Home (tool overview, recently brewed, release notes), top tabs on desktop and six bottom tabs on phones (Home / Brew / Grind / Water / Diagnose / Cafés). Language, theme and My gear live in Settings.', 'Brew no longer asks you to pick a dripper first: every recipe is listed, grouped by dripper, with dripper checkboxes (none ticked = all), hot/iced filter and search. New Recently brewed and Favorites (♡); first-time visitors see Just added and a skippable “Which drippers do you have?”.', 'New recipe page: previous/next, dose stepper, parameter strip, cumulative water bars and pour curve; set My grinder and the grind setting converts automatically.', 'New Brew mode: full-screen dark timer, current step with live target water, next-step countdown, chime + vibration, screen kept awake.', 'Grind, Water and Diagnose use the same layout: grinders A⇄B side by side with a big result; Diagnose is two columns on desktop with EY/TDS pinned on phones. Recents, favorites and gear are stored only in this browser.'] },
     { version: 'v6.1.0', date: 'Jun 2026', changes: ['Added the "Comandante C60 Baracuda" to the grinder database: counted in clicks (stepless true-zero), roughly 0–1090 µm at ~20 µm per click. Turkish 2–6, espresso 6–15, moka/AeroPress 15–22, pour-over 22–32, French press/cold brew 32–50. (Brew-band mapping is based on the Honest Coffee Guide grind chart and Basic Barista per-method clicks, not an official Comandante micron table.)'] },
     { version: 'v6.0.0', date: 'Jun 2026', changes: ['Launched the new "Café Recommendations" tool: map + list browsing, hot/iced / tag / region filters, distance sorting, star reviews, one-tap navigation.', 'Recommendation submission form: paste an IG link to auto-fill the shop name, search the map or drop a pin manually, upload multiple high-quality photos (stored in Google Drive, organized by shop).', 'Data report mechanism: report wrong info or add photos; published after review, with an email notification.'] },
     { version: 'v4.5.0', date: 'Jun 2026', changes: ['Re-calibrated the Varia VS3 scale using Varia\'s official and review data: the dial is stepless 0–10 (0.1 steps). Espresso ~#4, filter/pour-over #9–11, French press/cold brew ~#16. Turkish 1–2.5, espresso 2.5–6, moka/AeroPress 6–9, pour-over 9–12, French press/cold brew 12–18 (never go below 2 — too fine can jam the burrs).'] },
@@ -658,7 +688,7 @@ const i18n = {
     tweak_reset: 'リセット',
     changelog_title: 'リリースノート',
     changelog: [
-    { version: 'v7.0.0', date: '2026年11月', changes: ['全面リニューアル：5つのツールが共通のフレームとデザインに。PCは上部タブ、スマホは下部5タブ（抽出／挽き目／水質／診断／カフェ）。言語・表示・マイ器具・更新履歴は「設定」に集約。', '抽出はドリッパーを先に選ぶ必要がなくなりました：全レシピをドリッパー別に一覧表示。チェックで絞り込み（未選択＝すべて）、ホット/アイス、検索に対応。「最近淹れた」「お気に入り（♡）」を追加し、初回は「新着」とスキップ可能な「どのドリッパーを持っていますか？」を表示。', 'レシピページを刷新：前後のレシピ切替、粉量ステッパー、パラメータ帯、累計湯量バー、注湯カーブ。「マイミル」を設定すると挽き目を自動換算。', '新しい「抽出モード」：全画面ダークの大きなタイマー、現在のステップと目標湯量、次ステップのカウントダウン、チャイムと振動、画面スリープ防止。', '挽き目・水質・診断も同じレイアウトに：挽き目はA⇄Bを並べて大きく結果表示、診断はPCで2カラム・スマホではEY/TDSを上部に固定。最近・お気に入り・マイ器具はこのブラウザにのみ保存。'] },
+    { version: 'v7.0.0', date: '2026年11月', changes: ['全面リニューアル：5つのツールが共通のフレームとデザインに。ホームを再デザイン（ツール紹介・最近淹れた・更新履歴）。PCは上部タブ、スマホは下部6タブ（ホーム／抽出／挽き目／水質／診断／カフェ）。言語・表示・マイ器具は「設定」に集約。', '抽出はドリッパーを先に選ぶ必要がなくなりました：全レシピをドリッパー別に一覧表示。チェックで絞り込み（未選択＝すべて）、ホット/アイス、検索に対応。「最近淹れた」「お気に入り（♡）」を追加し、初回は「新着」とスキップ可能な「どのドリッパーを持っていますか？」を表示。', 'レシピページを刷新：前後のレシピ切替、粉量ステッパー、パラメータ帯、累計湯量バー、注湯カーブ。「マイミル」を設定すると挽き目を自動換算。', '新しい「抽出モード」：全画面ダークの大きなタイマー、現在のステップと目標湯量、次ステップのカウントダウン、チャイムと振動、画面スリープ防止。', '挽き目・水質・診断も同じレイアウトに：挽き目はA⇄Bを並べて大きく結果表示、診断はPCで2カラム・スマホではEY/TDSを上部に固定。最近・お気に入り・マイ器具はこのブラウザにのみ保存。'] },
     { version: 'v6.1.0', date: '2026年6月', changes: ['ミルデータベースに「Comandante C60 Baracuda」を追加：クリックで表示（無段階ゼロ復帰）、約0〜1090µm、クリックあたり約20µm。トルコ2〜6、エスプレッソ6〜15、モカ／エアロ15〜22、ドリップ22〜32、フレンチ／水出し32〜50。（抽出区分の対応はHonest Coffee Guideの研磨表とBasic Baristaの各抑法クリックに基づき、Comandante公式のミクロン表ではありません）。'] },
     { version: 'v6.0.0', date: '2026年6月', changes: ['「カフェ推薦」新ツールを公開：地図＋リスト閲覧、ホット／アイス・タグ・地域フィルター、距離順ソート、星レビュー、ワンタップナビ。', '推薦投稿フォーム：IGリンクを貼って店名を自動入力、地図検索または手動ピン留め、複数の高画質写真をアップロード（Google Driveに店ごとに保存）。', 'データ報告機能：誤りの報告や写真補充が可能、審査後に公開しメール通知。'] },
     { version: 'v4.5.0', date: '2026年6月', changes: ['Varia公式・レビューデータを基にVaria VS3のスケールを再調整：ダイヤルは無段階0〜10（0.1刻み）。エスプレッソ約#4、フィルター／ドリップ#9〜11、フレンチ／水出し約#16。トルコ1〜2.5、エスプレッソ2.5〜6、モカ／エアロ6〜9、ドリップ9〜12、フレンチ／水出し12〜18（2未満は刀盤を損なうため不可）。'] },
@@ -693,7 +723,7 @@ const I18N_EXTRA = {
     changelog_short: '更新紀錄', version_label: '版本', new_badge: 'NEW', iced_badge: '冰沖', hot_badge: '熱沖', locked_dose: '此配方粉量固定',
     expand_all: '全部展開', collapse_all: '全部收合', custom_um_title: '自訂刻度範圍（μm）', tips_title: '換算小提醒',
     grind_from: '從這台磨豆機', grind_to: '換成這台', grind_scale: '顆粒粗細對照', see_chart: '看圖表',
-    search_results: '搜尋結果', brewing_now: '沖煮中', conc_needed: '需要的濃縮液', water_needed: '需要的純水'
+    search_results: '搜尋結果', home_meta_brew: '{n} 個配方 · {d} 種濾杯', home_meta_grind: '{n} 款磨豆機', home_cta_brew: '找配方', home_subtitle: '沖煮參數、磨豆機刻度、礦物水調配、萃取診斷與好店推薦，都在這裡。', brewing_now: '沖煮中', conc_needed: '需要的濃縮液', water_needed: '需要的純水'
   },
   en: {
     app_short: 'Coffee Village', nav_cafe: 'Cafés', settings: 'Settings', lang_label: 'Language', theme_label: 'Appearance',
@@ -716,7 +746,7 @@ const I18N_EXTRA = {
     changelog_short: 'Release notes', version_label: 'Version', new_badge: 'NEW', iced_badge: 'Iced', hot_badge: 'Hot', locked_dose: 'This recipe uses a fixed dose',
     expand_all: 'Expand all', collapse_all: 'Collapse all', custom_um_title: 'Custom particle range (μm)', tips_title: 'Input tips',
     grind_from: 'From this grinder', grind_to: 'Convert to', grind_scale: 'Particle size', see_chart: 'Chart',
-    search_results: 'Search results', brewing_now: 'Brewing', conc_needed: 'Concentrate needed', water_needed: 'Pure water needed'
+    search_results: 'Search results', home_meta_brew: '{n} recipes · {d} drippers', home_meta_grind: '{n} grinders', home_cta_brew: 'Find a recipe', home_subtitle: 'Brew recipes, grinder settings, mineral water, extraction diagnosis and café picks — all in one place.', brewing_now: 'Brewing', conc_needed: 'Concentrate needed', water_needed: 'Pure water needed'
   },
   ja: {
     app_short: 'カフェの小さな村', nav_cafe: 'カフェ', settings: '設定', lang_label: '言語', theme_label: '表示',
@@ -739,7 +769,7 @@ const I18N_EXTRA = {
     changelog_short: '更新履歴', version_label: 'バージョン', new_badge: 'NEW', iced_badge: 'アイス', hot_badge: 'ホット', locked_dose: 'このレシピは粉量固定です',
     expand_all: 'すべて開く', collapse_all: 'すべて閉じる', custom_um_title: 'カスタム粒度範囲（μm）', tips_title: '入力のヒント',
     grind_from: '変換元のミル', grind_to: '変換先', grind_scale: '粒度の目安', see_chart: 'グラフ',
-    search_results: '検索結果', brewing_now: '抽出中', conc_needed: '必要な濃縮液', water_needed: '必要な純水'
+    search_results: '検索結果', home_meta_brew: '{n} レシピ · {d} 種のドリッパー', home_meta_grind: '{n} 機種のミル', home_cta_brew: 'レシピを探す', home_subtitle: '抽出レシピ、ミルの挽き目、ミネラルウォーター、抽出診断、カフェ探しをひとつに。', brewing_now: '抽出中', conc_needed: '必要な濃縮液', water_needed: '必要な純水'
   }
 };
 Object.keys(I18N_EXTRA).forEach((k) => Object.assign(i18n[k], I18N_EXTRA[k]));
@@ -2255,6 +2285,8 @@ const Sliders = (p) => <IconBase {...p}><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3
 const MapPin = (p) => <IconBase {...p}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></IconBase>;
 const SkipFwd = (p) => <IconBase {...p}><polygon points="5 4 15 12 5 20 5 4" /><path d="M19 5v14" /></IconBase>;
 const Check = (p) => <IconBase {...p}><path d="M20 6 9 17l-5-5" /></IconBase>;
+const HomeIcon = (p) => <IconBase {...p}><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" /></IconBase>;
+const ArrowUpRight = (p) => <IconBase {...p}><path d="M7 17 17 7M7 7h10v10" /></IconBase>;
 const Kettle = (p) => <IconBase {...p}><path d="M10 3h4M6 8h12l-1 11a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 8ZM18 10l3-2M8 8V6a4 4 0 0 1 8 0v2" /></IconBase>;
 
 function useMedia(q) {
@@ -2458,7 +2490,7 @@ function FilterSheet({ dinfo, counts, sel, gear, onApply, onClose, t, recipesFor
 }
 
 // ---------- 沖煮首頁（清單） ----------
-const BREW_UI = { q: '', open: {} }; // 回到清單時保留搜尋字與展開狀態
+const BREW_UI = { q: '', open: {}, list: null, dose: null, pushed: false }; // 回到清單時保留搜尋字與展開狀態
 function BrewHome({ t, lang, db, store, onOpen, openSettings }) {
   const { DRIPPER_CATEGORIES, RECIPE_DATABASE } = db;
   const dinfo = useDripperInfo(DRIPPER_CATEGORIES, lang);
@@ -2992,9 +3024,10 @@ function RecipePage({ recipe, db, t, c, lang, store, list, onNav, onBack, brewin
 function BrewTool({ lang, t, c, route, navigate, store, openSettings, initialDose }) {
   const db = useDatabases(lang);
   const recipe = route.recipe ? db.RECIPE_DATABASE.find((r) => r.id === route.recipe) : null;
-  const [list, setList] = useState([]);
-  const [doseHint, setDoseHint] = useState(initialDose || null);
-  const fromList = useRef(false);   // 從清單點進來 → 返回時用 history.back()，保留瀏覽紀錄乾淨
+  // 從首頁「最近沖過」點進來時，首頁會把清單與粉量放在 BREW_UI
+  const [list, setList] = useState(() => { const l = BREW_UI.list; BREW_UI.list = null; return l || []; });
+  const [doseHint, setDoseHint] = useState(() => { const d = BREW_UI.dose; BREW_UI.dose = null; return initialDose || d || null; });
+  const fromList = useRef((() => { const v = BREW_UI.pushed; BREW_UI.pushed = false; return v; })());   // 從清單點進來 → 返回時用 history.back()，保留瀏覽紀錄乾淨
   const pushedGo = useRef(false);
   const listScroll = useRef(0);
   const open = (id, ids, dose) => { listScroll.current = window.scrollY; fromList.current = true; setList(ids && ids.length ? ids : [id]); setDoseHint(dose || null); navigate({ tool: 'brew', recipe: id }); };
@@ -3846,6 +3879,7 @@ function BrewDiagnostics({ lang, t, c }) {
 // ==========================================
 const CAFE_URL = 'Cafe Recommendations.html';
 const TOOLS = [
+  { key: 'home', icon: HomeIcon, nav: 'nav_home' },
   { key: 'brew', icon: Thermometer, nav: 'nav_brew' },
   { key: 'grind', icon: Wrench, nav: 'nav_grind' },
   { key: 'water', icon: Droplets, nav: 'nav_water' },
@@ -3854,7 +3888,7 @@ const TOOLS = [
 const parseHash = () => {
   const h = (window.location.hash || '').replace(/^#\/?/, '');
   const parts = h.split('/').filter(Boolean).map((x) => { try { return decodeURIComponent(x); } catch (e) { return x; } });
-  const tool = ['brew', 'grind', 'water', 'diag'].includes(parts[0]) ? parts[0] : 'brew';
+  const tool = ['home', 'brew', 'grind', 'water', 'diag'].includes(parts[0]) ? parts[0] : 'home';
   return { tool, recipe: tool === 'brew' && parts[1] ? parts[1] : null, go: tool === 'brew' && parts[2] === 'go' };
 };
 const routeHash = (r) => '#/' + r.tool + (r.tool === 'brew' && r.recipe ? '/' + encodeURIComponent(r.recipe) + (r.go ? '/go' : '') : '');
@@ -3867,6 +3901,94 @@ function ToolHead({ tool, t }) {
     <div className="ck-head ck-donly">
       <div className={`ck-tile ${tool}`}><Icon size={22} /></div>
       <div><h1>{t(meta[0])}</h1><p>{t(meta[1])}</p></div>
+    </div>);
+}
+
+
+// ---------- 首頁：工具總覽＋介紹（打開網站的第一頁） ----------
+function HomeView({ t, lang, store, navigate }) {
+  const db = useDatabases(lang);
+  const dinfo = useDripperInfo(db.DRIPPER_CATEGORIES, lang);
+  const byId = useMemo(() => { const m = {}; db.RECIPE_DATABASE.forEach((r) => { m[r.id] = r; }); return m; }, [db]);
+  const recents = store.recent.filter((x) => byId[x.id]).slice(0, 3);
+  const [showLog, setShowLog] = useState(false);
+  const h = new Date().getHours();
+  const greet = t(h < 6 ? 'greet_dawn' : h < 11 ? 'greet_morning' : h < 14 ? 'greet_noon' : h < 18 ? 'greet_afternoon' : 'greet_evening');
+  const nRecipes = db.RECIPE_DATABASE.length;
+  const nDrippers = new Set(db.RECIPE_DATABASE.map((r) => r.dripper)).size;
+  const nGrinders = Object.keys(db.GRINDER_DATABASE).length;
+  const log = t('changelog');
+  const openRecent = (x) => { BREW_UI.list = recents.map((y) => y.id); BREW_UI.dose = x.dose || null; navigate({ tool: 'brew', recipe: x.id }); };
+  const small = [
+    ['grind', Wrench, 'tool_grind_title', 'tool_grind_desc', fmt(t('home_meta_grind'), { n: nGrinders })],
+    ['water', Droplets, 'tool_water_title', 'tool_water_desc', 'Aquacode · NAIRO · APAX'],
+    ['diag', Crosshair, 'tool_diag_title', 'tool_diag_desc', 'SCA Golden Cup']];
+  return (
+    <div className="ck-home">
+      <div className="ck-hero2">
+        <div className="kick">{greet} · Coffee Toolkit</div>
+        <h1>{t('home_question_pre')}<span>{t('home_question_main')}</span></h1>
+        <p>{t('home_subtitle')}</p>
+      </div>
+
+      {recents.length > 0 &&
+      <section style={{ marginBottom: 22 }}>
+          <div className="ck-cap"><Clock size={14} />{t('recent')}</div>
+          <div className="ck-cards">{recents.map((x) => { const r = byId[x.id]; return <RecipeCard key={x.id} r={r} d={dinfo.byId[r.dripper]} sub={relTime(x.at, t)} fav={store.favs.includes(r.id)} onFav={store.toggleFav} onOpen={() => openRecent(x)} t={t} />; })}</div>
+        </section>
+      }
+
+      <a href="#/brew" className="ck-tool big">
+        <div className="ck-tile brew" style={{ width: 56, height: 56, borderRadius: 16 }}><Thermometer size={26} /></div>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <h2>{t('tool_brew_title')}</h2>
+          <p>{t('tool_brew_desc')}</p>
+          <div className="meta">{fmt(t('home_meta_brew'), { n: nRecipes, d: nDrippers })}</div>
+          <span className="cta">{t('home_cta_brew')} <ChevronRight size={16} /></span>
+        </div>
+        <span className="no">01</span>
+      </a>
+
+      <div className="ck-tools3">
+        {small.map(([k, Icon, ti, de, meta], i) =>
+        <a key={k} href={'#/' + k} className="ck-tool">
+            <div className={`ck-tile ${k}`}><Icon size={21} /></div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <h2>{t(ti)}</h2>
+              <p>{t(de)}</p>
+              <div className="meta">{meta}</div>
+            </div>
+            <span className="no">0{i + 2}</span>
+          </a>
+        )}
+      </div>
+
+      <a href={CAFE_URL} className="ck-tool" style={{ marginTop: 14 }}>
+        <div className="ck-tile cafe"><MapPin size={21} /></div>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: 6 }}>{t('tool_cafe_title')}<ArrowUpRight size={15} style={{ color: 'var(--faint)' }} /></h2>
+          <p>{t('tool_cafe_desc')}</p>
+        </div>
+        <span className="no">05</span>
+      </a>
+
+      {Array.isArray(log) &&
+      <div style={{ marginTop: 30 }}>
+          <button className="ck-logbtn" onClick={() => setShowLog((v) => !v)} aria-expanded={showLog}>
+            <span className="ln"></span><Clock size={13} />{t('changelog_title')} · {log[0] && log[0].version}<ChevronDown size={14} style={{ transform: showLog ? 'rotate(180deg)' : '' }} /><span className="ln"></span>
+          </button>
+          {showLog &&
+        <div className="ck-card" style={{ padding: '20px 22px 8px', marginTop: 12 }}>
+              {log.map((g, i) =>
+          <div key={i} className={`ck-log ${i === 0 ? 'first' : ''}`}>
+                  <b>{g.version}</b><small>{g.date}</small>
+                  <ul>{g.changes.map((x, j) => <li key={j}>{x}</li>)}</ul>
+                </div>
+          )}
+            </div>
+        }
+        </div>
+      }
     </div>);
 }
 
@@ -3991,7 +4113,7 @@ function App() {
   const openSettings = (focus) => setSettings(focus || 'main');
 
   useEffect(() => { window.scrollTo(0, 0); }, [route.tool]);
-  useEffect(() => { document.title = route.tool === 'brew' ? t('app_title') : `${t('nav_' + route.tool)} · ${t('app_title')}`; }, [route.tool, L]);
+  useEffect(() => { document.title = route.tool === 'home' || route.tool === 'brew' ? t('app_title') : `${t('nav_' + route.tool)} · ${t('app_title')}`; }, [route.tool, L]);
 
   const inRecipe = route.tool === 'brew' && !!route.recipe;
   const phoneTitle = t('nav_' + route.tool);
@@ -4001,8 +4123,8 @@ function App() {
       {/* 電腦版上方導覽 */}
       <header className="ck-top ck-donly">
         <div className="ck-top-in">
-          <a className="ck-logo" href="#/brew" aria-label={t('app_title')}><Coffee size={17} /></a>
-          <a className="ck-brand" href="#/brew">{t('app_short')}</a>
+          <a className="ck-logo" href="#/home" aria-label={t('app_title')}><Coffee size={17} /></a>
+          <a className="ck-brand" href="#/home">{t('app_short')}</a>
           <nav style={{ display: 'flex', gap: 2 }} aria-label="tools">
             {TOOLS.map(({ key, icon: Icon, nav }) =>
             <a key={key} href={'#/' + key} className={`ck-tab ${key} ${route.tool === key ? 'on' : ''}`} aria-current={route.tool === key ? 'page' : undefined}><Icon size={16} />{t(nav)}</a>
@@ -4020,14 +4142,16 @@ function App() {
         {/* 手機版頁首：大標題＋深淺色＋設定 */}
         {!inRecipe &&
         <div className="ck-ph ck-monly">
-            <h1>{phoneTitle}</h1>
+            {route.tool === 'home' ? <a href="#/home" className="ck-logo" aria-label={t('app_title')}><Coffee size={17} /></a> : null}
+            <h1 style={route.tool === 'home' ? { fontSize: 17 } : undefined}>{route.tool === 'home' ? t('app_short') : phoneTitle}</h1>
             <div style={{ flex: 1 }}></div>
             <button className="ck-icb" onClick={toggleDark} aria-label={isDark ? t('theme_light') : t('theme_dark')}>{isDark ? <Sun size={16} /> : <Moon size={16} />}</button>
             <button className="ck-icb" onClick={() => openSettings()} aria-label={t('settings')}><Sliders size={16} /></button>
           </div>
         }
         <ToolHead tool={route.tool} t={t} />
-        {route.tool === 'brew' ? <BrewTool lang={L} t={t} c={c} route={route} navigate={navigate} store={store} openSettings={openSettings} initialDose={legacy && legacy.g} /> :
+        {route.tool === 'home' ? <HomeView t={t} lang={L} store={store} navigate={navigate} /> :
+        route.tool === 'brew' ? <BrewTool lang={L} t={t} c={c} route={route} navigate={navigate} store={store} openSettings={openSettings} initialDose={legacy && legacy.g} /> :
         route.tool === 'grind' ? <GrindTool lang={L} t={t} c={c} myGrinder={myGrinder} /> :
         route.tool === 'diag' ? <BrewDiagnostics lang={L} t={t} c={c} /> :
         <div style={{ maxWidth: 820 }}><WaterTool lang={L} c={c} t={t} /></div>}
