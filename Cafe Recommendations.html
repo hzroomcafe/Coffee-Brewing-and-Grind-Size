@@ -10,20 +10,22 @@
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root {
-  --cream: #F2EDE3; --card: #FBF8F1; --ink: #3A3733; --ink-soft: #6B6660; --muted: #9A9189;
-  --line: #E4DCCC; --sage: #7E8D85; --sage-d: #6E7D75; --accent: #B5654A; --chip: #ECE4D6;
-  --mblue: #7E96A8; --mblue-d: #62798B; --msand: #C0A46B; --msand-d: #9A8150; --mrose: #B98A80; --mrose-d: #9C6E64;
+  --cream: #F5F1E8; --card: #FFFDF8; --ink: #252D29; --ink-soft: #4F5852; --muted: #6D746E;
+  --line: #E6E0D2; --sage: #587265; --sage-d: #2F463B; --accent: #B4553E; --chip: #EFEADF;
+  --mblue: #8E7B6A; --mblue-d: #5E4C3D; --msand: #C09A5B; --msand-d: #7A5A22; --mrose: #B98A80; --mrose-d: #9C6E64;
+  --cafe: #8E7B6A; --cafe-ink: #5E4C3D; --brew-ink:#7A5A22; --grind-ink:#3F5F77; --water-ink:#2E6A4B; --diag-ink:#8A4331;
 }
 html.dark {
-  --cream: #1B1E22; --card: #262A2E; --ink: #EDE8DD; --ink-soft: #B8B2A7; --muted: #8A857C;
-  --line: #393E43; --sage: #8B9A91; --sage-d: #7E8D85; --accent: #C9785C; --chip: #33383D;
-  --mblue: #8CA6B8; --mblue-d: #A5BDCD; --msand: #C9B27D; --msand-d: #DBC796; --mrose: #C79A8F; --mrose-d: #D9B0A5;
+  --cream: #141816; --card: #1C2220; --ink: #EEF1EE; --ink-soft: #C3CBC6; --muted: #98A39D;
+  --line: #2F3935; --sage: #6F9483; --sage-d: #8DB3A1; --accent: #E08870; --chip: #232A27;
+  --mblue: #B19C88; --mblue-d: #D2BCA6; --msand: #D2AE6E; --msand-d: #E0BE80; --mrose: #C79A8F; --mrose-d: #D9B0A5;
+  --cafe: #B19C88; --cafe-ink: #D2BCA6; --brew-ink:#E0BE80; --grind-ink:#A9C4D8; --water-ink:#9FD0B4; --diag-ink:#E8A58F;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif; font-feature-settings: "palt"; }
+html, body { font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, sans-serif; font-feature-settings: "palt"; }
 body { background: var(--cream); color: var(--ink); transition: background .3s, color .3s; min-height: 100vh; }
 .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
 .wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
@@ -33,6 +35,7 @@ body::before { content:''; position:fixed; inset:0; pointer-events:none; z-index
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.21 0 0 0 0 0.18 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   opacity:.07; mix-blend-mode:multiply; }
 html.dark body::before { opacity:.16; mix-blend-mode:overlay; }
+body::before { display:none; }
 .modal-backdrop { position:fixed; inset:0; z-index:90; background:rgba(0,0,0,.45); display:flex; align-items:flex-end; justify-content:center; backdrop-filter:blur(3px); }
 @media(min-width:600px){ .modal-backdrop { align-items:center; } }
 .modal { background:var(--card); border-radius:22px 22px 0 0; padding:22px 20px calc(24px + env(safe-area-inset-bottom)); width:100%; max-width:520px; box-shadow:0 -16px 40px rgba(0,0,0,.18); max-height:calc(100dvh - 24px); overflow-y:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
@@ -82,9 +85,9 @@ html.ov-lock, html.ov-lock body { overflow:hidden !important; overscroll-behavio
 header { padding: 26px 0 14px; }
 .topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .brand { display:flex; align-items:center; gap:11px; }
-.brand .logo { width:42px; height:42px; border-radius:13px; background:var(--sage); display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(126,141,133,.32); flex-shrink:0; }
+.brand .logo { width:44px; height:44px; border-radius:13px; background:var(--cafe); display:flex; align-items:center; justify-content:center; box-shadow:none; flex-shrink:0; }
 .brand .logo svg { width:25px; height:25px; }
-.brand h1 { font-size:19px; font-weight:900; letter-spacing:-.01em; line-height:1.1; }
+.brand h1 { font-size:24px; font-weight:800; letter-spacing:-.01em; line-height:1.1; }
 .brand p { font-size:11.5px; color:var(--muted); font-weight:600; margin-top:2px; }
 .iconbtn { width:40px; height:40px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--ink-soft); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.15s; flex-shrink:0; }
 .iconbtn:hover { color:var(--ink); border-color:var(--sage); }
@@ -205,11 +208,11 @@ header { padding: 26px 0 14px; }
 /* list */
 .list { margin-top:16px; display:flex; flex-direction:column; gap:16px; }
 .cafe { background:var(--card); border:1px solid var(--line); border-radius:20px; padding:0 0 16px; transition:.18s; cursor:pointer; position:relative; overflow:hidden; }
-.cafe::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--sage); opacity:.9; transition:.18s; z-index:1; }
+.cafe::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--cafe); opacity:.9; transition:.18s; z-index:1; }
 .cafe:hover { border-color:var(--sage); transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.08); }
 .cafe:hover::before { opacity:1; }
 /* 頂部色帶區：鼠尾草綠→卡片色渐層，左綠邊條強調 */
-.cafe-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:17px 20px 15px; background:linear-gradient(135deg, color-mix(in srgb,var(--mblue) 30%,var(--card)) 0%, color-mix(in srgb,var(--mblue) 16%,var(--card)) 100%); border-bottom:1px solid color-mix(in srgb,var(--mblue) 24%,transparent); }
+.cafe-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:17px 20px 15px; background:linear-gradient(135deg, color-mix(in srgb,var(--mblue) 14%,var(--card)) 0%, color-mix(in srgb,var(--mblue) 5%,var(--card)) 100%); border-bottom:1px solid var(--line); }
 .cafe-headmain { min-width:0; flex:1; }
 .cafe-name { font-size:19px; font-weight:900; letter-spacing:-.01em; line-height:1.22; }
 .cafe-area { display:flex; align-items:center; gap:5px; font-size:12.5px; color:var(--muted); font-weight:600; margin-top:6px; min-width:0; }
@@ -295,15 +298,46 @@ footer a { color:var(--sage); text-decoration:none; font-weight:700; }
 /* banner for sheet config */
 .banner { margin-top:14px; padding:12px 15px; border-radius:13px; background:var(--chip); border:1px solid var(--line); font-size:12px; color:var(--ink-soft); line-height:1.6; }
 .banner b { color:var(--ink); }
+
+/* ===== v7 共用外框（與工具箱相同的導覽） ===== */
+.ck-top { position:sticky; top:0; z-index:600; background:color-mix(in srgb, var(--card) 92%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+.ck-top-in { max-width:1240px; margin:0 auto; height:60px; display:flex; align-items:center; gap:4px; padding:0 24px; }
+.ck-logo { width:32px; height:32px; border-radius:50%; background:var(--sage); color:#fff; display:flex; align-items:center; justify-content:center; flex:none; }
+html.dark .ck-logo { color:#0F1412; }
+.ck-brand { font-weight:800; font-size:15px; margin:0 18px 0 10px; white-space:nowrap; color:var(--ink); text-decoration:none; }
+.ck-tab { display:inline-flex; align-items:center; gap:7px; font-size:14px; font-weight:700; color:var(--muted); padding:8px 14px; border-radius:999px; text-decoration:none; white-space:nowrap; transition:background .15s, color .15s; }
+.ck-tab:hover { color:var(--ink); background:var(--chip); }
+.ck-tab.on { background:var(--cafe-ink); color:#fff; }
+html.dark .ck-tab.on { color:#101412; }
+.ck-tab svg, .ck-bnav svg { width:16px; height:16px; }
+.ck-bnav { position:fixed; left:0; right:0; bottom:0; z-index:600; background:color-mix(in srgb, var(--card) 96%, transparent); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid var(--line); padding-bottom:max(env(safe-area-inset-bottom), 6px); }
+.ck-bnav-in { display:grid; grid-template-columns:repeat(5,1fr); height:58px; }
+.ck-bnav a { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; font-size:10.5px; font-weight:700; color:var(--muted); text-decoration:none; }
+.ck-bnav svg { width:21px; height:21px; }
+.ck-bnav a.on { color:var(--cafe-ink); }
+.ck-bnav a.on i { position:absolute; top:0; width:18px; height:3px; border-radius:3px; background:currentColor; }
+@media (min-width:1024px) { .ck-bnav { display:none; } }
+@media (max-width:1023px) { .ck-top { display:none; } body { padding-bottom:calc(70px + env(safe-area-inset-bottom)); } }
+/* 電腦版：左清單、右地圖並排 */
+@media (min-width:1024px) {
+  .app.wrap { max-width:1240px; padding:0 24px; display:grid; grid-template-columns:minmax(0,500px) minmax(0,1fr); column-gap:28px; align-items:start; }
+  .app.wrap > header, .app.wrap > #banner, .app.wrap > #list, .app.wrap > footer { grid-column:1; }
+  .app.wrap > #mapWrap { grid-column:2; grid-row:1 / span 4; position:sticky; top:76px; display:block !important; margin-top:20px; }
+  #mapWrap #map { height:calc(100vh - 100px); margin-top:0; }
+  #list.hidden { display:flex !important; }
+  .vtoggle { display:none !important; }
+  header { padding-top:22px; }
+}
 </style>
 </head>
 <body>
+<div class="ck-top"><div class="ck-top-in">
+  <a class="ck-logo" href="index.html#/brew" aria-label="咖啡小村莊工具箱"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4ZM9 2v2M15 2v2"/></svg></a>
+  <a class="ck-brand" href="index.html#/brew">咖啡小村莊</a>
+  <nav style="display:flex;gap:2px"><a class="ck-tab" href="index.html#/brew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>沖煮</a><a class="ck-tab" href="index.html#/grind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>研磨</a><a class="ck-tab" href="index.html#/water"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 6.3 7 6.3s-2.29 2.76-3.29 3.69C2.57 10.92 2 12.02 2 13.18 2 15.4 3.8 17.2 6 17.2zM17.5 21.5c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19-.53-.43-1.63-1.46-2.29-2.15-.66.69-1.76 1.72-2.29 2.15-1.14.93-1.71 2.03-1.71 3.19 0 2.22 1.8 4.05 4 4.05z"/></svg>水質</a><a class="ck-tab" href="index.html#/diag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>診斷</a><a class="ck-tab on" href="Cafe Recommendations.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>咖啡廳</a></nav>
+</div></div>
 <div class="app wrap">
   <header>
-    <a class="backlink" href="index.html">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      返回工具箱
-    </a>
     <div class="topbar">
       <div class="brand">
         <div class="logo">
@@ -359,6 +393,7 @@ footer a { color:var(--sage); text-decoration:none; font-weight:700; }
   </footer>
 </div>
 
+<nav class="ck-bnav" aria-label="tools"><div class="ck-bnav-in"><a href="index.html#/brew"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>沖煮</a><a href="index.html#/grind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>研磨</a><a href="index.html#/water"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7 6.3 7 6.3s-2.29 2.76-3.29 3.69C2.57 10.92 2 12.02 2 13.18 2 15.4 3.8 17.2 6 17.2zM17.5 21.5c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19-.53-.43-1.63-1.46-2.29-2.15-.66.69-1.76 1.72-2.29 2.15-1.14.93-1.71 2.03-1.71 3.19 0 2.22 1.8 4.05 4 4.05z"/></svg>水質</a><a href="index.html#/diag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>診斷</a><a class="on" href="Cafe Recommendations.html" aria-current="page"><i></i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>咖啡廳</a></div></nav>
 <script>
 /* ===========================================================
    設定區 — 之後接 Google Sheet 只要改這裡
@@ -857,7 +892,8 @@ function ensureMap() {
   map.addLayer(clusterGroup);
   // 地圖移動後顯示「搜尋此區域」
   map.on('moveend zoomend', () => {
-    if (view==='map') document.getElementById('searchAreaBtn').classList.add('on');
+    if (window.__fitting) return;
+    if (view==='map' || isDesk()) document.getElementById('searchAreaBtn').classList.add('on');
   });
 }
 function refreshTiles() { if (tileLayer) tileLayer.setUrl(tileUrl()); }
@@ -893,7 +929,7 @@ function renderMap(data) {
     pts.push([c.lat, c.lng]);
   });
   if (userPos) pts.push([userPos.lat, userPos.lng]);
-  if (pts.length) { try { map.fitBounds(pts, { padding:[50,50], maxZoom:15 }); } catch(e){} }
+  if (pts.length) { window.__fitting = true; clearTimeout(window.__fitT); window.__fitT = setTimeout(() => { window.__fitting = false; }, 800); try { map.fitBounds(pts, { padding:[50,50], maxZoom:15 }); } catch(e){} }
   document.getElementById('searchAreaBtn').classList.remove('on');
   setTimeout(()=>map.invalidateSize(), 60);
 }
@@ -903,6 +939,7 @@ function searchThisArea() {
   const b = map.getBounds();
   const inView = mapAllData.filter(c => b.contains([c.lat, c.lng]));
   document.getElementById('searchAreaBtn').classList.remove('on');
+  if (isDesk()) { document.getElementById('count').innerHTML = `此範圍內 <b>${inView.length}</b> 間咖啡廳 · <span style="color:var(--sage);cursor:pointer;text-decoration:underline;" onclick="renderAll()">顯示全部</span>`; renderList(inView); return; }
   // 切到清單檢視顯示範圍內的店
   view = 'list';
   document.getElementById('vList').classList.add('on');
@@ -961,9 +998,11 @@ function setView(v) {
   document.getElementById('list').classList.toggle('hidden', v==='map');
   renderAll();
 }
+function isDesk() { try { return matchMedia('(min-width:1024px)').matches; } catch(e) { return false; } }
 function renderAll() {
   const data = getFiltered();
   document.getElementById('count').innerHTML = `共 <b>${data.length}</b> 間咖啡廳`;
+  if (isDesk()) { renderList(data); renderMap(data); return; }   // 電腦版：清單與地圖並排
   if (view==='list') renderList(data); else renderMap(data);
 }
 
@@ -1247,6 +1286,7 @@ function applyTheme(dark) {
     ? '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>'
     : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
   try { localStorage.setItem('cafe_theme', dark ? 'dark' : 'light'); } catch(e){}
+  if (window.__themeManual) { try { localStorage.setItem('coffee_theme_manual', '1'); localStorage.setItem('coffee_theme', dark ? 'dark' : 'light'); } catch(e){} }
   refreshTiles();
 }
 
@@ -1256,11 +1296,13 @@ function applyTheme(dark) {
 async function boot() {
   // theme: 跟隨系統或記住的選擇
   let dark;
-  try { const s = localStorage.getItem('cafe_theme'); dark = s ? s==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
+  // 與工具箱共用深淺色設定（coffee_theme_manual / coffee_theme）；未手動設定時跟隨系統
+  try { const man = localStorage.getItem('coffee_theme_manual'); const s = localStorage.getItem('coffee_theme'); dark = man && s ? s==='dark' : matchMedia('(prefers-color-scheme: dark)').matches; }
   catch(e){ dark = false; }
   applyTheme(dark);
 
-  document.getElementById('themeBtn').onclick = () => applyTheme(!document.documentElement.classList.contains('dark'));
+  document.getElementById('themeBtn').onclick = () => { window.__themeManual = true; applyTheme(!document.documentElement.classList.contains('dark')); };
+  let wasDesk = isDesk(); window.addEventListener('resize', () => { const d = isDesk(); if (d !== wasDesk) { wasDesk = d; renderAll(); } else if (d && map) map.invalidateSize(); });
   document.getElementById('locBtn').onclick = toggleLocate;
   document.getElementById('vList').onclick = () => setView('list');
   document.getElementById('vMap').onclick = () => setView('map');
