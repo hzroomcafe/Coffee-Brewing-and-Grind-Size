@@ -1103,5 +1103,21 @@ document.getElementById('againBtn').onclick = () => location.reload();
   document.getElementById('themeBtn').onclick=()=>{ const nd=!document.documentElement.classList.contains('dark'); applyTheme(nd); try{ localStorage.setItem('coffee_theme_manual','1'); localStorage.setItem('coffee_theme', nd?'dark':'light'); }catch(e){} };
 })();
 </script>
+<script>
+/* 照片放大檢視：按「返回」只關掉大圖，不會離開表單頁（避免填到一半的資料不見） */
+(function(){
+  var open = [];
+  new MutationObserver(function(muts){
+    muts.forEach(function(mu){
+      mu.addedNodes.forEach(function(n){ if (n.nodeType===1 && n.style && n.style.position==='fixed' && +n.style.zIndex>=90) { open.push(n); try { history.pushState({ ckModal: true }, ''); } catch(e){} n.__ck = true; } });
+      mu.removedNodes.forEach(function(n){ var i = open.indexOf(n); if (i>=0) { open.splice(i,1); if (!n.__ckPopped) { try { history.back(); } catch(e){} n.__ckSkip = true; window.__ckSkip = (window.__ckSkip||0)+1; } } });
+    });
+  }).observe(document.body, { childList: true });
+  window.addEventListener('popstate', function(){
+    if (window.__ckSkip) { window.__ckSkip--; return; }
+    var n = open[open.length-1]; if (n) { n.__ckPopped = true; n.remove(); }
+  });
+})();
+</script>
 </body>
 </html>
